@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Orbit Switch</title>
+  <meta name="description" content="Tap to switch orbits, dodge the blocks, grab the stars. A one-button arcade game.">
+  <meta name="theme-color" content="#07060f">
+  <meta property="og:title" content="Orbit Switch">
+  <meta property="og:description" content="Tap to switch orbits, dodge the blocks, grab the stars.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game" aria-label="Orbit Switch game"></canvas>
+
+  <button id="mute" type="button" aria-label="Toggle sound" aria-pressed="false">
+    <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+
+  <section id="menu" class="overlay">
+    <h1>ORBIT<span>SWITCH</span></h1>
+    <p class="tag">Tap to jump between orbits.<br>Dodge the blocks. Grab the stars.</p>
+    <button id="play" class="btn" type="button">Play</button>
+    <p class="hint">Tap · Click · Space</p>
+    <p class="best">Best <b id="menuBest">0</b></p>
+  </section>
+
+  <section id="over" class="overlay hidden" aria-live="polite">
+    <p class="label">Score</p>
+    <p id="finalScore" class="big">0</p>
+    <p id="newBest" class="badge hidden">New best!</p>
+    <p class="best">Best <b id="overBest">0</b></p>
+    <div class="row">
+      <button id="retry" class="btn" type="button">Retry</button>
+      <button id="share" class="btn ghost" type="button">Share</button>
+    </div>
+    <p class="hint">Tap or Space to retry</p>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

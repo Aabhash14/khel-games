@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: derived from nepali-games/bato-harayo/icon.svg (hand-authored SVG in this repo); rounded app-tile ground squared off for box-front printing. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03050f"/><stop offset="1" stop-color="#1a2350"/></linearGradient>
+    <radialGradient id="lamp"><stop offset="0" stop-color="#ffc867" stop-opacity=".85"/><stop offset="1" stop-color="#ffc867" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <circle cx="380" cy="120" r="44" fill="#f0f0e1"/><circle cx="398" cy="110" r="38" fill="#070b1e"/>
+  <path d="M0 330 L90 250 L170 300 L260 220 L360 300 L440 250 L512 300 V512 H0Z" fill="#0b1230"/>
+  <path d="M236 512 L250 340 L262 340 L290 512Z" fill="#2a2a3a"/>
+  <path d="M250 340 L150 512 M262 340 L400 512" stroke="#2a2a3a" stroke-width="30"/>
+  <path d="M60 512 L100 330 L140 512Z M410 512 L450 300 L490 512Z" fill="#05070f"/>
+  <circle cx="256" cy="300" r="90" fill="url(#lamp)"/>
+  <rect x="242" y="280" width="28" height="38" rx="5" fill="#ffd27a"/>
+  <path d="M244 280 Q256 258 268 280" stroke="#ffd27a" stroke-width="5" fill="none"/>
+</svg>

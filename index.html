@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Khel · खेल</title>
+  <meta name="description" content="Small free browser games: haggle in Asan bazaar, find your way home at night, guess the athlete, dare the Lakhey at Indra Jatra, fight kites over Kathmandu. Turn a box over, then play.">
+  <meta name="theme-color" content="#0b5d57">
+  <meta property="og:title" content="Khel · खेल">
+  <meta property="og:description" content="Small free browser games. Turn a box over, then play.">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/anton-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/mukta-800-devanagari.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/hub.css?v=9">
+  <noscript><style>
+    .box-3d, .box:hover .box-3d { transform: none; }
+    .box { aspect-ratio: auto; height: auto; }
+    .face { position: relative; transform: none; backface-visibility: visible; }
+    .face.side, .back-btn { display: none; }
+    .face.back { margin-top: 10px; }
+  </style></noscript>
+</head>
+<body>
+  <header class="top">
+    <div class="tools">
+      <div class="lang" role="group" aria-label="Language · भाषा">
+        <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+      </div>
+      <button type="button" class="dice" id="dice">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.6"/><circle cx="15.5" cy="15.5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="15.5" cy="8.5" r="1.6"/><circle cx="8.5" cy="15.5" r="1.6"/></svg>
+        <span data-l="en">Pick for me</span><span data-l="ne" lang="ne">तिमी नै छान</span>
+      </button>
+    </div>
+
+    <h1 class="sign">
+      <span class="sign-ne" lang="ne">खेल</span>
+      <span class="sign-en">Khel</span>
+    </h1>
+    <p class="byline">
+      <span data-l="en" aria-label="by Aabhash Shahi"><span class="by" aria-hidden="true">by</span> <span class="wave" aria-hidden="true"><span style="--i:0">A</span><span style="--i:1">a</span><span style="--i:2">b</span><span style="--i:3">h</span><span style="--i:4">a</span><span style="--i:5">s</span><span style="--i:6">h</span><span class="sp"> </span><span style="--i:7">S</span><span style="--i:8">h</span><span style="--i:9">a</span><span style="--i:10">h</span><span style="--i:11">i</span></span></span>
+      <span data-l="ne" lang="ne">आभाष शाही द्वारा</span>
+    </p>
+    <p class="tagline">
+      <span data-l="en">Small free games. Turn a box over, then play.</span>
+      <span data-l="ne" lang="ne">साना, निःशुल्क खेलहरू। बट्टा पल्टाऊ, अनि खेल।</span>
+    </p>
+  </header>
+
+  <main class="shelves">
+
+    <!-- Shelf 1 -->
+    <section class="shelf" aria-labelledby="s1">
+      <h2 class="tag" id="s1">
+        <span data-l="en">Bluff &amp; trust</span><span data-l="ne" lang="ne">झुट र भरोसा</span>
+        <small><span data-l="en">2 games</span><span data-l="ne" lang="ne">२ खेल</span></small>
+      </h2>
+      <div class="scroller">
+        <ul class="track">
+
+          <li class="slot">
+            <article class="box" id="mol-molai" style="--bg:#d7261e; --ink:#fff8ec; --label:#fff8ec; --label-ink:#1b1b1b; --accent:#f5c518; --ar:.66; --rest:-20deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="mol-molai-back">
+                      <span class="band"><span>Khel No. 01</span><span lang="ne">ने · EN</span></span>
+                      <img class="art bleed" src="assets/art/mol-molai.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Mol-Molai</span>
+                        <span class="name-ne" lang="ne">मोलमोलाई</span>
+                        <span class="teaser"><span data-l="en">Haggle · Bluff · Save</span><span data-l="ne" lang="ne">मोल · झुट · बचत</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Mol-Molai</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">मोलमोलाई</span></div>
+                <div class="face back" id="mol-molai-back" inert>
+                  <span class="band"><span><span data-l="en">Mol-Molai</span><span data-l="ne" lang="ne">मोलमोलाई</span></span></span>
+                  <p class="hook"><span data-l="en">Dashain shopping in Asan bazaar. Haggle, bluff, read the shopkeepers' faces and bring home the change.</span><span data-l="ne" lang="ne">असनमा दशैँको किनमेल। मोलमोलाई गर, झुट बोल, पसलेको अनुहार पढ, अनि पैसा बचाएर घर फर्क।</span></p>
+                  <p class="decide"><span data-l="en">Push your price, or walk away?</span><span data-l="ne" lang="ne">मोल घटाउने कि छोडेर हिँड्ने?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">12 levels</span><span data-l="ne" lang="ne">१२ तह</span></li>
+                    <li><span data-l="en">Real Asan map</span><span data-l="ne" lang="ne">असनको साँचो नक्सा</span></li>
+                    <li><span data-l="en">Nepali · English</span><span data-l="ne" lang="ne">नेपाली · अङ्ग्रेजी</span></li>
+                  </ul>
+                  <a class="play" href="nepali-games/mol-molai/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="slot">
+            <article class="box" id="bato-harayo" style="--bg:#0b1230; --ink:#ffd27a; --label:#141d45; --label-ink:#ffd27a; --accent:#ffc867; --ar:.6; --rest:17deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="bato-harayo-back">
+                      <span class="band"><span>Khel No. 02</span><span lang="ne">ने · EN</span></span>
+                      <img class="art bleed" src="assets/art/bato-harayo.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Bato Harayo</span>
+                        <span class="name-ne" lang="ne">बाटो हरायो</span>
+                        <span class="teaser"><span data-l="en">Night · Strangers · Trust</span><span data-l="ne" lang="ne">रात · अपरिचित · भरोसा</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Bato Harayo</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">बाटो हरायो</span></div>
+                <div class="face back" id="bato-harayo-back" inert>
+                  <span class="band"><span><span data-l="en">Bato Harayo</span><span data-l="ne" lang="ne">बाटो हरायो</span></span></span>
+                  <p class="hook"><span data-l="en">The last bus left you at the wrong stop and your phone is dead. Ask strangers the way to mamaghar before morning.</span><span data-l="ne" lang="ne">अन्तिम बसले गलत ठाउँमा छोड्यो, फोन मरेको छ। बिहान हुनुअघि अपरिचितसँग मामाघरको बाटो सोध।</span></p>
+                  <p class="decide"><span data-l="en">Not everyone tells the truth. Who do you trust?</span><span data-l="ne" lang="ne">सबैले सत्य बोल्दैनन्। कसलाई पत्याउने?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">Story game</span><span data-l="ne" lang="ne">कथा खेल</span></li>
+                    <li><span data-l="en">Torch, calls, fear</span><span data-l="ne" lang="ne">टर्च, फोन, डर</span></li>
+                    <li><span data-l="en">Nepali · English</span><span data-l="ne" lang="ne">नेपाली · अङ्ग्रेजी</span></li>
+                  </ul>
+                  <a class="play" href="nepali-games/bato-harayo/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- Shelf 2 -->
+    <section class="shelf" aria-labelledby="s2">
+      <h2 class="tag" id="s2">
+        <span data-l="en">Guess &amp; dare</span><span data-l="ne" lang="ne">अनुमान र चुनौती</span>
+        <small><span data-l="en">3 games</span><span data-l="ne" lang="ne">३ खेल</span></small>
+      </h2>
+      <div class="scroller">
+        <ul class="track">
+
+          <li class="slot">
+            <article class="box" id="pro-scout" style="--bg:#18793f; --ink:#fffdf7; --label:#fffdf7; --label-ink:#1c1a16; --accent:#f2b51d; --ar:.7; --rest:-17deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="pro-scout-back">
+                      <span class="band"><span>Khel No. 03</span><span>EN</span></span>
+                      <img class="art" src="assets/art/pro-scout.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Pro Scout</span>
+                        <span class="name-ne" lang="ne">प्रो स्काउट</span>
+                        <span class="teaser"><span data-l="en">Clues · Bets · Streaks</span><span data-l="ne" lang="ne">सङ्केत · बाजी · लगातार</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Pro Scout</span></div>
+                <div class="face side side-r" aria-hidden="true"><span>Pro Scout</span></div>
+                <div class="face back" id="pro-scout-back" inert>
+                  <span class="band"><span><span data-l="en">Pro Scout</span><span data-l="ne" lang="ne">प्रो स्काउट</span></span></span>
+                  <p class="hook"><span data-l="en">Guess the athlete from their eyes, a career path, a nickname or a flag. Football, cricket, F1 and more.</span><span data-l="ne" lang="ne">आँखा, क्लबको यात्रा, उपनाम वा झन्डा हेरेर खेलाडी चिन। फुटबल, क्रिकेट, F1 र अरू।</span></p>
+                  <p class="decide"><span data-l="en">Answer now for more points, or buy another clue?</span><span data-l="ne" lang="ne">अहिल्यै भन्ने कि अर्को सङ्केत किन्ने?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">157 athletes</span><span data-l="ne" lang="ne">१५७ खेलाडी</span></li>
+                    <li><span data-l="en">Daily challenge</span><span data-l="ne" lang="ne">दैनिक चुनौती</span></li>
+                    <li><span data-l="en">English</span><span data-l="ne" lang="ne">अङ्ग्रेजी</span></li>
+                  </ul>
+                  <a class="play" href="pro-scout/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="slot">
+            <article class="box" id="know-me" style="--bg:#2140ff; --ink:#ffffff; --label:#ffffff; --label-ink:#0b0b2e; --accent:#ffe66b; --ar:.64; --rest:20deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="know-me-back">
+                      <span class="band"><span>Khel No. 04</span><span lang="ne">EN · ने</span></span>
+                      <img class="art" src="assets/art/know-me.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Know Me</span>
+                        <span class="name-ne" lang="ne">मलाई चिन</span>
+                        <span class="teaser"><span data-l="en">8 questions · 1 card</span><span data-l="ne" lang="ne">८ प्रश्न · १ कार्ड</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Know Me</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">मलाई चिन</span></div>
+                <div class="face back" id="know-me-back" inert>
+                  <span class="band"><span><span data-l="en">Know Me</span><span data-l="ne" lang="ne">मलाई चिन</span></span></span>
+                  <p class="hook"><span data-l="en">Answer 8 quick questions and pull your holo personality card. Save it for your story.</span><span data-l="ne" lang="ne">८ छिटो प्रश्नको जवाफ देऊ, आफ्नो होलो कार्ड निकाल। स्टोरीमा राख।</span></p>
+                  <p class="decide"><span data-l="en">Then dare your friends: can they guess your answers?</span><span data-l="ne" lang="ne">अनि साथीलाई चुनौती: तिम्रो जवाफ अनुमान गर्न सक्छन्?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">16 cards</span><span data-l="ne" lang="ne">१६ कार्ड</span></li>
+                    <li><span data-l="en">Friend challenge link</span><span data-l="ne" lang="ne">साथीलाई लिङ्क</span></li>
+                    <li><span data-l="en">English · Nepali</span><span data-l="ne" lang="ne">अङ्ग्रेजी · नेपाली</span></li>
+                  </ul>
+                  <a class="play" href="know-me/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="slot">
+            <article class="box" id="indra-jatra" style="--bg:#7d1610; --ink:#fff3cf; --label:#f3e5c4; --label-ink:#2a130a; --accent:#d8a535; --ar:.62; --rest:-14deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="indra-jatra-back">
+                      <span class="band"><span>Khel No. 08</span><span lang="ne">ने · EN</span></span>
+                      <img class="art bleed" src="assets/art/indra-jatra.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Indra Jatra</span>
+                        <span class="name-ne" lang="ne">इन्द्रजात्रा</span>
+                        <span class="teaser"><span data-l="en">Yosin · Lakhey · Chariot</span><span data-l="ne" lang="ne">योसिं · लाखे · रथ</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Indra Jatra</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">इन्द्रजात्रा</span></div>
+                <div class="face back" id="indra-jatra-back" inert>
+                  <span class="band"><span><span data-l="en">Indra Jatra</span><span data-l="ne" lang="ne">इन्द्रजात्रा</span></span></span>
+                  <p class="hook"><span data-l="en">Eight days of Yenya in Kathmandu. Balance the Yosin against the wind, carry Aji's flame, dare Majipa Lakhey and drive Kumari's chariot through the old city.</span><span data-l="ne" lang="ne">काठमाडौँमा येँयाका आठ दिन। हावासँग जुधेर योसिं ठड्याऊ, अजिको दियो जोगाऊ, माझिपा लाखेलाई जिस्क्याऊ, अनि कुमारीको रथ गल्लीगल्ली डोर्‍याऊ।</span></p>
+                  <p class="decide"><span data-l="en">Step closer to the Lakhey, or run while you can?</span><span data-l="ne" lang="ne">लाखेको अझ नजिक जाने कि अहिल्यै भाग्ने?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">5 chapters</span><span data-l="ne" lang="ne">५ अध्याय</span></li>
+                    <li><span data-l="en">12 jatra notes</span><span data-l="ne" lang="ne">१२ जात्रा टिपोट</span></li>
+                    <li><span data-l="en">Nepali · English</span><span data-l="ne" lang="ne">नेपाली · अङ्ग्रेजी</span></li>
+                  </ul>
+                  <a class="play" href="nepali-games/indra-jatra/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- Shelf 3 -->
+    <section class="shelf" aria-labelledby="s3">
+      <h2 class="tag" id="s3">
+        <span data-l="en">Quick hands</span><span data-l="ne" lang="ne">छिटो हात</span>
+        <small><span data-l="en">3 games</span><span data-l="ne" lang="ne">३ खेल</span></small>
+      </h2>
+      <div class="scroller">
+        <ul class="track">
+
+          <li class="slot">
+            <article class="box" id="changa-chet" style="--bg:#2a78c8; --ink:#ffffff; --label:#ffffff; --label-ink:#2a1a14; --accent:#ffcf8f; --ar:.68; --rest:-17deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="changa-chet-back">
+                      <span class="band"><span>Khel No. 05</span><span lang="ne">ने · EN</span></span>
+                      <img class="art bleed" src="assets/art/changa-chet.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Changa Chet</span>
+                        <span class="name-ne" lang="ne">चङ्गा चेट</span>
+                        <span class="teaser"><span data-l="en">Kites · Strings · Cut</span><span data-l="ne" lang="ne">चङ्गा · धागो · चेट!</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Changa Chet</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">चङ्गा चेट</span></div>
+                <div class="face back" id="changa-chet-back" inert>
+                  <span class="band"><span><span data-l="en">Changa Chet</span><span data-l="ne" lang="ne">चङ्गा चेट</span></span></span>
+                  <p class="hook"><span data-l="en">Dashain kite fight over the Kathmandu rooftops. Cross a rival's string and saw until it snaps.</span><span data-l="ne" lang="ne">काठमाडौँका छतमाथि दशैँको चङ्गा लडाइँ। अर्काको धागोमा जुधाऊ, अनि नचुँडिउन्जेल रेट।</span></p>
+                  <p class="decide"><span data-l="en">Fight now, or rest your string first?</span><span data-l="ne" lang="ne">अहिल्यै भिड्ने कि पहिले धागो जोगाउने?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">Up to 4 rivals</span><span data-l="ne" lang="ne">४ जनासम्म प्रतिद्वन्द्वी</span></li>
+                    <li><span data-l="en">Madal beat</span><span data-l="ne" lang="ne">मादलको ताल</span></li>
+                    <li><span data-l="en">Nepali · English</span><span data-l="ne" lang="ne">नेपाली · अङ्ग्रेजी</span></li>
+                  </ul>
+                  <a class="play" href="nepali-games/changa-chet/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="slot">
+            <article class="box" id="himal-climb" style="--bg:#1b2a6b; --ink:#ffffff; --label:#f4f8fc; --label-ink:#1b2a6b; --accent:#f39a1e; --ar:.6; --rest:16deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="himal-climb-back">
+                      <span class="band"><span>Khel No. 06</span><span lang="ne">ने · EN</span></span>
+                      <img class="art bleed" src="assets/art/himal-climb.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Himal Climb</span>
+                        <span class="name-ne" lang="ne">हिमाल चढाइ</span>
+                        <span class="teaser"><span data-l="en">10 peaks · Oxygen · Summit</span><span data-l="ne" lang="ne">१० हिमाल · अक्सिजन · चुचुरो</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Himal Climb</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">हिमाल चढाइ</span></div>
+                <div class="face back" id="himal-climb-back" inert>
+                  <span class="band"><span><span data-l="en">Himal Climb</span><span data-l="ne" lang="ne">हिमाल चढाइ</span></span></span>
+                  <p class="hook"><span data-l="en">Climb the 10 highest mountains on Earth on their real routes, from Annapurna I up to Everest. Summit one to unlock the next.</span><span data-l="ne" lang="ne">संसारका १० सबैभन्दा अग्ला हिमाल साँचो बाटोबाट चढ, अन्नपूर्णदेखि सगरमाथासम्म। एउटा चढेपछि अर्को खुल्छ।</span></p>
+                  <p class="decide"><span data-l="en">Grab the oxygen bottle, or keep climbing?</span><span data-l="ne" lang="ne">अक्सिजन लिने कि चढिरहने?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">10 levels, 8,091 m to 8,849 m</span><span data-l="ne" lang="ne">१० तह, ८,०९१ देखि ८,८४९ मि</span></li>
+                    <li><span data-l="en">Real route and camp heights</span><span data-l="ne" lang="ne">साँचो बाटो र क्याम्प उचाइ</span></li>
+                    <li><span data-l="en">Nepali · English</span><span data-l="ne" lang="ne">नेपाली · अङ्ग्रेजी</span></li>
+                  </ul>
+                  <a class="play" href="nepali-games/himal-climb/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="slot">
+            <article class="box" id="orbit-switch" style="--bg:#07060f; --ink:#3cf2ff; --label:#15132a; --label-ink:#ffffff; --accent:#ff3d9a; --ar:.7; --rest:-16deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="orbit-switch-back">
+                      <span class="band"><span>Khel No. 07</span><span>EN</span></span>
+                      <img class="art" src="assets/art/orbit-switch.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Orbit Switch</span>
+                        <span class="name-ne" lang="ne">अर्बिट स्विच</span>
+                        <span class="teaser"><span data-l="en">Tap · Dodge · Faster</span><span data-l="ne" lang="ne">थिच · छल · झन् छिटो</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Orbit Switch</span></div>
+                <div class="face side side-r" aria-hidden="true"><span>Orbit Switch</span></div>
+                <div class="face back" id="orbit-switch-back" inert>
+                  <span class="band"><span><span data-l="en">Orbit Switch</span><span data-l="ne" lang="ne">अर्बिट स्विच</span></span></span>
+                  <p class="hook"><span data-l="en">One button. Jump between the inner and outer orbit, dodge the pink blocks, grab the gold stars.</span><span data-l="ne" lang="ne">एउटै बटन। भित्री र बाहिरी कक्षबीच उफ्र, गुलाबी ब्लक छल, सुनौला तारा टिप।</span></p>
+                  <p class="decide"><span data-l="en">It gets faster as your score goes up.</span><span data-l="ne" lang="ne">अङ्क बढ्दै जाँदा झन् छिटो हुन्छ।</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">One button</span><span data-l="ne" lang="ne">एउटै बटन</span></li>
+                    <li><span data-l="en">Stars +3</span><span data-l="ne" lang="ne">तारा +३</span></li>
+                    <li><span data-l="en">English</span><span data-l="ne" lang="ne">अङ्ग्रेजी</span></li>
+                  </ul>
+                  <a class="play" href="orbit-switch/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- Shelf 4: planned -->
+    <section class="shelf shelf-soon" aria-labelledby="s4">
+      <h2 class="tag" id="s4">
+        <span data-l="en">Coming soon</span><span data-l="ne" lang="ne">आउँदैछ</span>
+        <small><span data-l="en">3 games</span><span data-l="ne" lang="ne">३ खेल</span></small>
+      </h2>
+      <div class="scroller">
+        <ul class="track">
+
+          <li class="slot">
+            <article class="box soon" id="bagh-chal" style="--ar:.86; --rest:-16deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="bagh-chal-back">
+                      <span class="tape" aria-hidden="true"></span>
+                      <span class="label">
+                        <span class="name-ne" lang="ne">बाघ चाल</span>
+                        <span class="name">Bagh-Chal</span>
+                      </span>
+                      <span class="stamp"><span data-l="en">Coming soon</span><span data-l="ne" lang="ne">आउँदैछ</span></span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Bagh-Chal</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">बाघ चाल</span></div>
+                <div class="face back" id="bagh-chal-back" inert>
+                  <span class="band"><span><span data-l="en">Bagh-Chal</span><span data-l="ne" lang="ne">बाघ चाल</span></span></span>
+                  <p class="hook"><span data-l="en">Nepal's own board game: 4 tigers against 20 goats. Play the computer or a friend.</span><span data-l="ne" lang="ne">नेपालकै बोर्ड खेल: ४ बाघ विरुद्ध २० बाख्रा। कम्प्युटर वा साथीसँग।</span></p>
+                  <p class="soon-pill"><span data-l="en">Being built</span><span data-l="ne" lang="ne">बन्दैछ</span></p>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="slot">
+            <article class="box soon" id="momo-rush" style="--ar:.74; --rest:17deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="momo-rush-back">
+                      <span class="tape" aria-hidden="true"></span>
+                      <span class="label">
+                        <span class="name-ne" lang="ne">मःम रश</span>
+                        <span class="name">Momo Rush</span>
+                      </span>
+                      <span class="stamp"><span data-l="en">Coming soon</span><span data-l="ne" lang="ne">आउँदैछ</span></span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Momo Rush</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">मःम रश</span></div>
+                <div class="face back" id="momo-rush-back" inert>
+                  <span class="band"><span><span data-l="en">Momo Rush</span><span data-l="ne" lang="ne">मःम रश</span></span></span>
+                  <p class="hook"><span data-l="en">Run a street momo stall. Fold, steam and serve before the customers lose patience.</span><span data-l="ne" lang="ne">सडकको मःम पसल चलाऊ। ग्राहक रिसाउनुअघि बेर, पकाऊ अनि खुवाऊ।</span></p>
+                  <p class="soon-pill"><span data-l="en">Being built</span><span data-l="ne" lang="ne">बन्दैछ</span></p>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="slot">
+            <article class="box soon" id="tihar-diyo" style="--ar:.68; --rest:-20deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="tihar-diyo-back">
+                      <span class="tape" aria-hidden="true"></span>
+                      <span class="label">
+                        <span class="name-ne" lang="ne">तिहार दियो</span>
+                        <span class="name">Tihar Diyo</span>
+                      </span>
+                      <span class="stamp"><span data-l="en">Coming soon</span><span data-l="ne" lang="ne">आउँदैछ</span></span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Tihar Diyo</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">तिहार दियो</span></div>
+                <div class="face back" id="tihar-diyo-back" inert>
+                  <span class="band"><span><span data-l="en">Tihar Diyo</span><span data-l="ne" lang="ne">तिहार दियो</span></span></span>
+                  <p class="hook"><span data-l="en">A puzzle for Tihar night. Turn the tiles so the oil flows and every diyo on the house lights up.</span><span data-l="ne" lang="ne">तिहारको रातको पजल। टायल घुमाऊ, तेल बगोस्, घरका सबै दियो बलून्।</span></p>
+                  <p class="soon-pill"><span data-l="en">Being built</span><span data-l="ne" lang="ne">बन्दैछ</span></p>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>
+      <span data-l="en">Every game is free and runs in your browser. No accounts, nothing to install.</span>
+      <span data-l="ne" lang="ne">हरेक खेल निःशुल्क छ र ब्राउजरमै चल्छ। खाता चाहिँदैन, केही इन्स्टल गर्नु पर्दैन।</span>
+    </p>
+    <p class="credit">
+      <span data-l="en">© 2026 Made by Aabhash Shahi</span>
+      <span data-l="ne" lang="ne">© २०२६ आभाष शाहीद्वारा बनाइएको</span>
+    </p>
+  </footer>
+
+  <script src="assets/hub.js?v=9" defer></script>
+</body>
+</html>

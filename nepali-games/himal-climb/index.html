@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Himal Climb · हिमाल चढाइ</title>
+  <meta name="description" content="Climb the 10 highest mountains on Earth on their real routes, from Annapurna I up to Sagarmatha: icefall ladders, oxygen in the death zone, sunrise on summit day.">
+  <meta name="theme-color" content="#3d8fe0">
+  <meta property="og:title" content="Himal Climb · हिमाल चढाइ">
+  <meta property="og:description" content="Climb the 10 highest mountains on Earth, from Annapurna I to Sagarmatha.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game" aria-label="Himal Climb climbing game"></canvas>
+
+  <button id="mute" type="button" aria-label="Toggle sound" aria-pressed="false">
+    <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+
+  <section id="menu" class="overlay">
+    <div class="card">
+      <div class="dhaka" aria-hidden="true"></div>
+      <div class="card-body">
+        <h1 lang="ne">हिमाल चढाइ</h1>
+        <p class="latin">HIMAL CLIMB</p>
+        <p class="tag" data-i18n="tag"></p>
+        <div id="peaks" class="peaks" role="radiogroup" aria-label="Mountain"></div>
+        <div class="mt" aria-live="polite">
+          <p class="mt-name"><b id="mtName"></b> <span id="mtOther"></span></p>
+          <p id="mtMeta" class="mt-meta"></p>
+          <p id="mtRoute" class="mt-route"></p>
+          <p id="mtLock" class="mt-lock hidden"></p>
+        </div>
+        <button id="play" class="btn" type="button" data-i18n="play">Climb</button>
+        <p class="meta"><span data-i18n="best"></span> <b id="menuBest">–</b></p>
+        <ol class="how">
+          <li><span class="num">1</span><span data-i18n="how1"></span></li>
+          <li><span class="num">2</span><span data-i18n="how2"></span></li>
+          <li><span class="num">3</span><span data-i18n="how3"></span></li>
+        </ol>
+        <button id="lang" class="link" type="button" data-i18n="lang">नेपाली</button>
+      </div>
+      <div class="dhaka" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section id="over" class="overlay hidden" aria-live="polite">
+    <div class="card">
+      <div class="dhaka" aria-hidden="true"></div>
+      <div class="card-body">
+        <p id="overMt" class="kicker"></p>
+        <p id="overTitle" class="big-ne" lang="ne">थाकियो!</p>
+        <p id="overSub" class="sub"></p>
+        <div class="stats three">
+          <div><b id="finalAlt">0</b><span data-i18n="alt"></span></div>
+          <div><b id="finalCamp">–</b><span data-i18n="camp"></span></div>
+          <div><b id="finalTime">0:00</b><span data-i18n="time"></span></div>
+        </div>
+        <p id="newBest" class="badge hidden" data-i18n="newBest"></p>
+        <p class="meta"><span data-i18n="best"></span> <b id="overBest">–</b></p>
+        <div class="row">
+          <button id="next" class="btn hidden" type="button">Next</button>
+          <button id="retry" class="btn" type="button" data-i18n="again">Climb again</button>
+          <button id="share" class="btn ghost" type="button" data-i18n="share">Share</button>
+        </div>
+        <button id="toMenu" class="link" type="button" data-i18n="mountains">All mountains</button>
+      </div>
+      <div class="dhaka" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

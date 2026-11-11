@@ -1,0 +1,14 @@
+{
+  "name": "Himal Climb · हिमाल चढाइ",
+  "short_name": "Himal Climb",
+  "description": "Climb the 10 highest mountains on Earth on their real routes, from Annapurna I to Sagarmatha.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3d8fe0",
+  "theme_color": "#3d8fe0",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

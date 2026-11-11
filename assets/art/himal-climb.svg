@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: derived from nepali-games/himal-climb/icon.svg (hand-authored SVG in this repo); rounded app-tile ground squared off for box-front printing. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2a6b"/>
+      <stop offset="1" stop-color="#8fc7f2"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <path d="M40 470 L250 90 L470 470Z" fill="#8aa0b8"/>
+  <path d="M250 90 L310 200 L280 185 L250 215 L215 180 L190 200Z" fill="#ffffff"/>
+  <path d="M250 90 V40" stroke="#3a2a1a" stroke-width="7"/>
+  <path d="M253 40 L300 75 L272 75 L300 110 L253 110Z" fill="#dc143c" stroke="#003893" stroke-width="5" stroke-linejoin="miter"/>
+  <g transform="translate(250 330)">
+    <circle cx="0" cy="-40" r="26" fill="#f5c518"/>
+    <rect x="-30" y="-16" width="60" height="70" rx="16" fill="#dc143c"/>
+    <rect x="-22" y="-10" width="44" height="50" rx="10" fill="#f39a1e"/>
+    <path d="M-28 -6 L-40 -70 M28 -6 L40 -40" stroke="#dc143c" stroke-width="16" stroke-linecap="round"/>
+  </g>
+</svg>

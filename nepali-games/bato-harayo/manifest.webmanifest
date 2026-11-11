@@ -1,0 +1,14 @@
+{
+  "name": "Bato Harayo · बाटो हरायो",
+  "short_name": "Bato Harayo",
+  "description": "Lost at night with a dead phone. Ask strangers the way and reach home before morning.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#04060f",
+  "theme_color": "#04060f",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

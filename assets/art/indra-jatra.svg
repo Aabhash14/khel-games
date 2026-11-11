@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for nepali-games/indra-jatra; echoes the game's painted night scene (Yosin with Indra's flag, Kumari's gilded chariot roof, lamplit crowd). -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#120c2a"/><stop offset=".7" stop-color="#4a2a5a"/><stop offset="1" stop-color="#9a4a4a"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#ffbe5a" stop-opacity=".7"/><stop offset="1" stop-color="#ffbe5a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <circle cx="400" cy="92" r="34" fill="#fff4d6"/>
+  <!-- Yosin pole with the Indradhwaja -->
+  <path d="M96 470 L104 470 L102 60 L98 60 Z" fill="#7a4a26"/>
+  <rect x="82" y="66" width="36" height="5" fill="#5a3416"/>
+  <path d="M84 70 Q78 150 90 230 L96 230 Q86 150 92 70 Z" fill="#f4d24a" stroke="#b3201a" stroke-width="2"/>
+  <path d="M108 70 Q116 150 106 230 L112 230 Q122 150 116 70 Z" fill="#f8f3e2" stroke="#b3201a" stroke-width="2"/>
+  <circle cx="100" cy="58" r="6" fill="#e3b23c"/>
+  <!-- Kumari's chariot: three gilded roofs -->
+  <circle cx="300" cy="330" r="150" fill="url(#glow)"/>
+  <path d="M300 120 L292 150 L308 150 Z" fill="#e3b23c"/><circle cx="300" cy="156" r="9" fill="#e3b23c"/>
+  <path d="M262 190 H338 L322 165 H278 Z" fill="#c99a2e"/><rect x="262" y="188" width="76" height="4" fill="#ffe08a"/>
+  <rect x="282" y="192" width="36" height="16" fill="#5a2f15"/>
+  <path d="M232 240 H368 L344 208 H256 Z" fill="#c99a2e"/><rect x="232" y="238" width="136" height="4" fill="#ffe08a"/>
+  <rect x="268" y="242" width="64" height="16" fill="#5a2f15"/>
+  <path d="M196 300 H404 L370 258 H230 Z" fill="#c99a2e"/><rect x="196" y="298" width="208" height="5" fill="#ffe08a"/>
+  <rect x="222" y="303" width="156" height="86" fill="#5a2f15"/>
+  <rect x="248" y="314" width="104" height="75" fill="#22100a"/>
+  <path d="M240 314 A60 40 0 0 1 360 314 Z" fill="#e3b23c"/>
+  <path d="M286 389 L314 389 L310 352 L290 352 Z" fill="#c4231b"/><circle cx="300" cy="342" r="10" fill="#b37a55"/><path d="M289 336 H311 L307 326 H293 Z" fill="#e3b23c"/>
+  <rect x="200" y="389" width="200" height="14" fill="#4a2612"/><rect x="200" y="389" width="200" height="3" fill="#e3b23c"/>
+  <circle cx="246" cy="430" r="30" fill="#3a1c0c" stroke="#b3201a" stroke-width="4"/><circle cx="246" cy="430" r="7" fill="#e3b23c"/>
+  <circle cx="354" cy="430" r="30" fill="#3a1c0c" stroke="#b3201a" stroke-width="4"/><circle cx="354" cy="430" r="7" fill="#e3b23c"/>
+  <path d="M400 392 Q470 394 490 372" stroke="#3d1f0e" stroke-width="9" fill="none"/>
+  <!-- lamplit crowd -->
+  <path d="M0 512 V470 Q20 450 40 470 Q60 446 80 470 Q100 452 120 472 Q150 456 170 474 Q200 458 220 478 Q260 462 290 480 Q330 460 360 478 Q400 456 430 474 Q470 452 512 470 V512 Z" fill="#120a14"/>
+  <circle cx="60" cy="478" r="12" fill="url(#glow)"/><circle cx="180" cy="484" r="12" fill="url(#glow)"/><circle cx="440" cy="482" r="12" fill="url(#glow)"/>
+</svg>

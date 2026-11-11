@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ne">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Indra Jatra · इन्द्रजात्रा</title>
+  <meta name="description" content="Eight days of Yenya in Kathmandu. Raise the Yosin against the wind, carry Aji's flame on the Upaku walk, dare Majipa Lakhey, and drive Kumari's chariot through the old city.">
+  <meta name="theme-color" content="#120a12">
+  <meta property="og:title" content="Indra Jatra · इन्द्रजात्रा">
+  <meta property="og:description" content="Raise the Yosin, dare the Lakhey, drive Kumari's chariot. How many lamps can you light this Yenya?">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/mukta-800-devanagari.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="js/main.js">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="photo" aria-hidden="true"></canvas>
+  <canvas id="game" aria-hidden="true"></canvas>
+
+  <section id="menu" class="menu" hidden>
+    <header class="title">
+      <p class="kicker" data-i18n="kicker"></p>
+      <h1><span class="h-ne" lang="ne">इन्द्रजात्रा</span><span class="h-en">Indra Jatra</span></h1>
+      <p class="sub" data-i18n="sub"></p>
+    </header>
+    <div class="menu-bottom">
+      <button id="cta" class="cta" type="button"><span class="cta-t"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg></button>
+      <p id="lampTotal" class="lamp-total"></p>
+      <ol id="chapters" class="chapters"></ol>
+      <nav class="tools">
+        <button id="notesBtn" class="pill" type="button" data-i18n="notes"></button>
+        <button id="lang" class="pill" type="button" data-i18n="lang"></button>
+        <button id="mute" class="pill icon" type="button" aria-label="Sound" aria-pressed="false"></button>
+        <a class="pill" href="../../" data-i18n="khel"></a>
+      </nav>
+    </div>
+  </section>
+
+  <header id="hud" class="hud" hidden>
+    <button id="pauseBtn" class="hud-btn" type="button" aria-label="Pause"></button>
+    <div class="hud-t"><b id="hudTitle"></b><span id="hudSub"></span></div>
+    <div id="hudStats" class="hud-stats"></div>
+  </header>
+
+  <div id="say" class="say" role="status" aria-live="polite"></div>
+  <div id="controls" class="controls" hidden></div>
+
+  <div id="banner" class="banner" hidden aria-live="polite">
+    <p class="bn-k"></p>
+    <h2 class="bn-t"></h2>
+  </div>
+
+  <section id="sheet" class="sheet-wrap" hidden role="dialog" aria-modal="true">
+    <div id="sheetBody" class="sheet"></div>
+  </section>
+
+  <noscript><p class="noscript">Indra Jatra needs JavaScript. · इन्द्रजात्रा खेल्न JavaScript चाहिन्छ।</p></noscript>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

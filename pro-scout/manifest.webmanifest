@@ -1,0 +1,14 @@
+{
+  "name": "Pro Scout · Guess the Athlete",
+  "short_name": "Pro Scout",
+  "description": "Guess the athlete from a pixelated photo, a career path, a nickname or a flag.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3ecdb",
+  "theme_color": "#f3ecdb",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

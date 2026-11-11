@@ -1,0 +1,15 @@
+# Local Claude preferences
+.claude/*.local.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+node_modules/
+
+# Browser test output
+.playwright-mcp/
+
+# Local tooling cache
+.impeccable/
+**/.impeccable/

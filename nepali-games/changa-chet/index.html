@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Changa Chet · चङ्गा चेट</title>
+  <meta name="description" content="Dashain kite fight. Fly your kite over Kathmandu rooftops, cross strings and cut every rival kite.">
+  <meta name="theme-color" content="#3a8ee0">
+  <meta property="og:title" content="Changa Chet · चङ्गा चेट">
+  <meta property="og:description" content="Dashain kite fight. Cross strings and cut every rival kite!">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game" aria-label="Changa Chet kite fighting game"></canvas>
+
+  <button id="mute" type="button" aria-label="Toggle sound" aria-pressed="false">
+    <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+
+  <section id="menu" class="overlay">
+    <div class="card">
+      <div class="dhaka" aria-hidden="true"></div>
+      <div class="card-body">
+        <p class="kicker" data-i18n="kicker">Dashain Kite Fight</p>
+        <h1 lang="ne">चङ्गा चेट</h1>
+        <p class="latin">CHANGA CHET</p>
+        <p class="tag" data-i18n="tag"></p>
+        <ol class="how">
+          <li><span class="num">1</span><span data-i18n="how1"></span></li>
+          <li><span class="num">2</span><span data-i18n="how2"></span></li>
+          <li><span class="num">3</span><span data-i18n="how3"></span></li>
+        </ol>
+        <button id="play" class="btn" type="button" data-i18n="play">Play</button>
+        <p class="meta"><span data-i18n="best"></span> <b id="menuBest">0</b></p>
+        <button id="lang" class="link" type="button" data-i18n="lang">नेपाली</button>
+      </div>
+      <div class="dhaka" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section id="over" class="overlay hidden" aria-live="polite">
+    <div class="card">
+      <div class="dhaka" aria-hidden="true"></div>
+      <div class="card-body">
+        <p class="big-ne" lang="ne">काटियो!</p>
+        <p class="sub" data-i18n="cutYou"></p>
+        <div class="stats">
+          <div><b id="finalCuts">0</b><span data-i18n="cuts"></span></div>
+          <div><b id="finalTime">0</b><span data-i18n="time"></span></div>
+        </div>
+        <p id="newBest" class="badge hidden" data-i18n="newBest"></p>
+        <p class="meta"><span data-i18n="best"></span> <b id="overBest">0</b></p>
+        <div class="row">
+          <button id="retry" class="btn" type="button" data-i18n="again">Play again</button>
+          <button id="share" class="btn ghost" type="button" data-i18n="share">Share</button>
+        </div>
+      </div>
+      <div class="dhaka" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

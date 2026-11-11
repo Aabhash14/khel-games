@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="f" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff7ad9"/><stop offset=".3" stop-color="#ffe66b"/><stop offset=".6" stop-color="#6bffd8"/><stop offset="1" stop-color="#7aa8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#2140ff"/>
+  <g transform="rotate(-8 256 256)">
+    <rect x="128" y="76" width="256" height="358" rx="26" fill="#fff"/>
+    <rect x="146" y="94" width="220" height="322" rx="16" fill="url(#f)" stroke="#0b0b2e" stroke-width="8"/>
+    <rect x="178" y="190" width="156" height="130" rx="22" fill="#fff" stroke="#0b0b2e" stroke-width="8"/>
+    <text x="256" y="246" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="58" fill="#2140ff">KNOW</text>
+    <text x="256" y="300" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="58" fill="#2140ff">ME</text>
+  </g>
+</svg>

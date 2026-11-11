@@ -1,0 +1,14 @@
+{
+  "name": "Indra Jatra · इन्द्रजात्रा",
+  "short_name": "Indra Jatra",
+  "description": "Eight days of Yenya in Kathmandu: raise the Yosin, dare the Lakhey, pull Kumari's chariot.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#120a12",
+  "theme_color": "#7d1610",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

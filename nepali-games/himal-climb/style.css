@@ -1,0 +1,280 @@
+:root {
+  /* Nepal flag + prayer flag palette */
+  --crimson: #dc143c;
+  --blue: #003893;
+  --flag-blue: #1f6fd1;
+  --flag-red: #e23b3b;
+  --flag-green: #2e9e5b;
+  --flag-yellow: #f5c518;
+  --marigold: #f39a1e;
+  --cream: #fff8ec;
+  --ink: #2a1a14;
+  --muted: #7a6457;
+  --font: "Nirmala UI", "Noto Sans Devanagari", "Kohinoor Devanagari", Mangal, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: #3a8ee0;
+  color: var(--ink);
+  font-family: var(--font);
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+canvas { position: fixed; inset: 0; display: block; }
+
+/* ---------- Overlays ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  overflow-y: auto;
+  padding: 16px;
+  background: linear-gradient(rgba(0, 25, 70, 0.2), rgba(0, 25, 70, 0.5));
+  transition: opacity 0.3s ease;
+  touch-action: pan-y;
+}
+.overlay.hidden { opacity: 0; pointer-events: none; }
+
+.card {
+  margin: auto;
+  width: min(440px, 100%);
+  background: var(--cream);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  text-align: center;
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(16px, 4vw, 26px) clamp(16px, 5vw, 30px);
+}
+
+/* Dhaka-weave inspired band */
+.dhaka {
+  height: 14px;
+  background:
+    linear-gradient(45deg, transparent 35%, var(--crimson) 35% 65%, transparent 65%) 0 0 / 14px 14px,
+    linear-gradient(-45deg, transparent 35%, #1b1b1b 35% 65%, transparent 65%) 0 0 / 14px 14px,
+    var(--marigold);
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  font-size: clamp(48px, 14vw, 74px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--crimson);
+  text-shadow: 0 3px 0 var(--blue);
+}
+.latin { font-size: 13px; font-weight: 800; letter-spacing: 0.4em; color: var(--blue); margin-top: -6px; }
+.tag { font-size: 15px; line-height: 1.5; color: var(--ink); max-width: 34ch; }
+
+.how { list-style: none; display: grid; gap: 8px; width: 100%; margin: 4px 0 6px; }
+.how li { display: flex; align-items: center; gap: 10px; text-align: left; font-size: 14px; line-height: 1.35; color: var(--ink); }
+.how .num {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: #fff;
+  background: var(--flag-blue);
+}
+.how li:nth-child(2) .num { background: #1f7a45; }
+.how li:nth-child(3) .num { background: var(--marigold); color: var(--ink); }
+
+.meta { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); }
+.meta b { color: var(--crimson); font-size: 18px; margin-left: 4px; }
+
+.btn {
+  font: inherit;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: var(--crimson);
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 38px;
+  min-width: 160px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--blue);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.btn:hover { filter: brightness(1.06); }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--blue); }
+.btn.ghost { background: transparent; color: var(--blue); box-shadow: inset 0 0 0 2px var(--blue); }
+.btn.ghost:active { transform: translateY(1px); }
+.btn:focus-visible, .link:focus-visible, #mute:focus-visible { outline: 3px solid var(--flag-yellow); outline-offset: 3px; }
+
+.link {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--blue);
+  background: none;
+  border: 0;
+  padding: 6px 10px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Game over */
+.big-ne { font-size: clamp(46px, 13vw, 66px); font-weight: 800; line-height: 1.15; color: var(--crimson); text-shadow: 0 3px 0 var(--blue); }
+.sub { font-size: 16px; color: var(--muted); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin: 6px 0; }
+.stats div { background: rgba(0, 56, 147, 0.06); border-radius: 12px; padding: 10px 6px; display: flex; flex-direction: column; gap: 2px; }
+.stats b { font-size: 34px; line-height: 1.1; color: var(--ink); }
+.stats span { font-size: 13px; color: var(--muted); }
+.badge {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--flag-yellow);
+  padding: 5px 14px;
+  border-radius: 999px;
+}
+.badge.hidden { display: none; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+
+/* Sound button */
+#mute {
+  position: fixed;
+  z-index: 2;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  background: rgba(255, 248, 236, 0.9);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+#mute svg { width: 22px; height: 22px; fill: currentColor; }
+#mute .off { display: none; }
+#mute.muted .on { display: none; }
+#mute.muted .off { display: block; }
+
+/* Devanagari joins letters, so never space them apart */
+:lang(ne) .kicker, :lang(ne) .meta, :lang(ne) .btn { letter-spacing: 0; }
+:lang(ne) .kicker { font-size: 14px; }
+
+@media (max-height: 520px) {
+  .how, .tag { display: none; }
+  h1 { font-size: 44px; }
+  .card-body { gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .btn { transition: none; }
+}
+
+/* ---------- Himal Climb overrides ---------- */
+html, body { background: #3d8fe0; }
+.stats.three { grid-template-columns: repeat(3, 1fr); }
+.stats.three b { font-size: 24px; }
+.stats.three span { font-size: 12px; }
+h1 { font-size: clamp(40px, 11vw, 60px); white-space: nowrap; }
+.stats.three div { padding: 12px 10px; }
+.stats.three b { font-size: clamp(18px, 5.5vw, 24px); white-space: nowrap; }
+.badge { padding: 6px 16px; }
+
+/* ---------- Mountain picker: 10 peaks, each a little taller ---------- */
+.peaks {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  width: 100%;
+  height: 84px;
+  padding: 14px 2px 0;
+  border-bottom: 3px solid #cdd9e6;
+}
+.pk {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 0;
+  font: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.pk .tri {
+  --c: #7f96b0;
+  display: block;
+  width: 100%;
+  height: var(--h);
+  background: linear-gradient(to bottom, #ffffff 0 22%, var(--c) 22%);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  transition: transform 0.15s ease;
+}
+.pk .n {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+}
+.pk:hover .tri { transform: translateY(-2px); }
+.pk.done .tri { --c: var(--flag-blue); }
+.pk[aria-checked="true"] .tri { --c: var(--crimson); }
+.pk[aria-checked="true"]::before { /* pointer above the chosen peak */
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--h) + 3px);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top: 8px solid var(--ink);
+}
+.pk.locked .tri { --c: #c5ccd5; background: linear-gradient(to bottom, #eef1f4 0 22%, var(--c) 22%); }
+.pk.locked .n { color: #59616c; }
+.pk.locked[aria-checked="true"] .tri { --c: #9aa3ae; }
+.pk:focus-visible { outline: 3px solid var(--flag-yellow); outline-offset: 2px; border-radius: 4px; }
+
+.mt { display: grid; gap: 2px; width: 100%; }
+.mt-name b { font-size: 22px; font-weight: 800; color: var(--ink); }
+.mt-name span { font-size: 15px; font-weight: 700; color: var(--muted); }
+.mt-meta { font-size: 14px; font-weight: 800; color: var(--blue); }
+.mt-route { font-size: 13px; color: var(--muted); }
+.mt-lock { font-size: 14px; font-weight: 800; color: var(--crimson); }
+.mt-lock.hidden, .btn.hidden { display: none; }
+.btn:disabled { background: #857d76; box-shadow: 0 4px 0 #5e5852; cursor: not-allowed; filter: none; transform: none; }
+:lang(ne) .mt-meta { letter-spacing: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pk .tri { transition: none; }
+}
+#next { flex-basis: 100%; }
+.row .btn.ghost { min-width: 0; padding: 13px 24px; }

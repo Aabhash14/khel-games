@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ne">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bato Harayo · बाटो हरायो</title>
+  <meta name="description" content="Lost on a dark road with a dead phone. Ask strangers the way and reach home before morning. Not everyone tells the truth.">
+  <meta name="theme-color" content="#04060f">
+  <meta property="og:title" content="Bato Harayo · बाटो हरायो">
+  <meta property="og:description" content="Lost at night with a dead phone. Who will you trust to show you the way home?">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game" aria-hidden="true"></canvas>
+
+  <div id="hud" class="hidden">
+    <div class="pill"><span id="clock">९:००</span></div>
+    <div class="meters">
+      <div class="meter"><span data-i18n="strength">शक्ति</span><i><b id="stBar"></b></i></div>
+      <div class="meter fear"><span data-i18n="fear">डर</span><i><b id="fearBar"></b></i></div>
+      <div class="meter batt"><span data-i18n="battery">ब्याट्री</span><i><b id="battBar"></b></i></div>
+    </div>
+  </div>
+
+  <button id="mute" type="button" aria-label="Toggle sound" aria-pressed="false">
+    <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+
+  <button id="voiceBtn" type="button" aria-label="Toggle character voices" aria-pressed="true">
+    <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v11H10l-5 4v-4H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 8.5h8M8 11.5h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v11H10l-5 4v-4H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 3l18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+
+  <section id="panel" class="hidden" aria-live="polite">
+    <div class="panel-head">
+      <p id="place"></p>
+      <button id="memBtn" class="mini" type="button" data-i18n="memory">सम्झना</button>
+    </div>
+    <div id="lines"></div>
+    <div id="choices"></div>
+  </section>
+
+  <div id="fade"><p id="fadeText"></p></div>
+
+  <section id="memory" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="card">
+      <div class="dhaka" aria-hidden="true"></div>
+      <div class="card-body">
+        <h2 data-i18n="memTitle">मान्छेहरूले भनेका कुरा</h2>
+        <ul id="memList"></ul>
+        <button id="memClose" class="btn" type="button" data-i18n="close">बन्द</button>
+      </div>
+      <div class="dhaka" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section id="menu" class="overlay">
+    <div class="card">
+      <div class="dhaka" aria-hidden="true"></div>
+      <div class="card-body">
+        <h1 lang="ne">बाटो हरायो</h1>
+        <p class="latin">BATO HARAYO</p>
+        <p class="tag" data-i18n="tag"></p>
+        <ol class="how">
+          <li><span class="num">1</span><span data-i18n="how1"></span></li>
+          <li><span class="num">2</span><span data-i18n="how2"></span></li>
+          <li><span class="num">3</span><span data-i18n="how3"></span></li>
+        </ol>
+        <button id="play" class="btn" type="button" data-i18n="play">हिँड्न थाल्नुहोस्</button>
+        <p class="meta"><span data-i18n="best"></span> <b id="menuBest">–</b></p>
+        <div id="badges" class="badges"></div>
+        <button id="lang" class="link" type="button" data-i18n="lang">English</button>
+      </div>
+      <div class="dhaka" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section id="over" class="overlay hidden" aria-live="polite">
+    <div class="card">
+      <div class="dhaka" aria-hidden="true"></div>
+      <div class="card-body">
+        <p id="overTitle" class="big-ne" lang="ne">घर पुगियो!</p>
+        <p id="stars" class="stars" aria-label="stars"></p>
+        <p id="overSub" class="sub"></p>
+        <p id="overThought" class="over-thought"></p>
+        <div class="stats three">
+          <div><b id="finalTime">–</b><span data-i18n="timeLbl"></span></div>
+          <div><b id="finalMet">0</b><span data-i18n="metLbl"></span></div>
+          <div><b id="finalPlaces">0</b><span data-i18n="placesLbl"></span></div>
+        </div>
+        <p id="newBest" class="badge hidden" data-i18n="newBest"></p>
+        <div id="newBadges" class="badges"></div>
+        <p class="meta"><span data-i18n="best"></span> <b id="overBest">–</b></p>
+        <div class="row">
+          <button id="retry" class="btn" type="button" data-i18n="again">फेरि खेल्नुहोस्</button>
+          <button id="share" class="btn ghost" type="button" data-i18n="share">सेयर</button>
+        </div>
+      </div>
+      <div class="dhaka" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

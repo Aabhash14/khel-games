@@ -1,0 +1,14 @@
+{
+  "name": "Mol-Molai · मोलमोलाई",
+  "short_name": "Mol-Molai",
+  "description": "Dashain shopping in Asan bazaar. Haggle, bluff and read the shopkeepers' faces.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fdfcf8",
+  "theme_color": "#d7261e",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

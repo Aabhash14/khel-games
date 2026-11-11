@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: derived from nepali-games/mol-molai/icon.svg (hand-authored SVG in this repo); rounded app-tile ground squared off for box-front printing. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f39a1e"/><stop offset="1" stop-color="#ffd27a"/></linearGradient>
+    <pattern id="dhaka" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="#b71c1c"/>
+      <path d="M20 4 L32 20 L20 36 L8 20Z" fill="#1b1b1b"/>
+      <path d="M20 12 L26 20 L20 28 L14 20Z" fill="#f5f0e6"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <path d="M60 470 L60 250 Q60 230 80 230 L432 230 Q452 230 452 250 L452 470Z" fill="#8c3f25"/>
+  <path d="M40 230 L472 230 L440 160 L72 160Z" fill="url(#dhaka)"/>
+  <rect x="96" y="290" width="320" height="180" fill="#2a170e"/>
+  <rect x="80" y="420" width="352" height="50" fill="#5b3a26"/>
+  <ellipse cx="256" cy="410" rx="92" ry="22" fill="#b8860b"/>
+  <ellipse cx="256" cy="404" rx="76" ry="14" fill="#e8b923"/>
+  <rect x="150" y="70" width="212" height="74" rx="37" fill="#fff8ec"/>
+  <path d="M220 140 L256 180 L270 140Z" fill="#fff8ec"/>
+  <text x="256" y="122" text-anchor="middle" font-family="Nirmala UI, Noto Sans Devanagari, sans-serif" font-size="46" font-weight="800" fill="#b71c1c">रु. ?</text>
+  <circle cx="190" cy="350" r="26" fill="#f5c518"/><circle cx="322" cy="350" r="26" fill="#f5c518"/>
+  <circle cx="190" cy="350" r="14" fill="none" stroke="#8d6e00" stroke-width="5"/><circle cx="322" cy="350" r="14" fill="none" stroke="#8d6e00" stroke-width="5"/>
+</svg>

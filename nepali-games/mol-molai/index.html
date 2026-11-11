@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ne">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mol-Molai · मोलमोलाई</title>
+  <meta name="description" content="Dashain shopping in Asan bazaar. Haggle, bluff and read the shopkeepers' faces to beat each level's savings target. Get caught lying and the whole bazaar hears about it.">
+  <meta name="theme-color" content="#d7261e">
+  <meta property="og:title" content="Mol-Molai · मोलमोलाई">
+  <meta property="og:description" content="Aama sent you to the Dashain bazaar. Whatever you save is yours. How well can you haggle?">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/mukta-800-devanagari.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game" aria-hidden="true"></canvas>
+
+  <!-- In play: the patro band and the day's figures -->
+  <header id="hud" class="hidden">
+    <div class="band">
+      <div class="band-name">
+        <span id="lvlName"></span>
+        <span id="toleName"></span>
+      </div>
+      <div class="band-tools">
+        <button id="voiceBtn" class="tool" type="button" aria-label="Toggle character voices" aria-pressed="true"></button>
+        <button id="mute" class="tool" type="button" aria-label="Toggle sound" aria-pressed="false"></button>
+      </div>
+      <b id="lvlNum" class="band-num"></b>
+    </div>
+    <div class="strip">
+      <div class="stat"><span data-i18n="pocket"></span><b id="money" class="roll-host"></b></div>
+      <div class="stat"><span data-i18n="targetLbl"></span><b id="target"></b></div>
+      <div class="stat"><span data-i18n="timeLeft"></span><b id="clock"></b></div>
+      <div class="stat"><span data-i18n="rep"></span><b id="rep" class="rep" aria-live="polite"></b></div>
+    </div>
+  </header>
+
+  <section id="panel" class="hidden" aria-live="polite">
+    <div class="panel-head">
+      <p id="place"></p>
+      <button id="listBtn" class="mini" type="button"></button>
+    </div>
+    <div id="lines"></div>
+    <div id="choices"></div>
+  </section>
+
+  <section id="sheet" class="page-wrap hidden" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="page">
+      <header class="pband"><h2 id="sheetTitle" data-i18n="listTitle"></h2></header>
+      <ul id="listItems"></ul>
+      <div class="actions one"><button id="sheetClose" class="act" type="button" data-i18n="close"></button></div>
+    </div>
+  </section>
+
+  <!-- The month sheet: twelve levels as day-cells -->
+  <section id="menu" class="page-wrap">
+    <div class="page">
+      <header class="pband">
+        <div>
+          <h1 lang="ne">मोलमोलाई</h1>
+          <p class="pband-sub" data-i18n="sub"></p>
+        </div>
+        <div class="pband-tools">
+          <button id="menuVoice" class="tool" type="button" aria-label="Toggle character voices"></button>
+          <button id="menuMute" class="tool" type="button" aria-label="Toggle sound"></button>
+        </div>
+      </header>
+      <div class="month-head">
+        <h2 class="mh-month"><span id="monthName"></span><span class="mh-sub" data-i18n="levels"></span></h2>
+        <b id="starTotal"></b>
+      </div>
+      <ol id="levels" class="levels"></ol>
+      <div id="brief" class="brief" aria-live="polite"></div>
+      <div id="badges" class="badges"></div>
+      <div class="foot">
+        <button id="lang" class="link" type="button" data-i18n="lang"></button>
+        <button id="meVoice" class="link" type="button"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- The result sheet -->
+  <section id="over" class="page-wrap hidden" aria-live="polite">
+    <div class="page">
+      <header class="pband">
+        <div>
+          <h2 id="overTitle" lang="ne"></h2>
+          <p id="overLvl" class="pband-sub"></p>
+        </div>
+        <b id="overNum" class="band-num"></b>
+      </header>
+      <div id="stars" class="stars" role="img"></div>
+      <div class="tally">
+        <div class="tl"><span data-i18n="savedLbl"></span><b id="tallySaved"></b></div>
+        <div class="tl"><span data-i18n="targetShort"></span><b id="tallyGoal"></b></div>
+      </div>
+      <div class="meter" id="meter">
+        <div class="meter-track"><i id="meterFill"></i><em id="meterGoal"></em></div>
+        <div class="meter-legend"><span id="meterSaved"></span><span id="meterTarget"></span></div>
+        <p id="meterNext" class="meter-next"></p>
+      </div>
+      <p id="overSub" class="sub"></p>
+      <p id="overThought" class="thought-note"></p>
+      <ul id="receipt" class="receipt"></ul>
+      <div id="newBadges" class="badges"></div>
+      <div class="actions">
+        <button id="next" class="act primary" type="button"></button>
+        <button id="retry" class="act" type="button" data-i18n="again"></button>
+        <button id="toMenu" class="act" type="button" data-i18n="menu"></button>
+        <button id="share" class="act" type="button" data-i18n="share"></button>
+      </div>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pro Scout · Guess the Athlete</title>
+  <meta name="description" content="Guess the athlete from a pixelated photo, a career path, a nickname, a flag or a first club. 13 categories, a daily challenge and a sticker album to fill.">
+  <meta name="theme-color" content="#f3ecdb">
+  <meta property="og:title" content="Pro Scout · Guess the Athlete">
+  <meta property="og:description" content="Every clue costs you. How fast can you spot the pro?">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ============ HOME ============ -->
+  <main id="home" class="screen">
+    <header class="top">
+      <div class="brand">
+        <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/><path d="M7.5 8.5h1M11.5 8.5h1M8 12.2c1.3 1 2.7 1 4 0"/></svg></span>
+        <div>
+          <h1>Pro Scout</h1>
+          <p class="tagline">Guess the athlete. Every clue costs you.</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="openAlbum" class="chip-btn" type="button"><span class="album-ico" aria-hidden="true"></span>Album <b id="albumCount">0</b></button>
+        <button class="mute icon-btn" type="button" aria-label="Sound on" aria-pressed="false"></button>
+      </div>
+    </header>
+
+    <section id="challenge" class="challenge hidden" aria-live="polite"></section>
+
+    <section class="daily" aria-labelledby="dailyTitle">
+      <div class="daily-left">
+        <p class="eyebrow" id="dailyDate"></p>
+        <h2 id="dailyTitle">Daily Scout</h2>
+        <p class="daily-sub">10 questions from 10 categories, ending on a final bet. Same ones for everyone today.</p>
+      </div>
+      <div class="daily-right" id="dailyRight"></div>
+    </section>
+
+    <section aria-labelledby="catsTitle">
+      <div class="section-head">
+        <h2 id="catsTitle">Pick a category</h2>
+        <p class="hint">10 questions per round</p>
+      </div>
+      <div id="cats" class="cats"></div>
+    </section>
+
+    <section class="how" aria-labelledby="howTitle">
+      <h2 id="howTitle">How scoring works</h2>
+      <ol>
+        <li><b>300</b> if you answer on the first clue. Each extra clue you reveal makes it worth less: <b>200</b>, then <b>100</b>.</li>
+        <li><b>Double down</b> (2 per round): twice the points if you're right, and you <em>lose</em> the points if you're wrong.</li>
+        <li><b>Hot streak</b>: 3 right in a row earns +50, 4 earns +100, 5 or more +150 each.</li>
+        <li><b>Final bet</b>: before question 10 you see its category and stake any part of your score on it.</li>
+        <li><b>50:50</b> (1 per round) removes two wrong answers.</li>
+        <li>Get a player right and their card goes in your <b>album</b>. Get it on the first clue and it's a <b>gold</b> card.</li>
+      </ol>
+    </section>
+
+    <footer class="foot">
+      <p>Photos load from Wikipedia / Wikimedia Commons; each one links to its author and licence after you answer. Flags from flagcdn.com. Career facts as of mid-2026.</p>
+    </footer>
+  </main>
+
+  <!-- ============ LOADING ============ -->
+  <section id="loading" class="screen hidden" aria-live="polite">
+    <div class="loader">
+      <div class="loader-card" aria-hidden="true"><span></span><span></span><span></span></div>
+      <p id="loadingText">Scouting players…</p>
+    </div>
+  </section>
+
+  <!-- ============ PLAY ============ -->
+  <main id="play" class="screen hidden">
+    <header class="play-top">
+      <button id="quit" class="icon-btn" type="button" aria-label="Quit round">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="play-title">
+        <p id="qCat" class="eyebrow"></p>
+        <p id="qNum" class="qnum"></p>
+      </div>
+      <span id="streak" class="streak hidden" aria-live="polite"></span>
+      <div class="score-box"><span>Score</span><b id="score">0</b></div>
+      <button class="mute icon-btn" type="button" aria-label="Sound on" aria-pressed="false"></button>
+    </header>
+    <ol id="progress" class="progress" aria-label="Round progress"></ol>
+
+    <section id="bet" class="bet hidden" aria-labelledby="betTitle">
+      <p class="eyebrow">Final question</p>
+      <h2 id="betTitle">Final bet</h2>
+      <p class="bet-cat" id="betCat"></p>
+      <p class="bet-sub">You have <b id="betHave">0</b> points<span id="betMax"></span>. Stake as much as you dare: right and you win it, wrong and you lose it. Every clue you buy halves the win.</p>
+      <output id="betOut" class="bet-out" for="betRange">0</output>
+      <input id="betRange" type="range" min="0" step="50" aria-label="Your stake">
+      <div class="bet-quick">
+        <button type="button" class="tool" data-f="0">Nothing</button>
+        <button type="button" class="tool" data-f="0.25">A quarter</button>
+        <button type="button" class="tool" data-f="0.5">Half</button>
+        <button type="button" class="tool" data-f="1">All in</button>
+      </div>
+      <button id="betGo" class="btn" type="button">Lock it in</button>
+    </section>
+
+    <div class="play-grid" id="playGrid">
+      <section class="stage-col">
+        <div id="stage" class="stage"></div>
+        <ul id="clues" class="clues" aria-live="polite"></ul>
+      </section>
+
+      <section class="answer-col">
+        <div class="worth-row">
+          <p id="prompt" class="prompt"></p>
+          <p id="worth" class="worth"></p>
+        </div>
+        <div id="options" class="options"></div>
+        <div id="tools" class="tools">
+          <button id="revealBtn" class="tool" type="button"></button>
+          <button id="doubleBtn" class="tool" type="button" aria-pressed="false"></button>
+          <button id="fiftyBtn" class="tool" type="button"></button>
+        </div>
+        <div id="feedback" class="feedback hidden" aria-live="assertive"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ RESULT ============ -->
+  <main id="result" class="screen hidden">
+    <div class="result-card">
+      <p id="rCat" class="eyebrow"></p>
+      <p id="rScore" class="r-score"></p>
+      <p id="rVerdict" class="r-verdict"></p>
+      <p id="rGrid" class="r-grid" aria-hidden="true"></p>
+      <p id="rVs" class="r-vs hidden"></p>
+      <div id="rCards" class="r-cards"></div>
+      <label class="name-field">Your name on challenge links
+        <input id="rName" type="text" maxlength="20" autocomplete="nickname" placeholder="optional">
+      </label>
+      <div class="row">
+        <button id="rShare" class="btn" type="button">Challenge a friend</button>
+        <button id="rAgain" class="btn ghost" type="button">New round</button>
+      </div>
+      <button id="rHome" class="link" type="button">Back to categories</button>
+      <p id="rToast" class="toast" role="status"></p>
+    </div>
+  </main>
+
+  <!-- ============ ALBUM ============ -->
+  <main id="album" class="screen hidden">
+    <header class="play-top">
+      <button id="albumBack" class="icon-btn" type="button" aria-label="Back">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="play-title">
+        <p class="eyebrow">Sticker album</p>
+        <p id="albumSummary" class="qnum"></p>
+      </div>
+    </header>
+    <div id="albumFilters" class="filters" role="group" aria-label="Filter by sport"></div>
+    <div id="albumGrid" class="album-grid"></div>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="faces.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

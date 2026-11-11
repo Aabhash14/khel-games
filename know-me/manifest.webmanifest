@@ -1,0 +1,14 @@
+{
+  "name": "Know Me",
+  "short_name": "Know Me",
+  "description": "Open a pack, answer 8 questions, pull your holo personality card. Then dare friends to guess your answers.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2140ff",
+  "theme_color": "#2140ff",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

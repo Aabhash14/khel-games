@@ -1,0 +1,14 @@
+{
+  "name": "Changa Chet · चङ्गा चेट",
+  "short_name": "Changa Chet",
+  "description": "Dashain kite fight. Cross strings and cut every rival kite.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#3a8ee0",
+  "theme_color": "#3a8ee0",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Majipa Lakhey's mask on sindur red: crown, flame brows, bulging eyes, fangs. Hand-authored for this game. -->
+  <rect width="512" height="512" rx="96" fill="#7d1610"/>
+  <g stroke="#2b0d07" stroke-width="14" stroke-linecap="round" fill="none">
+    <path d="M150 170 Q110 300 130 430"/><path d="M178 160 Q150 300 160 450"/><path d="M362 170 Q402 300 382 430"/><path d="M334 160 Q362 300 352 450"/>
+  </g>
+  <path d="M150 150 H362 L352 92 H160 Z" fill="#e3b23c"/>
+  <path d="M176 96 L196 40 L216 96 Z M236 96 L256 26 L276 96 Z M296 96 L316 40 L336 96 Z" fill="#e3b23c"/>
+  <circle cx="256" cy="112" r="12" fill="#2f7fd0"/>
+  <path d="M146 150 Q256 128 366 150 Q390 280 340 360 Q256 410 172 360 Q122 280 146 150 Z" fill="#d12b1d" stroke="#5e0b06" stroke-width="6"/>
+  <path d="M248 196 Q210 150 160 178 Q205 180 248 196 Z M264 196 Q302 150 352 178 Q307 180 264 196 Z" fill="#140805"/>
+  <circle cx="204" cy="228" r="34" fill="#e3b23c"/><circle cx="204" cy="228" r="27" fill="#fffbea"/><circle cx="210" cy="230" r="13" fill="#120804"/>
+  <circle cx="308" cy="228" r="34" fill="#e3b23c"/><circle cx="308" cy="228" r="27" fill="#fffbea"/><circle cx="302" cy="230" r="13" fill="#120804"/>
+  <ellipse cx="256" cy="276" rx="30" ry="20" fill="#a81c12"/>
+  <path d="M190 312 Q256 380 322 312 Q256 326 190 312 Z" fill="#3a0805"/>
+  <rect x="200" y="310" width="112" height="12" fill="#fffbea"/>
+  <path d="M204 312 L222 312 L213 352 Z M290 312 L308 312 L299 352 Z" fill="#fffbea"/>
+</svg>
