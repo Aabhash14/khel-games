@@ -9,6 +9,7 @@ Made by **Aabhash Shahi**.
 
 | Game | What you do | Folder |
 | --- | --- | --- |
+| Imposter (नक्कली को?) | Pass-the-phone party game: everyone gets the secret word except the imposter. Clue, argue, point on 3 | `imposter` |
 | Mol-Molai (मोलमोलाई) | Haggle, bluff and read shopkeepers' faces in Asan bazaar | `nepali-games/mol-molai` |
 | Bato Harayo (बाटो हरायो) | Lost on a dark road. Ask strangers the way, not everyone tells the truth | `nepali-games/bato-harayo` |
 | Indra Jatra (इन्द्रजात्रा) | Eight days of Yenya: raise the Yosin, carry Aji's flame, dare Majipa Lakhey, drive Kumari's chariot | `nepali-games/indra-jatra` |
@@ -40,7 +41,7 @@ Then open <http://localhost:8765/>. Opening `index.html` straight from disk also
 index.html        landing page (the shelf of boxes)
 assets/           landing page CSS, JS, fonts and box art
 nepali-games/     games with a Nepali theme
-know-me/  pro-scout/  orbit-switch/   other games
+imposter/  know-me/  pro-scout/  orbit-switch/   other games
 DESIGN.md  PRODUCT.md                 design system and product notes
 ```
 
@@ -50,4 +51,4 @@ Static files only, so any free static host works (Cloudflare Pages, GitHub Pages
 
 ## Credits
 
-Fonts: Anton, Mukta and Pacifico (SIL Open Font License). © 2026 Aabhash Shahi.
+Fonts: Anton, Mukta, Kalam and Pacifico (SIL Open Font License). © 2026 Aabhash Shahi.

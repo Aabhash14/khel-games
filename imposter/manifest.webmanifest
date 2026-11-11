@@ -1,0 +1,14 @@
+{
+  "name": "Imposter · नक्कली को?",
+  "short_name": "Imposter",
+  "description": "Pass-the-phone party game. Everyone gets the secret word except the imposter.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#24283a",
+  "theme_color": "#24283a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

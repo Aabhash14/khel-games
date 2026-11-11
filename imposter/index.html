@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Imposter · नक्कली को?</title>
+  <meta name="description" content="Pass-the-phone party game. Everyone gets the secret word except the imposter. Give one-word clues, argue, point on 3. English and Nepali.">
+  <meta name="theme-color" content="#24283a">
+  <meta property="og:title" content="Imposter · नक्कली को?">
+  <meta property="og:description" content="Everyone gets the secret word. One of you doesn't. A pass-the-phone party game.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/anton-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/kalam-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+  <div class="desk">
+    <div class="app" id="app">
+      <header class="bar">
+        <a class="home-link" id="homeLink" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="back">Khel</span></a>
+        <div class="bar-r">
+          <div class="lang" role="group" aria-label="Language · भाषा">
+            <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+            <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+          </div>
+          <button type="button" class="icon-btn" id="mute" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="sr-only" data-t="sound">Sound</span>
+          </button>
+        </div>
+      </header>
+
+      <main id="stage">
+
+        <!-- HOME -->
+        <section class="screen on" data-screen="home" aria-labelledby="title">
+          <div class="title-block">
+            <p class="kicker" data-t="kicker">Pass-the-phone party game</p>
+            <h1 class="stamp-title" id="title"><span>IMPOSTER</span></h1>
+            <p class="subtitle hand" data-t="subtitle">Who's faking?</p>
+            <p class="pitch"><mark data-t="pitch">Everyone gets the secret word. One of you doesn't.</mark></p>
+          </div>
+
+          <div class="sheet">
+            <h2 class="sheet-h"><span data-t="players">Players</span> <span class="count" id="pCount">4</span></h2>
+            <ol class="names" id="names"></ol>
+            <button type="button" class="btn ghost small" id="addPlayer" data-t="add">+ Add player</button>
+          </div>
+
+          <div class="sheet">
+            <h2 class="sheet-h" data-t="packs">Word packs</h2>
+            <div class="chips" id="packs"></div>
+          </div>
+
+          <div class="sheet">
+            <h2 class="sheet-h" data-t="mode">Mode</h2>
+            <div class="seg" role="radiogroup">
+              <button type="button" role="radio" data-mode="classic" aria-checked="true"><b data-t="classic">Classic</b><small data-t="classicSub"></small></button>
+              <button type="button" role="radio" data-mode="sneaky" aria-checked="false"><b data-t="sneaky">Sneaky</b><small data-t="sneakySub"></small></button>
+            </div>
+          </div>
+
+          <details class="sheet how">
+            <summary data-t="how">How to play</summary>
+            <ol>
+              <li data-t="how1"></li>
+              <li data-t="how2"></li>
+              <li data-t="how3"></li>
+              <li data-t="how4"></li>
+            </ol>
+          </details>
+
+          <p class="warn" id="homeWarn" role="alert"></p>
+          <div class="dock">
+            <button type="button" class="btn primary wide" id="start"><span data-t="start">Deal the chits</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg></button>
+          </div>
+        </section>
+
+        <!-- PASS + PEEK -->
+        <section class="screen" data-screen="pass">
+          <p class="step" id="passStep"></p>
+          <p class="lead" data-t="passTo">Pass the phone to</p>
+          <h2 class="who" id="passName"></h2>
+          <p class="hint" data-t="hush">Only you look! Hold the button.</p>
+
+          <div class="chit-wrap">
+            <div class="chit" id="chit">
+              <div class="chit-in" id="chitIn" aria-live="polite"></div>
+              <div class="chit-flap" aria-hidden="true">
+                <span class="flap-q">?</span>
+                <span class="flap-name hand" id="flapName"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dock split">
+            <button type="button" class="hold" id="peek" aria-describedby="passName">
+              <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45"/><circle class="fill" cx="50" cy="50" r="45"/></svg>
+              <svg class="eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+              <span data-t="holdPeek">Hold to peek</span>
+            </button>
+            <button type="button" class="btn primary" id="passNext" disabled><span id="passNextLabel"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg></button>
+          </div>
+        </section>
+
+        <!-- CLUES -->
+        <section class="screen" data-screen="clues">
+          <p class="step" id="clueStep"></p>
+          <p class="hint" data-t="clueRule">Say ONE word that fits.</p>
+          <div class="spot">
+            <div class="ring-face">
+              <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45"/><circle class="fill" id="clueRing" cx="50" cy="50" r="45"/></svg>
+              <span class="initial" id="clueInitial"></span>
+            </div>
+            <h2 class="who" id="clueName" aria-live="polite"></h2>
+          </div>
+          <p class="mini-h" data-t="upNext">Up next</p>
+          <ol class="queue" id="queue"></ol>
+          <div class="dock split">
+            <button type="button" class="btn ghost" id="forgot" data-t="forgot">Forgot word?</button>
+            <button type="button" class="btn primary" id="clueNext"><span data-t="next">Next</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg></button>
+          </div>
+        </section>
+
+        <!-- TALK -->
+        <section class="screen" data-screen="talk">
+          <h2 class="big-h" data-t="talkTitle">Who's faking it?</h2>
+          <p class="hint" data-t="talkRule">Argue. Accuse. Defend yourself.</p>
+          <div class="timer" id="talkTimer">
+            <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45"/><circle class="fill" id="talkRing" cx="50" cy="50" r="45"/></svg>
+            <span class="time" id="talkTime" role="timer">1:30</span>
+          </div>
+          <div class="dock split">
+            <button type="button" class="btn ghost" id="moreTime" data-t="more">+30s</button>
+            <button type="button" class="btn primary" id="toVote"><span data-t="vote">Vote</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg></button>
+          </div>
+        </section>
+
+        <!-- VOTE -->
+        <section class="screen" data-screen="vote">
+          <div class="vote-a" id="voteA">
+            <p class="big-h" data-t="voteReady">Everyone point at the imposter on 3!</p>
+            <div class="countdown" id="countdown" aria-live="assertive"></div>
+            <div class="dock">
+              <button type="button" class="btn primary wide" id="countBtn"><span data-t="countBtn">Count 3, 2, 1</span></button>
+            </div>
+          </div>
+          <div class="vote-b" id="voteB" hidden>
+            <h2 class="big-h" data-t="voteTitle">Who got the most fingers?</h2>
+            <div class="grid" id="voteGrid" role="radiogroup"></div>
+            <div class="dock split">
+              <button type="button" class="btn ghost" id="recount" data-t="recount">Count again</button>
+              <button type="button" class="hold" id="revealHold" disabled>
+                <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45"/><circle class="fill" cx="50" cy="50" r="45"/></svg>
+                <svg class="eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v4l-4 3 4 3v6H5v-6l4-3-4-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                <span data-t="holdReveal">Hold to reveal</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- VERDICT -->
+        <section class="screen" data-screen="verdict">
+          <p class="lead" data-t="picked">The group picked</p>
+          <h2 class="who" id="verdictName"></h2>
+          <div class="stamp-zone"><div class="stamp" id="verdictStamp"></div></div>
+          <p class="verdict-text" id="verdictText" aria-live="polite"></p>
+          <div class="dock">
+            <button type="button" class="btn primary wide" id="verdictNext" hidden></button>
+          </div>
+        </section>
+
+        <!-- GUESS -->
+        <section class="screen" data-screen="guess">
+          <p class="lead" data-t="guessLead">Last chance,</p>
+          <h2 class="who" id="guessName"></h2>
+          <p class="hint" data-t="guessRule">Guess the crew's word.</p>
+          <div class="timer small">
+            <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45"/><circle class="fill" id="guessRing" cx="50" cy="50" r="45"/></svg>
+            <span class="time" id="guessTime" role="timer"></span>
+          </div>
+          <div class="grid words" id="guessGrid"></div>
+        </section>
+
+        <!-- RESULT -->
+        <section class="screen" data-screen="result">
+          <p class="step" id="resRound"></p>
+          <h2 class="headline" id="resHead"></h2>
+          <p class="hint" id="resSub"></p>
+          <div class="reveal-row">
+            <div class="mini-chit"><small data-t="crewWord">Crew word</small><b id="resWord"></b></div>
+            <div class="mini-chit red"><small id="resImpLabel"></small><b id="resImpWord"></b></div>
+          </div>
+          <h3 class="mini-h" data-t="scores">Scores</h3>
+          <ol class="board" id="board"></ol>
+          <div class="dock split three">
+            <button type="button" class="btn ghost" id="toHome" data-t="playersBtn">Players</button>
+            <button type="button" class="btn ghost" id="share" data-t="story">Story</button>
+            <button type="button" class="btn primary" id="again"><span data-t="again">Next round</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg></button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="forgotDlg" class="dlg">
+    <form method="dialog">
+      <h2 class="sheet-h" data-t="whoForgot">Who forgot their word?</h2>
+      <div class="grid" id="forgotGrid"></div>
+      <button class="btn ghost wide" value="cancel" data-t="cancel">Cancel</button>
+    </form>
+  </dialog>
+
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <p class="toast" id="toast" role="status"></p>
+  <script type="module" src="js/main.js?v=1"></script>
+</body>
+</html>

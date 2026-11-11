@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches imposter/icon.svg (folded notebook chit + rubber stamp). -->
+  <g transform="rotate(-7 256 256)">
+    <rect x="96" y="96" width="320" height="330" rx="6" fill="#fbf7ea"/>
+    <path d="M96 150h320M96 200h320M96 250h320M96 300h320M96 350h320M96 400h320" stroke="#c3d3ea" stroke-width="5"/>
+    <path d="M146 96v330" stroke="#e9a3a3" stroke-width="5"/>
+    <rect x="190" y="78" width="132" height="36" fill="#ff8ac1" opacity=".85" transform="rotate(4 256 96)"/>
+    <text x="270" y="232" text-anchor="middle" font-family="Kalam, 'Comic Sans MS', cursive" font-weight="700" font-size="48" fill="#1f3a9e">Momo</text>
+    <path d="M206 244h128" stroke="#ffe94d" stroke-width="16" opacity=".9"/>
+    <g transform="rotate(-10 270 322)">
+      <rect x="140" y="282" width="262" height="82" rx="10" fill="none" stroke="#d62828" stroke-width="8"/>
+      <text x="271" y="349" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="62" fill="#d62828">IMPOSTER</text>
+    </g>
+  </g>
+</svg>

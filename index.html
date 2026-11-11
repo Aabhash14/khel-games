@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/anton-400-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/mukta-800-devanagari.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/hub.css?v=9">
+  <link rel="stylesheet" href="assets/hub.css?v=10">
   <noscript><style>
     .box-3d, .box:hover .box-3d { transform: none; }
     .box { aspect-ratio: auto; height: auto; }
@@ -53,10 +53,46 @@
     <section class="shelf" aria-labelledby="s1">
       <h2 class="tag" id="s1">
         <span data-l="en">Bluff &amp; trust</span><span data-l="ne" lang="ne">झुट र भरोसा</span>
-        <small><span data-l="en">2 games</span><span data-l="ne" lang="ne">२ खेल</span></small>
+        <small><span data-l="en">3 games</span><span data-l="ne" lang="ne">३ खेल</span></small>
       </h2>
       <div class="scroller">
         <ul class="track">
+
+          <li class="slot">
+            <article class="box" id="imposter" style="--bg:#24283a; --ink:#fbf7ea; --label:#fbf7ea; --label-ink:#1f3a9e; --accent:#ffe94d; --ar:.66; --rest:18deg">
+              <div class="box-3d">
+                <div class="face front">
+                  <h3 class="front-h">
+                    <button class="turn" type="button" aria-expanded="false" aria-controls="imposter-back">
+                      <span class="band"><span>Khel No. 09</span><span lang="ne">EN · ने</span></span>
+                      <img class="art" src="assets/art/imposter.svg" alt="" width="512" height="512">
+                      <span class="label">
+                        <span class="name">Imposter</span>
+                        <span class="name-ne" lang="ne">नक्कली को?</span>
+                        <span class="teaser"><span data-l="en">Clue · Bluff · Point</span><span data-l="ne" lang="ne">सङ्केत · झुट · औँला</span></span>
+                      </span>
+                      <span class="sr-only"><span data-l="en">, turn over to read more</span><span data-l="ne" lang="ne">, थप पढ्न पल्टाऊ</span></span>
+                    </button>
+                  </h3>
+                  <span class="sticker" hidden><span data-l="en">Played</span><span data-l="ne" lang="ne">खेलेको</span></span>
+                </div>
+                <div class="face side side-l" aria-hidden="true"><span>Imposter</span></div>
+                <div class="face side side-r" aria-hidden="true"><span lang="ne">नक्कली को?</span></div>
+                <div class="face back" id="imposter-back" inert>
+                  <span class="band"><span><span data-l="en">Imposter</span><span data-l="ne" lang="ne">नक्कली को?</span></span></span>
+                  <p class="hook"><span data-l="en">A party game on one phone. Everyone gets the secret word on a chit, except the imposter. One-word clues, then argue.</span><span data-l="ne" lang="ne">एउटै फोनमा पार्टी खेल। सबैले चिटमा गोप्य शब्द पाउँछन्, नक्कलीले बाहेक। एक शब्दको सङ्केत, अनि बहस।</span></p>
+                  <p class="decide"><span data-l="en">Point on 3. Who's faking it?</span><span data-l="ne" lang="ne">३ मा औँला देखाऊ। नक्कली को हो?</span></p>
+                  <ul class="facts">
+                    <li><span data-l="en">3 to 12 players</span><span data-l="ne" lang="ne">३ देखि १२ जना</span></li>
+                    <li><span data-l="en">8 packs, 98 word pairs</span><span data-l="ne" lang="ne">८ प्याक, ९८ शब्द जोडी</span></li>
+                    <li><span data-l="en">English · Nepali</span><span data-l="ne" lang="ne">अङ्ग्रेजी · नेपाली</span></li>
+                  </ul>
+                  <a class="play" href="imposter/"><span data-l="en">Play</span><span data-l="ne" lang="ne">खेल</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg></a>
+                  <button class="back-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"><span data-l="en">Turn back</span><span data-l="ne" lang="ne">फर्काऊ</span></span></button>
+                </div>
+              </div>
+            </article>
+          </li>
 
           <li class="slot">
             <article class="box" id="mol-molai" style="--bg:#d7261e; --ink:#fff8ec; --label:#fff8ec; --label-ink:#1b1b1b; --accent:#f5c518; --ar:.66; --rest:-20deg">
@@ -485,6 +521,6 @@
     </p>
   </footer>
 
-  <script src="assets/hub.js?v=9" defer></script>
+  <script src="assets/hub.js?v=10" defer></script>
 </body>
 </html>
