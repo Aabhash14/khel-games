@@ -1,5 +1,5 @@
 // Imposter: screen flow, hold-to-act controls, timers and juice. Rules live in rules.js.
-import { PACKS, packById } from './words.js';
+import { PACKS } from './words.js';
 import * as R from './rules.js';
 import { t, L, num, getLang, setLang } from './i18n.js';
 import { sfx, music, unlock, isMuted, setMuted, buzzHaptic } from './audio.js';
@@ -262,12 +262,11 @@ function fillChit() {
   if (s.kind === 'imposter') {
     el('div', 'tag', t('youAre'));
     el('div', 'imp-stamp', t('stampImp'));
-    el('div', 'pack', `${s.pack.icon} ${t('packIs', { p: L(s.pack) })}`);
+    el('div', 'pack', t('hintIs', { h: L(s.hint) }));
     el('div', 'blend', t('blend'));
   } else {
     el('div', 'tag', t('yourWord'));
     el('div', 'word', L(s.word));
-    el('div', 'pack', `${s.pack.icon} ${t('packIs', { p: L(s.pack) })}`);
   }
 }
 leavers.pass = closeChit;
@@ -589,7 +588,7 @@ renderers.result = (langOnly) => {
   $('#resSub').textContent = t(out === 'crew' ? 'subCrew' : out === 'stolen' ? 'subStolen' : 'subEscaped', { name: impName });
   $('#resWord').textContent = L(r.crew);
   $('#resImpLabel').textContent = t('impHad', { name: impName });
-  $('#resImpWord').textContent = game.mode === 'sneaky' ? L(r.twin) : t('onlyPack', { p: L(packById(r.card.pack)) });
+  $('#resImpWord').textContent = game.mode === 'sneaky' ? L(r.twin) : t('onlyHint', { h: L(r.hint) });
 
   const ranked = game.players.map((p, i) => ({ i, s: p.score, d: result.delta[i] })).sort((a, b) => b.s - a.s || a.i - b.i);
   const top = ranked[0].s;
@@ -621,7 +620,7 @@ $('#share').addEventListener('click', async () => {
     outcome: r.outcome,
     imposter: nameOf(r.imposter),
     word: L(r.crew),
-    impWord: game.mode === 'sneaky' ? L(r.twin) : t('onlyPack', { p: L(packById(r.card.pack)) }),
+    impWord: game.mode === 'sneaky' ? L(r.twin) : t('onlyHint', { h: L(r.hint) }),
     impName: nameOf(r.imposter),
     board: game.players.map((p, i) => ({ name: nameOf(i), score: p.score, imp: i === r.imposter })).sort((a, b) => b.score - a.score),
   });

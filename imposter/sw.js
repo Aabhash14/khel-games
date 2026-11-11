@@ -1,8 +1,8 @@
 // Offline support, network first: online players always get the newest version,
 // and the last saved copy is used only when there is no connection.
-const CACHE = 'imposter-v2';
+const CACHE = 'imposter-v3';
 const ASSETS = ['./', './index.html', './style.css?v=2', './icon.svg', './manifest.webmanifest',
-  './js/main.js?v=1', './js/rules.js', './js/words.js', './js/i18n.js', './js/audio.js', './js/share.js',
+  './js/main.js?v=2', './js/rules.js', './js/words.js', './js/i18n.js', './js/audio.js', './js/share.js',
   './fonts/anton-400-latin.woff2', './fonts/kalam-400-latin.woff2', './fonts/kalam-400-devanagari.woff2',
   './fonts/kalam-700-latin.woff2', './fonts/kalam-700-devanagari.woff2',
   './fonts/mukta-500-latin.woff2', './fonts/mukta-500-devanagari.woff2', './fonts/mukta-800-latin.woff2', './fonts/mukta-800-devanagari.woff2'];

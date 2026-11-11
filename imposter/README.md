@@ -12,7 +12,7 @@ A pass-the-phone party game for 3 to 12 people in one room. Everyone gets the sa
 
 ## Modes
 
-- **Classic**: the imposter knows and only sees the pack name (e.g. "Food").
+- **Classic**: the imposter knows and only sees a one-word hint that fits both words of the pair (e.g. "Street snack" for Momo / Chowmein). No chit shows the pack name.
 - **Sneaky**: the imposter gets a close twin word (Momo vs Chowmein, Tiger vs Leopard) and does not know they are the imposter.
 
 ## Points
@@ -25,7 +25,7 @@ A pass-the-phone party game for 3 to 12 people in one room. Everyone gets the sa
 
 ## Content
 
-8 packs, 98 word pairs, all in English and Nepali: Food, Places, School, Festivals, Online, Animals, Sports, At home. Edit `js/words.js` to add more; each entry is `[English, Nepali, twin English, twin Nepali]`.
+8 packs, 98 word pairs, all in English and Nepali: Food, Places, School, Festivals, Online, Animals, Sports, At home. Edit `js/words.js` to add more; each entry is `[English, Nepali, twin English, twin Nepali, hint English, hint Nepali]`. The hint must fit both words.
 
 ## Features
 

@@ -62,7 +62,8 @@ function pickImposter(game, rng) {
 export function startRound(game, rng = Math.random) {
   if (!game.deck.length) game.deck = buildDeck(game.packIds, rng);
   const card = game.deck.pop();
-  const [aEn, aNe, bEn, bNe] = packById(card.pack).words[card.idx];
+  const [aEn, aNe, bEn, bNe, hEn, hNe] = packById(card.pack).words[card.idx];
+  const hint = { en: hEn, ne: hNe };
   const flip = rng() < 0.5; // which half of the pair the crew gets
   const crew = flip ? { en: bEn, ne: bNe } : { en: aEn, ne: aNe };
   const twin = flip ? { en: aEn, ne: aNe } : { en: bEn, ne: bNe };
@@ -72,17 +73,16 @@ export function startRound(game, rng = Math.random) {
   let starter;
   do { starter = Math.floor(rng() * n); } while (starter === imposter);
   const order = Array.from({ length: n }, (_, k) => (starter + k) % n);
-  game.round = { card, crew, twin, imposter, starter, order, accused: null, guess: null, outcome: null };
+  game.round = { card, crew, twin, hint, imposter, starter, order, accused: null, guess: null, outcome: null };
   return game.round;
 }
 
-/** What player i sees on their chit. */
+/** What player i sees on their chit. No pack name anywhere: the imposter only gets a hint. */
 export function secretFor(game, i) {
   const r = game.round;
-  const pack = packById(r.card.pack);
-  if (i !== r.imposter) return { kind: 'word', word: r.crew, pack };
-  if (game.mode === 'sneaky') return { kind: 'word', word: r.twin, pack };
-  return { kind: 'imposter', pack };
+  if (i !== r.imposter) return { kind: 'word', word: r.crew };
+  if (game.mode === 'sneaky') return { kind: 'word', word: r.twin };
+  return { kind: 'imposter', hint: r.hint };
 }
 
 /** Six choices for the imposter's last-chance guess: the answer, the twin, four from the same pack. */
