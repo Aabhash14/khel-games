@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches duo/icon.svg (Tempo Art: painted crown, red and blue coins, bumper stripes). -->
+  <defs><clipPath id="duo-clip"><circle cx="256" cy="256" r="216"/></clipPath></defs>
+  <g clip-path="url(#duo-clip)">
+    <rect width="512" height="512" fill="#0c5a3b"/>
+    <path d="M0 400h512v112H0z" fill="#ffcb1f"/>
+    <path d="M-40 512l112-112h48L8 512zM88 512l112-112h48L136 512zM216 512l112-112h48L264 512zM344 512l112-112h48L392 512zM472 512l112-112h48L520 512z" fill="#141210"/>
+    <path d="M70 380V220C70 70 442 70 442 220v160z" fill="#ffcb1f" stroke="#141210" stroke-width="8"/>
+    <path d="M92 366V224C92 98 420 98 420 224v142z" fill="none" stroke="#d41f16" stroke-width="5"/>
+    <circle cx="206" cy="270" r="66" fill="#d41f16" stroke="#141210" stroke-width="7"/>
+    <circle cx="206" cy="270" r="47" fill="none" stroke="#fffaf0" stroke-width="9"/>
+    <circle cx="306" cy="232" r="66" fill="#1f52d4" stroke="#141210" stroke-width="7"/>
+    <circle cx="306" cy="232" r="47" fill="none" stroke="#fffaf0" stroke-width="9"/>
+  </g>
+</svg>

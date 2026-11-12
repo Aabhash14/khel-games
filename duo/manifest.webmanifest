@@ -1,0 +1,14 @@
+{
+  "name": "Duo · जोडी",
+  "short_name": "Duo",
+  "description": "Nine two-player games on one phone. Works offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c5a3b",
+  "theme_color": "#0c5a3b",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

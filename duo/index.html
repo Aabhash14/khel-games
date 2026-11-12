@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Duo · जोडी</title>
+  <meta name="description" content="Nine two-player games on one phone: Memory, Pool, Who Is It?, Air Hockey, Four in a Row, Dots & Boxes, Sea Battle, Quick Draw, Animal Stack. Offline, English and Nepali.">
+  <meta name="theme-color" content="#0c5a3b">
+  <meta property="og:title" content="Duo · जोडी">
+  <meta property="og:description" content="2 players, 1 phone, 9 games. Lay it flat between you and fight.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/bungee-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/hind-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- HOME -->
+    <section class="screen on" data-screen="home">
+      <header class="bar">
+        <a class="home-link" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="back">Khel</span></a>
+        <div class="bar-r">
+          <div class="lang" role="group" aria-label="Language · भाषा">
+            <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+            <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+          </div>
+          <button type="button" class="icon-btn" id="mute" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="sr-only" data-t="sound">Sound</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="crown">
+        <span class="flour" aria-hidden="true"></span>
+        <h1 class="logo"><span class="logo-en">DUO</span> <span class="logo-ne" lang="ne">जोडी</span></h1>
+        <p class="ribbon"><span lang="ne">पालो पर्खनुस्</span><small data-t="slogan"></small></p>
+      </div>
+      <p class="sub" data-t="subtitle"></p>
+
+      <div class="duel" aria-live="polite">
+        <label class="medal" data-p="0"><span class="mdisc" id="w0">0</span><span class="sr-only" id="n0Label"></span><input id="n0" maxlength="12" autocomplete="off" spellcheck="false" aria-labelledby="n0Label"></label>
+        <span class="vs" lang="ne">बनाम</span>
+        <label class="medal r" data-p="1"><span class="mdisc" id="w1">0</span><span class="sr-only" id="n1Label"></span><input id="n1" maxlength="12" autocomplete="off" spellcheck="false" aria-labelledby="n1Label"></label>
+      </div>
+
+      <ul class="tiles" id="tiles"></ul>
+
+      <div class="foot">
+        <button type="button" class="btn plaque" id="share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v6h14v-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="story">Story</span></button>
+        <button type="button" class="btn plaque alt" id="reset" data-t="reset">Reset wins</button>
+      </div>
+      <div class="bumper" aria-hidden="true"></div>
+    </section>
+
+    <!-- GAME -->
+    <section class="screen" data-screen="game">
+      <div class="bumper" aria-hidden="true"></div>
+      <div class="hud" data-p="1">
+        <span class="coin" aria-hidden="true"></span>
+        <span class="hud-txt"><b class="nm"></b><span class="msg" aria-live="polite"></span></span>
+        <span class="sc"></span>
+      </div>
+      <div class="arena" id="arena"></div>
+      <div class="hud" data-p="0">
+        <span class="coin" aria-hidden="true"></span>
+        <span class="hud-txt"><b class="nm"></b><span class="msg" aria-live="polite"></span></span>
+        <span class="sc"></span>
+      </div>
+      <div class="bumper" aria-hidden="true"></div>
+      <button type="button" class="pause-btn" id="pauseBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg><span class="sr-only" data-t="pause">Pause</span></button>
+
+      <div class="split" id="split" hidden>
+        <div class="half" data-p="1"></div>
+        <div class="half" data-p="0"></div>
+      </div>
+    </section>
+  </div>
+
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <p class="toast" id="toast" role="status"></p>
+  <script type="module" src="js/main.js?v=3"></script>
+</body>
+</html>
