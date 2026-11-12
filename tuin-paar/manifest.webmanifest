@@ -1,0 +1,14 @@
+{
+  "name": "Tuin Paar · तुइन पार",
+  "short_name": "Tuin Paar",
+  "description": "River-crossing mind game. Get everyone across on the tuin without anyone getting eaten.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2a2421",
+  "theme_color": "#2a2421",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

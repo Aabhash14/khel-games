@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="128" viewBox="0 0 256 128">
+  <!-- Glacier-melt river surface: stretched noise for current lines, thresholded into foam streaks. Tiles seamlessly. -->
+  <filter id="w" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.09" numOctaves="4" seed="3" stitchTiles="stitch" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  3.2 0 0 0 -1.75" result="foam"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.02 0.05" numOctaves="2" seed="9" stitchTiles="stitch" result="m"/>
+    <feColorMatrix in="m" type="matrix" values="0 0 0 0 0.02  0 0 0 0 0.25  0 0 0 0 0.3  1.6 0 0 0 -0.55" result="deep"/>
+    <feFlood flood-color="#2aa7a0" result="base"/>
+    <feComposite in="deep" in2="base" operator="over" result="b2"/>
+    <feComposite in="foam" in2="b2" operator="over"/>
+  </filter>
+  <rect width="256" height="128" filter="url(#w)"/>
+</svg>

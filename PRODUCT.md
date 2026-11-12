@@ -28,7 +28,7 @@ Games with a Nepali voice: real places (Asan bazaar, Kathmandu rooftops, Sagarma
 - English and Nepali (Devanagari) in every game; Nepali-first games default to Nepali.
 - Games work offline as installable PWAs (each has its own `manifest.webmanifest`, `sw.js`, `icon.svg`).
 - Collections nest one level: `play/<game>/` and `play/nepali-games/<game>/`.
-- Playable: Know Me, Pro Scout, Orbit Switch, Changa Chet, Himal Climb, Bato Harayo, Mol-Molai, Indra Jatra. Planned (no game yet): Bagh-Chal, Momo Rush, Tihar Diyo.
+- Playable: Tuin Paar, Imposter, Know Me, Pro Scout, Orbit Switch, Changa Chet, Himal Climb, Bato Harayo, Mol-Molai, Indra Jatra. Planned (no game yet): Bagh-Chal, Momo Rush, Tihar Diyo.
 
 ## Brand Commitments
 

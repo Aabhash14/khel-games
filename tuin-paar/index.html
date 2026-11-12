@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tuin Paar · तुइन पार</title>
+  <meta name="description" content="A river-crossing mind game. Get everyone across on the tuin without anyone getting eaten. A new puzzle every day, 12 levels, and make your own for a friend. English and Nepali.">
+  <meta name="theme-color" content="#2a2421">
+  <meta property="og:title" content="Tuin Paar · तुइन पार">
+  <meta property="og:description" content="Get everyone across the river. Nobody gets eaten. A new crossing every day.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/anton-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/mukta-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="bar">
+      <a class="home-link" id="homeLink" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="back">Khel</span></a>
+      <div class="bar-r">
+        <div class="lang" role="group" aria-label="Language · भाषा">
+          <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+        </div>
+        <button type="button" class="icon-btn" id="mute" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="sr-only" data-t="sound">Sound</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="stage">
+
+      <!-- HOME -->
+      <section class="screen on" data-screen="home" aria-labelledby="title">
+        <div class="hero">
+          <p class="kicker" data-t="kicker">River-crossing mind game</p>
+          <h1 class="title" id="title"><span class="title-en">TUIN PAAR</span><span class="title-ne" lang="ne">तुइन पार</span></h1>
+          <div class="hero-art" aria-hidden="true">
+            <span class="hero-cliff l"></span><span class="hero-cliff r"></span>
+            <svg class="hero-cable" viewBox="0 0 100 40" preserveAspectRatio="none">
+              <path class="wire" d="M0 6 Q50 46 100 6" fill="none" vector-effect="non-scaling-stroke"/>
+              <path class="twist" d="M0 6 Q50 46 100 6" fill="none" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="hero-basket"><span class="hanger"></span><span class="hero-seat"><img src="img/bakhra.webp" alt="" width="80" height="80"><img src="img/didi.webp" alt="" width="80" height="80"></span></div>
+          </div>
+          <p class="pitch" data-t="pitch">Get everyone across the river. Nobody gets eaten.</p>
+        </div>
+
+        <div class="menu">
+          <button type="button" class="big-btn daily" id="goDaily">
+            <span class="bb-main" data-t="daily">Today's tuin</span>
+            <span class="bb-sub" id="dailySub"></span>
+          </button>
+          <button type="button" class="big-btn" id="goLevels">
+            <span class="bb-main" data-t="levels">Levels</span>
+            <span class="bb-sub" id="levelsSub"></span>
+          </button>
+          <button type="button" class="big-btn" id="goMake">
+            <span class="bb-main" data-t="make">Make one for a friend</span>
+            <span class="bb-sub" data-t="makeSub">Build a puzzle, send the link</span>
+          </button>
+        </div>
+
+        <details class="how">
+          <summary data-t="howTitle">How it works</summary>
+          <ol>
+            <li data-t="how1"></li>
+            <li data-t="how2"></li>
+            <li data-t="how3"></li>
+            <li data-t="how4"></li>
+          </ol>
+        </details>
+        <p class="credits">Characters: Fluent Emoji 3D, Microsoft (MIT). Sounds: “Sound of stump-tailed macaque” by Rushenb, <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license noopener" target="_blank">CC BY-SA 4.0</a>; “Boy giggle” by thatjeffcarter, <a href="https://creativecommons.org/licenses/by/3.0/" rel="license noopener" target="_blank">CC BY 3.0</a>, via Wikimedia Commons, trimmed. Other sounds CC0 (BigSoundBank, Freesound).</p>
+      </section>
+
+      <!-- LEVELS -->
+      <section class="screen" data-screen="levels" aria-labelledby="levelsH">
+        <div class="sub-head">
+          <button type="button" class="back-btn" data-go="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only" data-t="home">Home</span></button>
+          <h2 id="levelsH" data-t="levels">Levels</h2>
+        </div>
+        <ol class="level-grid" id="levelGrid"></ol>
+      </section>
+
+      <!-- PLAY -->
+      <section class="screen" data-screen="play" aria-labelledby="playLabel">
+        <div class="hud">
+          <button type="button" class="back-btn" id="playBack"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only" data-t="menu">Menu</span></button>
+          <h2 class="play-label" id="playLabel"></h2>
+          <div class="stat"><b id="tripsN">0</b><span data-t="trips">Trips</span></div>
+          <div class="stat"><b id="parN">0</b><span data-t="par">Best</span></div>
+        </div>
+
+        <ul class="signs" id="signs" aria-label="Rules"></ul>
+
+        <div class="scene" id="scene">
+          <div class="lane" id="lane">
+            <svg class="cable" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 40">
+              <path class="string" d="M12 15 Q50 38 88 15" fill="none" vector-effect="non-scaling-stroke"/>
+              <path class="wire" d="M0 8 Q50 40 100 8" fill="none" vector-effect="non-scaling-stroke"/>
+              <path class="twist" d="M0 8 Q50 40 100 8" fill="none" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="flags" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <span class="post l" aria-hidden="true"></span><span class="post r" aria-hidden="true"></span>
+            <div class="basket" id="basket">
+              <span class="hanger" aria-hidden="true"></span>
+              <div class="seats" id="seats" role="group"></div>
+            </div>
+          </div>
+          <div class="gorge">
+            <div class="bank wari">
+              <div class="tokens" id="bank0" role="group"></div>
+              <span class="bank-name" data-t="wari">This side</span>
+            </div>
+            <div class="river" aria-hidden="true">
+              <span class="danger"></span>
+              <div class="water" id="water"><i></i><i></i></div>
+            </div>
+            <div class="bank pari">
+              <div class="tokens" id="bank1" role="group"></div>
+              <span class="bank-name" data-t="pari">Other side</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="msg" id="msg" aria-live="polite"></p>
+
+        <div class="controls">
+          <button type="button" class="ctl" id="undoBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="undo">Undo</span></button>
+          <button type="button" class="pull-btn" id="pullBtn"><span data-t="pull">Pull</span><svg viewBox="0 0 24 24" aria-hidden="true" id="pullArrow"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button type="button" class="ctl" id="hintBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="hint">Hint</span></button>
+        </div>
+        <button type="button" class="restart-link" id="restartBtn" data-t="restart">Restart</button>
+      </section>
+
+      <!-- MAKE -->
+      <section class="screen" data-screen="make" aria-labelledby="makeH">
+        <div class="sub-head">
+          <button type="button" class="back-btn" data-go="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only" data-t="home">Home</span></button>
+          <h2 id="makeH" data-t="makeTitle">Make a tuin</h2>
+        </div>
+        <p class="lead" data-t="makeLead"></p>
+        <fieldset class="pick">
+          <legend><span data-t="pickCast">Who is crossing?</span> <small data-t="pickHint">Pick 3 to 7</small></legend>
+          <div class="pick-grid" id="pickGrid"></div>
+        </fieldset>
+        <fieldset class="cap-pick">
+          <legend data-t="cap">Basket holds</legend>
+          <div class="seg" id="capSeg">
+            <button type="button" data-cap="2" aria-pressed="true">2</button>
+            <button type="button" data-cap="3" aria-pressed="false">3</button>
+          </div>
+        </fieldset>
+        <label class="name-field"><span data-t="yourName">Your name (optional)</span><input id="makerName" maxlength="16" autocomplete="nickname"></label>
+        <ul class="signs mini" id="makeSigns"></ul>
+        <p class="status" id="makeStatus" aria-live="polite"></p>
+        <div class="row">
+          <button type="button" class="big-btn slim" id="makePlay" data-t="playIt">Try it</button>
+          <button type="button" class="big-btn slim daily" id="makeSend" data-t="send">Send to a friend</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="sheet-wrap" id="sheetWrap" hidden>
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetH" tabindex="-1"></div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+  </div>
+
+  <script type="module" src="js/main.js?v=4"></script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  </script>
+</body>
+</html>

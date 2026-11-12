@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches tuin-paar/icon.svg (gorge at dawn, tuin basket, prayer flags). -->
+  <defs>
+    <linearGradient id="tp-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f59f73"/><stop offset="1" stop-color="#ffd9a8"/></linearGradient>
+    <clipPath id="tp-clip"><circle cx="256" cy="256" r="216"/></clipPath>
+  </defs>
+  <g clip-path="url(#tp-clip)">
+    <rect width="512" height="512" fill="url(#tp-sky)"/>
+    <path d="M40 300L170 170l60 70 60-90 180 150v212H40z" fill="#c98d8a"/>
+    <path d="M40 512V250l120 20 30 242z" fill="#4a3e37"/>
+    <path d="M472 512V240l-120 30-30 242z" fill="#4a3e37"/>
+    <path d="M190 512c10-80 0-130 20-170h92c20 40 10 90 20 170z" fill="#27b8ae"/>
+    <path d="M40 190Q256 340 472 190" fill="none" stroke="#5c3215" stroke-width="8"/>
+    <path d="M220 252v44M292 252v44" stroke="#5c3215" stroke-width="7"/>
+    <rect x="196" y="292" width="120" height="66" rx="12" fill="#9a5b2c"/>
+    <rect x="196" y="342" width="120" height="16" fill="#5c3215"/>
+    <circle cx="232" cy="312" r="20" fill="#e8e2d4"/><circle cx="280" cy="312" r="20" fill="#f2c230"/>
+    <rect x="96" y="214" width="22" height="28" fill="#2a6fdb"/><rect x="136" y="236" width="22" height="28" fill="#f6f2ea"/>
+    <rect x="354" y="236" width="22" height="28" fill="#d7261e"/><rect x="394" y="214" width="22" height="28" fill="#2e9e4f"/>
+  </g>
+</svg>

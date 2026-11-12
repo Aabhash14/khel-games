@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <!-- Procedural cliff rock: layered noise lit from the upper left, tinted slate-brown. Tiles seamlessly. -->
+  <filter id="r" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.011 0.045" numOctaves="5" seed="11" stitchTiles="stitch" result="strata"/>
+    <feTurbulence type="turbulence" baseFrequency="0.035" numOctaves="3" seed="4" stitchTiles="stitch" result="cracks"/>
+    <feComposite in="strata" in2="cracks" operator="arithmetic" k2="0.75" k3="0.35" result="height"/>
+    <feDiffuseLighting in="height" surfaceScale="7" diffuseConstant="1.15" lighting-color="#ffe9d2" result="lit">
+      <feDistantLight azimuth="225" elevation="42"/>
+    </feDiffuseLighting>
+    <feFlood flood-color="#6e5c4f" result="tint"/>
+    <feBlend in="lit" in2="tint" mode="multiply"/>
+  </filter>
+  <rect width="256" height="256" filter="url(#r)"/>
+</svg>
