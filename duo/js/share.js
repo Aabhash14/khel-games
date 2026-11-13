@@ -66,10 +66,11 @@ export async function drawStory({ names, totals, games }) {
   const lead = totals[0] === totals[1] ? null : totals[0] > totals[1] ? 0 : 1;
   if (lead != null) { x.fillStyle = C.yellow; x.font = '34px Bungee'; x.fillText(ne ? 'अगाडि' : 'LEADS', lead ? 805 : 275, 812); }
 
-  // nine painted panels
+  // one painted panel per game, three to a row; a short last row is centred
   const gx = 70; const gy = 850; const gap = 24; const pw = (W - 140 - 2 * gap) / 3; const ph = 270;
   games.forEach((gm, k) => {
-    const px = gx + (k % 3) * (pw + gap); const py = gy + Math.floor(k / 3) * (ph + gap);
+    const inRow = Math.min(3, games.length - Math.floor(k / 3) * 3);
+    const px = gx + ((3 - inRow) * (pw + gap)) / 2 + (k % 3) * (pw + gap); const py = gy + Math.floor(k / 3) * (ph + gap);
     const [fill, ink] = FILLS[k % 5];
     panel(x, px, py, pw, ph, 28, fill);
     x.fillStyle = ink; fit(x, gm.name, pw - 60, ne ? 46 : 30, sign); x.fillText(gm.name, px + pw / 2, py + 90);

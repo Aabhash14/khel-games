@@ -1,5 +1,6 @@
 // Memory: flip two, match = keep them and go again.
-const PICS = ['🥟', '🐅', '🏔️', '🪁', '🛕', '🐘', '🦏', '🌺', '🐐', '🍵', '🪔', '🐮', '🌶️', '🥭', '🐒', '🎲', '🦚', '🏏'];
+// Pictures are painted on canvas at the card's real pixel size (see pics.js), so they stay sharp.
+import { PICS, paintPic } from '../pics.js';
 const COLS = 4; const ROWS = 6;
 
 export default {
@@ -19,20 +20,32 @@ export default {
     const cards = deck.map((pic, i) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'card';
-      b.setAttribute('aria-label', `${i + 1}`);
-      b.innerHTML = `<span class="in"><span class="bk"></span><span class="fr">${pic}</span></span>`;
+      b.setAttribute('aria-label', `${i + 1}`); b.dataset.pic = pic.id;
+      b.innerHTML = '<span class="in"><span class="bk"></span><span class="fr"><canvas></canvas></span></span>';
       b.addEventListener('click', () => flip(i));
       grid.append(b);
       return b;
     });
 
+    let painted = 0;
     const size = () => {
       const w = root.clientWidth - 20; const h = root.clientHeight - 20;
       const c = Math.floor(Math.min((w - 6 * (COLS - 1) - 16) / COLS, (h - 6 * (ROWS - 1) - 16) / ROWS));
       grid.style.gridTemplateColumns = `repeat(${COLS}, ${c}px)`;
       grid.style.gridAutoRows = `${c}px`;
-      grid.style.fontSize = `${c * 0.55}px`;
-      cards.forEach((b) => { b.querySelector('.fr').style.fontSize = `${c * 0.55}px`; });
+      // paint each picture once at full device resolution, then copy it to both cards of the pair
+      const px = Math.round(c * 0.86 * Math.min(3, Math.max(2, devicePixelRatio || 1)));
+      if (px === painted || px <= 0) return;
+      painted = px;
+      const master = document.createElement('canvas');
+      pics.forEach((pic) => {
+        paintPic(master, pic, px);
+        cards.forEach((b, i) => {
+          if (deck[i] !== pic) return;
+          const cv = b.querySelector('canvas'); cv.width = cv.height = px;
+          cv.getContext('2d').drawImage(master, 0, 0);
+        });
+      });
     };
     const ro = new ResizeObserver(size); ro.observe(root); size();
 

@@ -4,6 +4,8 @@
 import { ANIMALS, drawAnimal, life, tickLife } from '../animals.js';
 
 const WW = 360; // world width in physics units
+const AS = 0.72; // animals are drawn and simulated at this size
+const RW = 290; // roof (landing place) width
 let matterP = null;
 function loadMatter() {
   if (window.Matter) return Promise.resolve(window.Matter);
@@ -25,6 +27,7 @@ function makeBody(M, a) {
     return M.Bodies.fromVertices(c.x, c.y, [pts]);
   });
   const body = parts.length === 1 ? parts[0] : M.Body.create({ parts });
+  M.Body.scale(body, AS, AS, { x: 0, y: 0 });
   const com = { x: body.position.x, y: body.position.y };
   M.Body.set(body, { friction: 0.9, frictionStatic: 1.4, frictionAir: 0.012, restitution: 0.02 });
   M.Body.setDensity(body, 0.0016);
@@ -99,7 +102,7 @@ export default {
       M = Matter;
       engine = M.Engine.create({ enableSleeping: true });
       engine.gravity.y = 1;
-      const roof = M.Bodies.rectangle(WW / 2, platY + 12, 196, 24, { isStatic: true, chamfer: { radius: 8 }, friction: 1, frictionStatic: 2 });
+      const roof = M.Bodies.rectangle(WW / 2, platY + 12, RW, 24, { isStatic: true, chamfer: { radius: 8 }, friction: 1, frictionStatic: 2 });
       M.Composite.add(engine.world, roof);
       M.Events.on(engine, 'collisionStart', (ev) => {
         const now = performance.now();
@@ -201,26 +204,28 @@ export default {
 
     function tempo() {
       // the painted tempo whose roof is the stage (world units)
-      const x0 = WW / 2 - 98; const y0 = platY;
+      const x0 = WW / 2 - RW / 2; const y0 = platY; const bw = RW + 16;
       const body = ctx.createLinearGradient(0, y0 + 24, 0, y0 + 200);
       body.addColorStop(0, '#1f7a4c'); body.addColorStop(1, '#0c5a3b');
-      ctx.fillStyle = body; ctx.beginPath(); ctx.roundRect(x0 - 8, y0 + 18, 212, 220, 18); ctx.fill();
+      ctx.fillStyle = body; ctx.beginPath(); ctx.roundRect(x0 - 8, y0 + 18, bw, 220, 18); ctx.fill();
       ctx.strokeStyle = '#141210'; ctx.lineWidth = 3; ctx.stroke();
-      ctx.strokeStyle = '#fffaf0'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(x0, y0 + 26, 196, 200, 12); ctx.stroke();
-      // windows
+      ctx.strokeStyle = '#fffaf0'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(x0, y0 + 26, RW, 200, 12); ctx.stroke();
+      // three windows
+      const ww = (RW - 28 - 2 * 10) / 3;
       ctx.fillStyle = '#bfe6f6'; ctx.strokeStyle = '#141210'; ctx.lineWidth = 2.5;
-      [[x0 + 14, 82], [x0 + 104, 82]].forEach(([x, w]) => { ctx.beginPath(); ctx.roundRect(x, y0 + 38, w - 4, 36, 8); ctx.fill(); ctx.stroke(); });
-      ctx.fillStyle = '#ffffff66'; ctx.beginPath(); ctx.roundRect(x0 + 20, y0 + 42, 22, 8, 4); ctx.fill(); ctx.beginPath(); ctx.roundRect(x0 + 110, y0 + 42, 22, 8, 4); ctx.fill();
+      for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.roundRect(x0 + 14 + i * (ww + 10), y0 + 38, ww, 36, 8); ctx.fill(); ctx.stroke(); }
+      ctx.fillStyle = '#ffffff66';
+      for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.roundRect(x0 + 20 + i * (ww + 10), y0 + 42, ww * 0.3, 8, 4); ctx.fill(); }
       // bumper band
-      ctx.save(); ctx.beginPath(); ctx.rect(x0 - 8, y0 + 86, 212, 14); ctx.clip();
-      ctx.fillStyle = '#ffcb1f'; ctx.fillRect(x0 - 8, y0 + 86, 212, 14);
+      ctx.save(); ctx.beginPath(); ctx.rect(x0 - 8, y0 + 86, bw, 14); ctx.clip();
+      ctx.fillStyle = '#ffcb1f'; ctx.fillRect(x0 - 8, y0 + 86, bw, 14);
       ctx.fillStyle = '#141210';
-      for (let i = -2; i < 24; i++) { ctx.beginPath(); ctx.moveTo(x0 - 8 + i * 12, y0 + 86); ctx.lineTo(x0 - 2 + i * 12, y0 + 86); ctx.lineTo(x0 + 4 + i * 12, y0 + 100); ctx.lineTo(x0 - 2 + i * 12, y0 + 100); ctx.fill(); }
+      for (let i = -2; i < bw / 12 + 2; i++) { ctx.beginPath(); ctx.moveTo(x0 - 8 + i * 12, y0 + 86); ctx.lineTo(x0 - 2 + i * 12, y0 + 86); ctx.lineTo(x0 + 4 + i * 12, y0 + 100); ctx.lineTo(x0 - 2 + i * 12, y0 + 100); ctx.fill(); }
       ctx.restore();
       // roof (the stage)
-      ctx.fillStyle = '#ffcb1f'; ctx.beginPath(); ctx.roundRect(WW / 2 - 98, platY, 196, 24, 8); ctx.fill();
+      ctx.fillStyle = '#ffcb1f'; ctx.beginPath(); ctx.roundRect(x0, platY, RW, 24, 8); ctx.fill();
       ctx.strokeStyle = '#141210'; ctx.lineWidth = 3; ctx.stroke();
-      ctx.strokeStyle = '#d41f16'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(WW / 2 - 92, platY + 5, 184, 14, 5); ctx.stroke();
+      ctx.strokeStyle = '#d41f16'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(x0 + 6, platY + 5, RW - 12, 14, 5); ctx.stroke();
     }
 
     function paintPlaced(p) {
@@ -230,7 +235,7 @@ export default {
       ctx.save();
       ctx.translate(p.body.position.x, p.body.position.y); ctx.rotate(p.body.angle);
       ctx.scale(1 + sq * 0.16, 1 - sq * 0.16 + breathe);
-      ctx.translate(-p.com.x, -p.com.y);
+      ctx.translate(-p.com.x, -p.com.y); ctx.scale(AS, AS);
       drawAnimal(ctx, p.a, an);
       ctx.restore();
     }
@@ -246,7 +251,7 @@ export default {
       ctx.save(); ctx.globalAlpha = aim.shown;
       ctx.translate(aim.x, y); ctx.rotate(aim.da); ctx.scale(0.6 + 0.4 * aim.shown, 0.6 + 0.4 * aim.shown);
       const com = comOf(aim.a);
-      ctx.translate(-com.x, -com.y);
+      ctx.translate(-com.x, -com.y); ctx.scale(AS, AS);
       drawAnimal(ctx, aim.a, tickLife(aim.L, tS, fdt, dragging ? 3 : 0));
       ctx.restore();
     }

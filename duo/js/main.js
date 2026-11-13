@@ -6,14 +6,12 @@ import { icon } from './icons.js';
 import memory from './games/memory.js';
 import pool from './games/pool.js';
 import guess from './games/guess.js';
-import reversi from './games/reversi.js';
 import four from './games/four.js';
 import dots from './games/dots.js';
 import sea from './games/sea.js';
-import mancala from './games/mancala.js';
 import stack from './games/stack.js';
 
-export const GAMES = [memory, pool, guess, reversi, four, dots, sea, mancala, stack];
+export const GAMES = [memory, pool, guess, four, dots, sea, stack];
 
 const $ = (s, r = document) => r.querySelector(s);
 const store = {

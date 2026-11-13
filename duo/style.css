@@ -97,6 +97,9 @@ button { cursor: pointer; touch-action: manipulation; }
 .tile small { font: 13px/1.1 var(--deva); text-align: center; white-space: nowrap; }
 :root:lang(ne) .tile b { font: 17px/1.05 var(--deva); }
 .tile .tw { position: absolute; top: 12px; right: 13px; font: 10px var(--sign); }
+/* odd one out (7 games: 3 + 3 + 1) becomes a wide strip */
+.tiles li:last-child:nth-child(3n+1) { grid-column: 1 / -1; }
+.tiles li:last-child:nth-child(3n+1) .tile { aspect-ratio: auto; min-height: 70px; flex-direction: row; gap: 12px; padding: 12px 18px; }
 .foot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 [data-screen="home"] > .bumper { margin: auto -16px 0; padding-bottom: env(safe-area-inset-bottom); height: calc(22px + env(safe-area-inset-bottom)); }
 
@@ -165,12 +168,14 @@ button { cursor: pointer; touch-action: manipulation; }
 /* ---------- MEMORY ---------- */
 .mem-grid { display: grid; gap: 6px; padding: 16px; }
 .card { position: relative; border: 0; padding: 0; background: none; perspective: 600px; }
-.card .in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .35s; }
+.card .in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.3, 1.35, .45, 1); will-change: transform; }
+.card:active .in { scale: .95; transition: transform .5s cubic-bezier(.3, 1.35, .45, 1), scale .1s; }
 .card.up .in, .card.done .in { transform: rotateY(180deg); }
 .card .bk, .card .fr { position: absolute; inset: 0; border-radius: 10px; backface-visibility: hidden; display: grid; place-items: center; }
 .card .bk { background: radial-gradient(circle, var(--pink) 0 12%, var(--white) 12% 17%, transparent 17%), radial-gradient(circle at 0 0, var(--yellow) 0 18%, transparent 18%), radial-gradient(circle at 100% 100%, var(--yellow) 0 18%, transparent 18%), var(--blue);
   box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 4px var(--blue), inset 0 0 0 6px var(--white), 0 3px 5px #0005; }
-.card .fr { transform: rotateY(180deg); background: var(--white); box-shadow: inset 0 0 0 2px var(--ink); font-size: min(9vw, 40px); }
+.card .fr { transform: rotateY(180deg); background: var(--white); box-shadow: inset 0 0 0 2px var(--ink); }
+.card .fr canvas { width: 86%; height: 86%; display: block; }
 .card.done .fr { background: color-mix(in srgb, var(--pc) 14%, var(--white)); box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 5px var(--pc); }
 .card.done { animation: match .45s; }
 @keyframes match { 40% { scale: 1.12; rotate: -4deg; } }
@@ -183,10 +188,18 @@ button { cursor: pointer; touch-action: manipulation; }
 .four-row:focus-visible { background: #14121014; }
 @media (hover: hover) { .four-row:hover { background: #14121014; } }
 .hole { border-radius: 50%; background: var(--yellow-2); box-shadow: inset 0 3px 0 #0003, inset 0 0 0 2px #a67c00; aspect-ratio: 1; }
-.disc { position: absolute; border-radius: 50%; background: var(--pc); box-shadow: inset 0 0 0 2px var(--white), inset 0 0 0 4px var(--pc), inset 0 0 0 5px #fff8, 0 0 0 1.5px var(--ink);
-  transition: translate .45s cubic-bezier(.5, 0, .7, 1.35); pointer-events: none; }
-.disc.win { animation: wobwin .5s ease-in-out infinite alternate; outline: 3px solid var(--white); outline-offset: 2px; }
-@keyframes wobwin { to { scale: 1.1; rotate: 14deg; } }
+.disc { position: absolute; left: 0; top: 0; border-radius: 50%; background: var(--pc); box-shadow: inset 0 0 0 2px var(--white), inset 0 0 0 4px var(--pc), inset 0 0 0 5px #fff8, 0 0 0 1.5px var(--ink);
+  pointer-events: none; will-change: translate; }
+/* a win cuts each coin in half along the slash: the coin turns to the slash angle, its halves slide apart */
+.disc.cut { background: none; box-shadow: none; rotate: var(--a); }
+.disc .h { position: absolute; inset: 0; border-radius: 50%; background: var(--pc); box-shadow: inset 0 0 0 2px var(--white), inset 0 0 0 4px var(--pc), inset 0 0 0 5px #fff8, 0 0 0 1.5px var(--ink);
+  animation: .45s var(--d, 0ms) cubic-bezier(.2, .9, .3, 1.2) both; }
+.disc .h.t { clip-path: inset(0 0 52% 0); animation-name: cut-t; }
+.disc .h.b { clip-path: inset(52% 0 0 0); animation-name: cut-b; }
+@keyframes cut-t { to { translate: -2px -18%; rotate: -8deg; } }
+@keyframes cut-b { to { translate: 2px 18%; rotate: 8deg; } }
+.strike { position: absolute; z-index: 3; height: 10px; margin-top: -5px; border-radius: 5px; transform-origin: 0 50%; pointer-events: none;
+  background: linear-gradient(var(--white) 0 0) center / 100% 3px no-repeat, var(--pc); box-shadow: 0 0 0 2px var(--ink), 0 4px 8px #0006; }
 .four .gutter { position: absolute; right: 4px; top: 22px; bottom: 22px; width: 5px; border-radius: 3px; background: repeating-linear-gradient(var(--red) 0 8px, var(--white) 8px 12px); }
 
 /* ---------- DOTS ---------- */
@@ -252,38 +265,6 @@ button { cursor: pointer; touch-action: manipulation; }
 /* ---------- CANVAS GAMES ---------- */
 .cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; display: block; }
 
-
-/* ---------- MANCALA ---------- */
-.mancala { position: relative; display: grid; grid-template-columns: 1.25fr repeat(6, 1fr) 1.25fr; grid-template-rows: 1fr 1fr; gap: 6px; padding: 16px; background: var(--yellow); border-radius: 26px;
-  box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 7px var(--yellow), inset 0 0 0 9px var(--red), inset 0 0 0 13px var(--yellow), 0 18px 30px #0008; }
-.mpit, .mstore { position: relative; border: 0; padding: 0; border-radius: 999px; background: radial-gradient(ellipse at 50% 30%, #a67c00, #c99a08 70%); box-shadow: inset 0 4px 8px #0006, inset 0 0 0 2px #8a6400; transition: transform .12s; }
-.mstore { border-radius: 40px; }
-.mcount { position: absolute; left: 0; right: 0; bottom: 5px; text-align: center; font: 12px var(--sign); color: var(--ink); pointer-events: none; z-index: 40; }
-.mpit[data-p="1"] .mcount, .mstore[data-p="1"] .mcount { bottom: auto; top: 5px; rotate: 180deg; }
-.mstore .mcount { font-size: 19px; }
-.mpit.can { cursor: pointer; box-shadow: inset 0 4px 8px #0006, inset 0 0 0 2px #8a6400, 0 0 0 3px var(--pc), 0 0 0 5px var(--white); }
-.mpit.can:active { transform: scale(.95); }
-.mpit.pulse, .mstore.pulse { animation: mpulse .25s; }
-@keyframes mpulse { 50% { filter: brightness(1.3); } }
-.seed { position: absolute; left: 0; top: 0; width: var(--ss, 12px); height: var(--ss, 12px); border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle at 35% 30%, #fffc 0 16%, var(--c) 24%, color-mix(in srgb, var(--c) 68%, #000) 100%);
-  box-shadow: 0 1.5px 2px #0008, inset 0 0 0 1px #0003; transition: translate .34s cubic-bezier(.3, .8, .3, 1.15); }
-
-/* ---------- REVERSI ---------- */
-.rv { padding: 16px; background: var(--yellow); border-radius: 24px;
-  box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 7px var(--yellow), inset 0 0 0 9px var(--red), inset 0 0 0 13px var(--yellow), 0 18px 30px #0008; }
-.rv-grid { display: grid; gap: 3px; padding: 4px; background: #0b4f26; border-radius: 10px; }
-.rv-cell { position: relative; aspect-ratio: 1; border: 0; padding: 0; border-radius: 6px; background: var(--leaf); box-shadow: inset 0 -2px 0 #0003; perspective: 300px; }
-.rv-cell.hint::after { content: ''; position: absolute; inset: 34%; border-radius: 50%; background: var(--pc); opacity: .85; outline: 2px solid var(--white); }
-.rv-cell.last { box-shadow: inset 0 0 0 2px var(--yellow); }
-.rdisc { position: absolute; inset: 9%; transform-style: preserve-3d; transition: transform .42s cubic-bezier(.4, 0, .2, 1); }
-.rdisc[data-s="1"] { transform: rotateY(180deg); }
-.rdisc i { position: absolute; inset: 0; border-radius: 50%; backface-visibility: hidden; background: var(--c);
-  box-shadow: inset 0 0 0 2px var(--white), inset 0 0 0 4px var(--c), inset 0 0 0 5px #fff8, 0 2px 3px #0006; }
-.rdisc .f0 { --c: var(--red); }
-.rdisc .f1 { --c: var(--blue); transform: rotateY(180deg); }
-.rdisc.pop { animation: rpop .3s cubic-bezier(.3, 1.6, .5, 1); }
-@keyframes rpop { from { scale: .2; } }
 
 /* Animal Stack */
 .stack-cv { inset: 0 0 80px 0; height: calc(100% - 80px); border-radius: 18px; box-shadow: 0 0 0 3px var(--ink), 0 10px 22px #0007; }

@@ -194,11 +194,5 @@ export const sfx = {
   start() { madal('dhum', 0, 0.35); madal('ta', 0.12, 0.3); flute(N.D5, 0.14, 0.14, 0.1); flute(N.A5, 0.3, 0.3, 0.1); },
   again() { [N.D5, N.Fs5, N.A5].forEach((f, i) => pluck(f, i * 0.06, 0.09)); },
   pass() { pluck(N.A4, 0, 0.09); pluck(N.Fs4, 0.12, 0.09); },
-  // Mancala: one pebble per pit, climbing in pitch as the hand moves on
-  seed(i = 0) { wood(1300 + Math.min(i, 14) * 70 + Math.random() * 60, 0, 0.11); bell(2600 + Math.random() * 300, 0.005, 0.012, 0.12, 1.4); },
-  store() { wood(420, 0, 0.25); madal('tin', 0.01, 0.25); },
-  capture() { for (let i = 0; i < 6; i++) wood(700 + Math.random() * 900, i * 0.045, 0.1); sfx.good(); },
-  // Reversi: each flip in a chain a little higher
-  disc(i = 0) { wood(650 + i * 70, 0, 0.16); noise({ d: 0.05, v: 0.06, f: 3000 + i * 200, q: 2 }); },
   voice(id) { VOICES[id]?.(); },
 };

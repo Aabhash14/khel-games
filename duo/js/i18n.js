@@ -2,7 +2,7 @@
 const S = {
   en: {
     back: 'Khel', sound: 'Sound',
-    kicker: '2 players · 1 phone · 9 games',
+    kicker: '2 players · 1 phone · 7 games',
     subtitle: 'Lay the phone flat between you. Fight.',
     nameP0: 'Red', nameP1: 'Blue', slogan: 'Wait your turn', nameLabel: 'Name of player {n}',
     rivalry: 'Wins', story: 'Story', reset: 'Reset wins', resetAgain: 'Tap again to reset',
@@ -54,17 +54,7 @@ const S = {
     'sea.imReady': "I'm ready", 'sea.fire': 'Fire at their sea', 'sea.hit': 'HIT!', 'sea.miss': 'Splash',
     'sea.sunk': 'Sunk a {n}-boat!', 'sea.theirs': 'Their boats', 'sea.mine': 'Hold: your boats', 'sea.mineTip': 'Your sea',
 
-    'mancala.name': 'Mancala', 'mancala.tag': 'Sow · Steal',
-    'mancala.r1': 'Tap one of your pits: its seeds are sown one per pit, round the board.',
-    'mancala.r2': 'Last seed in your store = go again. Last seed in an empty pit of yours steals the pit across.',
-    'mancala.r3': 'Your store is the big pit on your right. Most seeds wins.',
-    'mancala.pick': 'Pick a pit', 'mancala.again': 'AGAIN!', 'mancala.steal': 'STOLEN!',
 
-    'reversi.name': 'Reversi', 'reversi.tag': 'Trap · Flip',
-    'reversi.r1': 'Place a coin so it traps their coins in a straight line.',
-    'reversi.r2': 'Every trapped coin flips to your colour. Dots show where you can go.',
-    'reversi.r3': 'No move? You pass. Most coins at the end wins.',
-    'reversi.pass': '{name} has no move',
 
     'stack.name': 'Animal Stack', 'stack.tag': 'Drop · Balance',
     'stack.r1': 'Drag to place your animal, turn it, then drop it on the tempo roof.',
@@ -74,7 +64,7 @@ const S = {
   },
   ne: {
     back: 'खेल', sound: 'आवाज',
-    kicker: '२ जना · १ फोन · ९ खेल',
+    kicker: '२ जना · १ फोन · ७ खेल',
     subtitle: 'फोन बीचमा राख। भिड।',
     nameP0: 'रातो', nameP1: 'नीलो', slogan: '', nameLabel: 'खेलाडी {n} को नाम',
     rivalry: 'जित', story: 'स्टोरी', reset: 'जित मेटाऊ', resetAgain: 'फेरि थिच्यो भने मेटिन्छ',
@@ -126,17 +116,7 @@ const S = {
     'sea.imReady': 'म तयार', 'sea.fire': 'अर्काको समुद्रमा हान', 'sea.hit': 'लाग्यो!', 'sea.miss': 'छप्लक',
     'sea.sunk': '{n}-कोठे डुङ्गा डुब्यो!', 'sea.theirs': 'उसका डुङ्गा', 'sea.mine': 'थिचिराख: तिम्रा डुङ्गा', 'sea.mineTip': 'तिम्रो समुद्र',
 
-    'mancala.name': 'मन्काला', 'mancala.tag': 'छर · खोस',
-    'mancala.r1': 'आफ्नो एउटा खाल्टो थिच: बिउ एक-एक गर्दै घुमाउँदै छरिन्छ।',
-    'mancala.r2': 'अन्तिम बिउ भकारीमा पर्‍यो भने फेरि पालो। आफ्नो खाली खाल्टोमा पर्‍यो भने अगाडिको खाल्टो खोस।',
-    'mancala.r3': 'तिम्रो भकारी दायाँतिरको ठूलो खाल्टो हो। धेरै बिउ हुने जित्छ।',
-    'mancala.pick': 'खाल्टो छान', 'mancala.again': 'फेरि!', 'mancala.steal': 'खोसियो!',
 
-    'reversi.name': 'पल्टाऊ', 'reversi.tag': 'घेर · पल्टाऊ',
-    'reversi.r1': 'उनका सिक्का सिधा लाइनमा घेरिने गरी आफ्नो सिक्का राख।',
-    'reversi.r2': 'घेरिएका सबै सिक्का तिम्रो रङमा पल्टिन्छन्। थोप्लाले जान मिल्ने ठाउँ देखाउँछ।',
-    'reversi.r3': 'चाल छैन? पालो छुट्छ। अन्त्यमा धेरै सिक्का हुने जित्छ।',
-    'reversi.pass': '{name} को चाल छैन',
 
     'stack.name': 'जनावरको थाक', 'stack.tag': 'खसाल · सन्तुलन',
     'stack.r1': 'जनावरलाई तानेर ठाउँ मिलाऊ, घुमाऊ, अनि टेम्पोको छानामा खसाल।',

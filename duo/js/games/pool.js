@@ -3,6 +3,7 @@
 const R = 0.036;
 const POCKETS = [[0, 0, 0.078], [1, 0, 0.078], [0, 1, 0.066], [1, 1, 0.066], [0, 2, 0.078], [1, 2, 0.078]];
 const COLORS = { red: '#d41f16', yellow: '#ffcb1f', black: '#141414', cue: '#fbf6ea' };
+const SHADE = { red: '#8a0e08', yellow: '#b88606', black: '#000000', cue: '#c4bba8' };
 const HEAD = [0.5, 1.5];
 
 export default {
@@ -10,15 +11,20 @@ export default {
   mount(root, api) {
     const cv = document.createElement('canvas'); cv.className = 'cv'; root.append(cv);
     const ctx = cv.getContext('2d');
-    let W = 0; let H = 0; let s = 100; let ox = 0; let oy = 0; let rail = 20;
+    let W = 0; let H = 0; let s = 100; let ox = 0; let oy = 0; let rail = 20; let dpr = 1;
+    // The table and every ball are painted once into sprites; each frame just copies them.
+    const tableCv = document.createElement('canvas');
+    const sprites = {};
+    let dirty = true;
     const resize = () => {
-      const d = Math.min(devicePixelRatio || 1, 2);
+      dpr = Math.min(devicePixelRatio || 1, 2);
       W = root.clientWidth; H = root.clientHeight;
-      cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       s = Math.min((W - 8) / 1.12, (H - 8) / 2.12);
       rail = s * 0.06; ox = (W - s) / 2; oy = (H - 2 * s) / 2;
+      bake();
     };
-    const ro = new ResizeObserver(resize); ro.observe(root); resize();
+    const ro = new ResizeObserver(resize); ro.observe(root);
 
     // ---- balls ----
     const balls = [];
@@ -69,11 +75,12 @@ export default {
       const [x, y] = toTable(e);
       if (handBall && Math.hypot(x - cue.x, y - cue.y) < R * 5) aim = { mode: 'move', fx: x, fy: y };
       else aim = { mode: 'aim', fx: x, fy: y };
+      dirty = true;
     });
     cv.addEventListener('pointermove', (e) => {
       if (!aim) return;
       const [x, y] = toTable(e);
-      aim.fx = x; aim.fy = y;
+      aim.fx = x; aim.fy = y; dirty = true;
       if (aim.mode === 'move') {
         const nx = Math.min(1 - R, Math.max(R, x)); const ny = Math.min(2 - R, Math.max(R, y));
         const clearOfPockets = POCKETS.every(([px, py, pr]) => Math.hypot(nx - px, ny - py) > pr + R * 1.5);
@@ -82,7 +89,7 @@ export default {
     });
     const release = () => {
       if (!aim) return;
-      const a = aim; aim = null;
+      const a = aim; aim = null; dirty = true;
       if (a.mode !== 'aim' || !canShoot()) return;
       const { dir, power } = aimInfo(a);
       if (power < 0.04) return;
@@ -92,7 +99,7 @@ export default {
       handBall = false; api.sfx.cue(); api.buzz(12); hud();
     };
     cv.addEventListener('pointerup', release);
-    cv.addEventListener('pointercancel', () => { aim = null; });
+    cv.addEventListener('pointercancel', () => { aim = null; dirty = true; });
 
     function aimInfo(a) {
       const dx = cue.x - a.fx; const dy = cue.y - a.fy;
@@ -146,7 +153,7 @@ export default {
     }
 
     function settle() {
-      moving = false;
+      moving = false; dirty = true;
       const p = turn; const o = 1 - p; const sh = shot; shot = null;
       if (sh.potted.includes('black')) {
         const legal = sh.wasOnBlack && !sh.cue;
@@ -180,14 +187,37 @@ export default {
 
     // ---- drawing ----
     const X = (x) => ox + x * s; const Y = (y) => oy + y * s;
-    function ball(x, y, kind, scale = 1) {
-      const r = R * s * scale;
-      ctx.fillStyle = '#0005'; ctx.beginPath(); ctx.arc(x + r * 0.15, y + r * 0.25, r, 0, 7); ctx.fill();
-      ctx.fillStyle = COLORS[kind]; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
-      if (kind === 'black') { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, r * 0.45, 0, 7); ctx.fill(); ctx.fillStyle = '#141414'; ctx.font = `800 ${r * 0.7}px Bungee, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('8', x, y + r * 0.05); }
-      ctx.fillStyle = '#ffffff70'; ctx.beginPath(); ctx.arc(x - r * 0.35, y - r * 0.35, r * 0.28, 0, 7); ctx.fill();
+    function paintBall(c, x, y, r, kind) {
+      c.fillStyle = '#0005'; c.beginPath(); c.arc(x + r * 0.15, y + r * 0.25, r, 0, 7); c.fill();
+      const g = c.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r * 1.05);
+      const base = COLORS[kind];
+      g.addColorStop(0, kind === 'black' ? '#5a5a5a' : '#ffffff'); g.addColorStop(0.22, base); g.addColorStop(1, SHADE[kind]);
+      c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+      c.lineWidth = Math.max(1, r * 0.06); c.strokeStyle = '#0006'; c.stroke();
+      if (kind === 'black') { c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, r * 0.45, 0, 7); c.fill(); c.fillStyle = '#141414'; c.font = `800 ${r * 0.7}px Bungee, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('8', x, y + r * 0.05); }
+      c.fillStyle = '#ffffff80'; c.beginPath(); c.arc(x - r * 0.35, y - r * 0.38, r * 0.24, 0, 7); c.fill();
     }
-    function table() {
+    function bake() {
+      // ball sprites
+      const r = R * s; const half = Math.ceil(r * 1.45);
+      for (const kind of Object.keys(COLORS)) {
+        const c = sprites[kind] || (sprites[kind] = document.createElement('canvas'));
+        c.width = c.height = Math.ceil(half * 2 * dpr);
+        const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, half * 2, half * 2);
+        paintBall(x, half, half, r, kind);
+        c.half = half;
+      }
+      // table
+      tableCv.width = cv.width; tableCv.height = cv.height;
+      const x = tableCv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      paintTable(x);
+      dirty = true;
+    }
+    function ball(x, y, kind, scale = 1) {
+      const sp = sprites[kind]; const h = sp.half * scale;
+      ctx.drawImage(sp, x - h, y - h, h * 2, h * 2);
+    }
+    function paintTable(ctx) {
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = '#141210'; ctx.beginPath(); ctx.roundRect(X(0) - rail, Y(0) - rail, s + 2 * rail, 2 * s + 2 * rail, rail * 0.8); ctx.fill();
       ctx.strokeStyle = '#00000040'; ctx.lineWidth = 2; ctx.stroke();
@@ -200,6 +230,10 @@ export default {
       ctx.strokeStyle = '#ffffff22'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(0), Y(1.5)); ctx.lineTo(X(1), Y(1.5)); ctx.stroke();
       ctx.beginPath(); ctx.arc(X(0.5), Y(0.55), 2.5, 0, 7); ctx.fillStyle = '#ffffff33'; ctx.fill();
       for (const [px, py, pr] of POCKETS) { ctx.fillStyle = '#0b0705'; ctx.beginPath(); ctx.arc(X(px), Y(py), pr * s * 0.8, 0, 7); ctx.fill(); }
+    }
+    function table() {
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(tableCv, 0, 0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     function guide() {
       if (!aim || aim.mode !== 'aim' || moving) return;
@@ -248,22 +282,28 @@ export default {
       guide();
     }
 
+    // physics runs at a fixed 480 steps a second whatever the screen's refresh rate
+    const STEP = 1 / 480; let acc = 0;
     function loop(now) {
-      const dt = Math.min(0.033, Math.max(0, (now - last) / 1000)); last = now;
+      const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
       if (api.live && moving) {
-        const n = 10; for (let i = 0; i < n; i++) step(dt / n);
-        if (balls.every((b) => !b.on || Math.hypot(b.vx, b.vy) < 0.01)) { balls.forEach((b) => { b.vx = b.vy = 0; }); settle(); }
+        acc += dt;
+        while (acc >= STEP) { step(STEP); acc -= STEP; }
+        if (balls.every((b) => !b.on || Math.hypot(b.vx, b.vy) < 0.01)) { balls.forEach((b) => { b.vx = b.vy = 0; }); acc = 0; settle(); }
       }
       for (const sk of sinking) sk.t = Math.min(1, sk.t + dt * 4);
       for (let i = sinking.length - 1; i >= 0; i--) if (sinking[i].t >= 1) sinking.splice(i, 1);
-      draw();
+      // only repaint when something can have changed
+      if (dirty || moving || sinking.length) { draw(); dirty = false; }
       raf = requestAnimationFrame(loop);
     }
+    resize();
+    if (document.fonts) document.fonts.ready.then(() => { if (W) bake(); });
     raf = requestAnimationFrame(loop);
 
     return {
       destroy() { cancelAnimationFrame(raf); ro.disconnect(); timers.forEach(clearTimeout); },
-      resume() { last = performance.now(); },
+      resume() { last = performance.now(); acc = 0; dirty = true; },
     };
   },
 };
