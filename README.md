@@ -9,7 +9,7 @@ Made by **Aabhash Shahi**.
 
 | Game | What you do | Folder |
 | --- | --- | --- |
-| Duo (जोडी) | Two players, one phone, 9 games: Memory, Pool, Who Is It?, Air Hockey, Four in a Row, Dots & Boxes, Sea Battle, Quick Draw, Animal Stack | `duo` |
+| Duo (जोडी) | Two players, one phone, 9 games: Memory, Pool, Who Is It?, Reversi, Four in a Row, Dots & Boxes, Sea Battle, Mancala, Animal Stack | `duo` |
 | Imposter (नक्कली को?) | Pass-the-phone party game: everyone gets the secret word except the imposter. Clue, argue, point on 3 | `imposter` |
 | Tuin Paar (तुइन पार) | River-crossing mind game: get everyone across on the tuin without anyone getting eaten. Daily puzzle, 12 levels, make your own | `tuin-paar` |
 | Mol-Molai (मोलमोलाई) | Haggle, bluff and read shopkeepers' faces in Asan bazaar | `nepali-games/mol-molai` |

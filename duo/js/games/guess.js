@@ -22,7 +22,7 @@ export default {
     const gw = el('div', 'gw'); root.append(gw);
     let faces = [];
     const fit = () => {
-      const w = (root.clientWidth - 20) / 6; const h = (root.clientHeight - 64 - 24) / 6 - 16;
+      const w = (root.clientWidth - 20) / 6; const h = (root.clientHeight - 64 - 24) / 6 - 4;
       gw.style.setProperty('--fw', `${Math.floor(Math.min(w, h))}px`);
     };
     const ro = new ResizeObserver(fit); ro.observe(root); fit();

@@ -6,14 +6,14 @@ import { icon } from './icons.js';
 import memory from './games/memory.js';
 import pool from './games/pool.js';
 import guess from './games/guess.js';
-import hockey from './games/hockey.js';
+import reversi from './games/reversi.js';
 import four from './games/four.js';
 import dots from './games/dots.js';
 import sea from './games/sea.js';
-import draw from './games/draw.js';
+import mancala from './games/mancala.js';
 import stack from './games/stack.js';
 
-export const GAMES = [memory, pool, guess, hockey, four, dots, sea, draw, stack];
+export const GAMES = [memory, pool, guess, reversi, four, dots, sea, mancala, stack];
 
 const $ = (s, r = document) => r.querySelector(s);
 const store = {
@@ -113,6 +113,7 @@ function openGame(game) {
   setHuds();
   arena.innerHTML = ''; arena.className = 'arena';
   try { history.pushState({ duo: game.id }, ''); } catch { /* fine */ }
+  try { wake?.release(); } catch { /* fine */ }
   try { navigator.wakeLock?.request('screen').then((w) => { wake = w; }).catch(() => {}); } catch { /* fine */ }
   const first = starter[game.id] ?? (Math.random() < 0.5 ? 0 : 1);
   showSplit((h, p) => {
@@ -123,7 +124,9 @@ function openGame(game) {
     const who = el('p', 'note who'); who.dataset.p = first;
     who.append(el('span', 'coin'), el('span', '', t('starts', { name: nameOf(first) })));
     h.append(who);
-    h.append(btn(t('start'), 'pc', () => launch(game)));
+    const row = el('div', 'row');
+    row.append(btn(t('start'), 'pc', () => launch(game)), btn(t('menu'), 'ghost', () => history.back()));
+    h.append(row);
   });
 }
 
@@ -137,6 +140,7 @@ function launch(game) {
   const session = { game, done: false };
   cur = session;
   session.inst = game.mount(arena, makeApi(session, first));
+  sfx.start();
 }
 
 function quit() {
@@ -194,7 +198,7 @@ function makeApi(session, first) {
       const w = tally[id] || [0, 0];
       if (winner === 0 || winner === 1) w[winner]++;
       tally[id] = w; store.set('tally', tally);
-      api.turn(null);
+      api.turn(null); api.msg(null, '');
       if (winner == null) sfx.draw(); else { sfx.win(); confetti(winner); }
       setTimeout(() => {
         if (cur !== session) return;

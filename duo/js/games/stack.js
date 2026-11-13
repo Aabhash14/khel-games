@@ -1,7 +1,7 @@
 // Animal Stack: take turns dropping an animal onto the tempo roof. Topple the pile and you lose.
 // The board turns to face whoever is dropping, so the stack always looks upright to them.
 // Physics: Matter.js (MIT), vendored in js/vendor and loaded on first play.
-import { ANIMALS } from '../animals.js';
+import { ANIMALS, drawAnimal, life, tickLife } from '../animals.js';
 
 const WW = 360; // world width in physics units
 let matterP = null;
@@ -49,7 +49,9 @@ export default {
 
     let M = null; let engine = null; let destroyed = false;
     let W = 0; let H = 0; let s = 1; let WH = 600; let platY = 500;
-    const placed = []; // { body, com, a, by }
+    const placed = []; // { body, com, a, by, L }
+    const byBody = new Map();
+    let tS = 0; let fdt = 0.016;
     const count = [0, 0];
     let turn = api.first; let lastDropper = null;
     let state = 'load'; let aim = null; let cam = 0; let camTarget = 0;
@@ -68,9 +70,10 @@ export default {
 
     const anName = (a) => (ne ? a.ne : a.en);
     function setAimLabel() { label.textContent = aim ? api.t('stack.your', { a: anName(aim.a) }) : ''; }
+    let lastPick = null;
     function pickAnimal() {
-      const prev = aim?.a?.id;
-      let a; do { a = ANIMALS[Math.floor(Math.random() * ANIMALS.length)]; } while (a.id === prev && ANIMALS.length > 1);
+      let a; do { a = ANIMALS[Math.floor(Math.random() * ANIMALS.length)]; } while (a.id === lastPick && ANIMALS.length > 1);
+      lastPick = a.id;
       return a;
     }
 
@@ -80,8 +83,8 @@ export default {
       bar.dataset.p = turn; dropBtn.dataset.p = turn;
       later(() => {
         if (destroyed || state === 'over') return;
-        aim = { a: pickAnimal(), x: WW / 2, angle: 0, shown: 0 };
-        state = 'aim'; setAimLabel(); api.sfx.blip();
+        aim = { a: pickAnimal(), x: WW / 2, angle: 0, shown: 0, L: life() };
+        state = 'aim'; setAimLabel(); api.sfx.voice(aim.a.id);
       }, 650);
     }
 
@@ -100,10 +103,14 @@ export default {
       M.Composite.add(engine.world, roof);
       M.Events.on(engine, 'collisionStart', (ev) => {
         const now = performance.now();
-        if (now - lastThump < 70) return;
         let v = 0;
-        for (const p of ev.pairs) v = Math.max(v, Math.hypot(p.bodyA.velocity.x - p.bodyB.velocity.x, p.bodyA.velocity.y - p.bodyB.velocity.y));
-        if (v > 1.2) { api.sfx.thump(Math.min(1, v / 8)); lastThump = now; if (v > 4) api.buzz(12); }
+        for (const p of ev.pairs) {
+          const rel = Math.hypot(p.bodyA.velocity.x - p.bodyB.velocity.x, p.bodyA.velocity.y - p.bodyB.velocity.y);
+          v = Math.max(v, rel);
+          // whoever gets bumped squashes like a soft toy
+          [p.bodyA.parent, p.bodyB.parent].forEach((b) => { const e = byBody.get(b.id); if (e && rel > 0.5) e.L.sqV += Math.min(5, rel) * 1.7; });
+        }
+        if (v > 1.2 && now - lastThump > 70) { api.sfx.thump(Math.min(1, v / 8)); lastThump = now; if (v > 4) api.buzz(12); }
       });
       api.score(0, 0); api.score(1, 0);
       newTurn();
@@ -130,7 +137,8 @@ export default {
       M.Body.setPosition(body, { x: aim.x, y: aimY() });
       M.Body.setAngle(body, aim.angle);
       M.Composite.add(engine.world, body);
-      placed.push({ body, com, a: aim.a, by: turn });
+      const entry = { body, com, a: aim.a, by: turn, L: aim.L };
+      placed.push(entry); byBody.set(body.id, entry);
       lastDropper = turn; aim = null; setAimLabel();
       state = 'settle'; dropAt = performance.now(); calmSince = 0;
       api.sfx.whoosh(); api.msg(turn, api.t('stack.steady'));
@@ -142,7 +150,7 @@ export default {
       // anything off the roof and falling = toppled
       for (const p of placed) {
         const b = p.body.position;
-        if (b.y > platY + 110 || b.x < -80 || b.x > WW + 80) { toppled(); return; }
+        if (b.y > platY + 110 || b.x < -80 || b.x > WW + 80) { toppled(p); return; }
       }
       if (state !== 'settle') return;
       const calm = placed.every((p) => p.body.isSleeping || (p.body.speed < 0.12 && p.body.angularSpeed < 0.01));
@@ -153,9 +161,10 @@ export default {
       }
     }
 
-    function toppled() {
+    function toppled(fallen) {
       if (state === 'over') return;
       state = 'over';
+      if (fallen) api.sfx.voice(fallen.a.id);
       const loser = lastDropper ?? turn;
       api.sfx.crash(); api.shake(10); api.buzz([80, 40, 80]);
       api.callout(api.t('stack.fell'), null, '#ffcb1f');
@@ -214,10 +223,15 @@ export default {
       ctx.strokeStyle = '#d41f16'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(WW / 2 - 92, platY + 5, 184, 14, 5); ctx.stroke();
     }
 
-    function drawAnimal(p) {
+    function paintPlaced(p) {
+      const an = tickLife(p.L, tS, fdt, p.body.speed);
+      const sq = Math.max(-0.45, Math.min(0.45, p.L.sq));
+      const breathe = Math.sin(an.t * 2.4) * 0.012;
       ctx.save();
-      ctx.translate(p.body.position.x, p.body.position.y); ctx.rotate(p.body.angle); ctx.translate(-p.com.x, -p.com.y);
-      p.a.draw(ctx);
+      ctx.translate(p.body.position.x, p.body.position.y); ctx.rotate(p.body.angle);
+      ctx.scale(1 + sq * 0.16, 1 - sq * 0.16 + breathe);
+      ctx.translate(-p.com.x, -p.com.y);
+      drawAnimal(ctx, p.a, an);
       ctx.restore();
     }
 
@@ -233,7 +247,7 @@ export default {
       ctx.translate(aim.x, y); ctx.rotate(aim.da); ctx.scale(0.6 + 0.4 * aim.shown, 0.6 + 0.4 * aim.shown);
       const com = comOf(aim.a);
       ctx.translate(-com.x, -com.y);
-      aim.a.draw(ctx);
+      drawAnimal(ctx, aim.a, tickLife(aim.L, tS, fdt, dragging ? 3 : 0));
       ctx.restore();
     }
     const comCache = new Map();
@@ -247,7 +261,7 @@ export default {
       scenery();
       ctx.save(); ctx.scale(s, s); ctx.translate(0, -cam);
       tempo();
-      for (const p of placed) drawAnimal(p);
+      for (const p of placed) paintPlaced(p);
       drawAim(now);
       ctx.restore();
       // height marker
@@ -261,6 +275,7 @@ export default {
 
     function loop(now) {
       const dt = Math.min(50, Math.max(0, now - last)); last = now;
+      tS = now / 1000; fdt = dt / 1000;
       if (engine && api.live && state !== 'over') {
         acc += dt;
         while (acc >= 1000 / 60) { M.Engine.update(engine, 1000 / 60); acc -= 1000 / 60; }

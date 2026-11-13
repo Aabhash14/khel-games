@@ -45,7 +45,7 @@ export default {
     const wrap = document.createElement('div'); wrap.className = 'surface';
     root.append(wrap);
     let cell = 30;
-    const measure = () => { cell = Math.floor(Math.min((root.clientWidth - 30 - 2 * (N - 1)) / N, (root.clientHeight - 170 - 2 * (N - 1)) / N)); wrap.querySelectorAll('.sea-grid').forEach((g) => { g.style.gridTemplateColumns = `repeat(${N}, ${cell}px)`; }); };
+    const measure = () => { cell = Math.floor(Math.min((root.clientWidth - 30 - 2 * (N - 1)) / N, (root.clientHeight - 230 - 2 * (N - 1)) / N)); wrap.querySelectorAll('.sea-grid').forEach((g) => { g.style.gridTemplateColumns = `repeat(${N}, ${cell}px)`; }); };
     const ro = new ResizeObserver(measure); ro.observe(root);
 
     const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
@@ -119,7 +119,21 @@ export default {
       const box = el('div', 'sea');
       const { g, at } = makeGrid((r, c) => fire(p, r, c));
       const fleetRow = el('div', 'fleet');
-      box.append(el('p', 'tip', api.t('sea.fire')), g, fleetRow);
+      const tip = el('p', 'tip', api.t('sea.fire'));
+      // Hold to check your own sea: where your boats are and where they've been hit.
+      const mine = makeGrid(() => {});
+      mine.g.hidden = true;
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        const s = shots[p][r][c];
+        mine.at(r, c).className = 'cell' + (fleets[p].occ[r][c] !== -1 ? ' ship' : '') + (s === 1 ? ' miss' : s === 2 ? ' hit' : '');
+      }
+      const hold = el('button', 'btn ghost peek-fleet', api.t('sea.mine')); hold.type = 'button';
+      const on = (e) => { e.preventDefault(); g.hidden = true; mine.g.hidden = false; tip.textContent = api.t('sea.mineTip'); api.sfx.flip(); };
+      const off = () => { g.hidden = false; mine.g.hidden = true; tip.textContent = api.t('sea.fire'); };
+      hold.addEventListener('pointerdown', on);
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => hold.addEventListener(ev, off));
+      hold.addEventListener('contextmenu', (e) => e.preventDefault());
+      box.append(tip, g, mine.g, fleetRow, hold);
       wrap.append(box);
       view = { at, fleetRow, target };
       paintTarget();

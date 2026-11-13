@@ -1,10 +1,10 @@
 // Offline support, network first: online players always get the newest version,
 // and the last saved copy is used only when there is no connection.
-const CACHE = 'duo-v3';
-const ASSETS = ['./', './index.html', './style.css?v=3', './icon.svg', './manifest.webmanifest',
-  './js/main.js?v=3', './js/icons.js', './js/animals.js', './js/vendor/matter.min.js', './js/i18n.js', './js/audio.js', './js/share.js', './js/faces.js',
-  './js/games/memory.js', './js/games/pool.js', './js/games/guess.js', './js/games/hockey.js', './js/games/four.js',
-  './js/games/dots.js', './js/games/sea.js', './js/games/draw.js', './js/games/stack.js',
+const CACHE = 'duo-v5';
+const ASSETS = ['./', './index.html', './style.css?v=5', './icon.svg', './manifest.webmanifest',
+  './js/main.js?v=5', './js/icons.js', './js/animals.js', './js/vendor/matter.min.js', './js/i18n.js', './js/audio.js', './js/share.js', './js/faces.js',
+  './js/games/memory.js', './js/games/pool.js', './js/games/guess.js', './js/games/reversi.js', './js/games/four.js',
+  './js/games/dots.js', './js/games/sea.js', './js/games/mancala.js', './js/games/stack.js',
   './fonts/bungee-400-latin.woff2', './fonts/bungee-shade-400-latin.woff2', './fonts/yatra-one-400-latin.woff2', './fonts/yatra-one-400-devanagari.woff2',
   './fonts/hind-600-latin.woff2', './fonts/hind-600-devanagari.woff2', './fonts/hind-700-latin.woff2', './fonts/hind-700-devanagari.woff2'];
 

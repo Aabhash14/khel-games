@@ -38,10 +38,6 @@ const S = {
     'guess.left': '{n} left', 'guess.right': 'Yes! It was {name}', 'guess.wrong': 'No! It was {name}',
     'guess.askTitle': 'Does their person have…', 'guess.yourPerson': 'Your person',
 
-    'hockey.name': 'Air Hockey', 'hockey.tag': 'Slap · Score',
-    'hockey.r1': 'Drag your paddle around your half.', 'hockey.r2': 'Smash the puck into their goal.', 'hockey.r3': 'First to 7.',
-    'hockey.goal': 'GOAL!',
-
     'four.name': 'Four in a Row', 'four.tag': 'Drop · Block',
     'four.r1': 'Tap a row to slide your coin in from the left.',
     'four.r2': 'Four in a line, any direction, wins. 10 × 10 board.', 'four.r3': "The board lies sideways so it's fair for both of you.",
@@ -56,13 +52,19 @@ const S = {
     'sea.hide': '{name}, hide your boats', 'sea.away': '{name}, look away!',
     'sea.shuffle': 'Shuffle', 'sea.rotate': 'Tap a boat to turn it', 'sea.ready': 'Hidden. Done',
     'sea.imReady': "I'm ready", 'sea.fire': 'Fire at their sea', 'sea.hit': 'HIT!', 'sea.miss': 'Splash',
-    'sea.sunk': 'Sunk a {n}-boat!', 'sea.theirs': 'Their boats',
+    'sea.sunk': 'Sunk a {n}-boat!', 'sea.theirs': 'Their boats', 'sea.mine': 'Hold: your boats', 'sea.mineTip': 'Your sea',
 
-    'draw.name': 'Quick Draw', 'draw.tag': 'Wait · Snap',
-    'draw.r1': 'Wait for the target picture, then slap your half first.',
-    'draw.r2': 'Slap on a wrong picture and you lose the round.', 'draw.r3': 'First to 4.',
-    'draw.wait': 'Wait for', 'draw.early': 'Too early!', 'draw.fake': 'Wrong one!', 'draw.ms': '{ms} ms',
-    'draw.hold': 'Hands ready…', 'draw.tapHalf': 'Slap here',
+    'mancala.name': 'Mancala', 'mancala.tag': 'Sow · Steal',
+    'mancala.r1': 'Tap one of your pits: its seeds are sown one per pit, round the board.',
+    'mancala.r2': 'Last seed in your store = go again. Last seed in an empty pit of yours steals the pit across.',
+    'mancala.r3': 'Your store is the big pit on your right. Most seeds wins.',
+    'mancala.pick': 'Pick a pit', 'mancala.again': 'AGAIN!', 'mancala.steal': 'STOLEN!',
+
+    'reversi.name': 'Reversi', 'reversi.tag': 'Trap · Flip',
+    'reversi.r1': 'Place a coin so it traps their coins in a straight line.',
+    'reversi.r2': 'Every trapped coin flips to your colour. Dots show where you can go.',
+    'reversi.r3': 'No move? You pass. Most coins at the end wins.',
+    'reversi.pass': '{name} has no move',
 
     'stack.name': 'Animal Stack', 'stack.tag': 'Drop · Balance',
     'stack.r1': 'Drag to place your animal, turn it, then drop it on the tempo roof.',
@@ -108,10 +110,6 @@ const S = {
     'guess.left': '{n} बाँकी', 'guess.right': 'हो! {name} नै थियो', 'guess.wrong': 'होइन! {name} थियो',
     'guess.askTitle': 'उसको मान्छेको…', 'guess.yourPerson': 'तिम्रो मान्छे',
 
-    'hockey.name': 'एयर हक्की', 'hockey.tag': 'हान · गोल',
-    'hockey.r1': 'आफ्नो आधामा प्याडल घुमाऊ।', 'hockey.r2': 'पक अर्काको गोलमा हान।', 'hockey.r3': 'पहिले ७ गोल।',
-    'hockey.goal': 'गोल!',
-
     'four.name': 'चार मिलाऊ', 'four.tag': 'खसाल · छेक',
     'four.r1': 'एउटा लाइन थिच, सिक्का बायाँबाट चिप्लिन्छ।',
     'four.r2': 'जता पनि चार लहरै मिलाए जित। १० × १० बोर्ड।', 'four.r3': 'बोर्ड तेर्सो छ, दुवैलाई बराबर।',
@@ -126,13 +124,19 @@ const S = {
     'sea.hide': '{name}, डुङ्गा लुकाऊ', 'sea.away': '{name}, नहेर!',
     'sea.shuffle': 'फेरबदल', 'sea.rotate': 'घुमाउन डुङ्गा थिच', 'sea.ready': 'लुकाएँ',
     'sea.imReady': 'म तयार', 'sea.fire': 'अर्काको समुद्रमा हान', 'sea.hit': 'लाग्यो!', 'sea.miss': 'छप्लक',
-    'sea.sunk': '{n}-कोठे डुङ्गा डुब्यो!', 'sea.theirs': 'उसका डुङ्गा',
+    'sea.sunk': '{n}-कोठे डुङ्गा डुब्यो!', 'sea.theirs': 'उसका डुङ्गा', 'sea.mine': 'थिचिराख: तिम्रा डुङ्गा', 'sea.mineTip': 'तिम्रो समुद्र',
 
-    'draw.name': 'फटाफट', 'draw.tag': 'पर्ख · झपट',
-    'draw.r1': 'सही चित्र नआउन्जेल पर्ख, अनि पहिले आफ्नो भाग थिच।',
-    'draw.r2': 'गलत चित्रमा थिच्यौ भने त्यो राउन्ड हार।', 'draw.r3': 'पहिले ४ जित्ने।',
-    'draw.wait': 'पर्ख:', 'draw.early': 'धेरै छिटो!', 'draw.fake': 'गलत चित्र!', 'draw.ms': '{ms} मि.से.',
-    'draw.hold': 'हात तयार…', 'draw.tapHalf': 'यहाँ थिच',
+    'mancala.name': 'मन्काला', 'mancala.tag': 'छर · खोस',
+    'mancala.r1': 'आफ्नो एउटा खाल्टो थिच: बिउ एक-एक गर्दै घुमाउँदै छरिन्छ।',
+    'mancala.r2': 'अन्तिम बिउ भकारीमा पर्‍यो भने फेरि पालो। आफ्नो खाली खाल्टोमा पर्‍यो भने अगाडिको खाल्टो खोस।',
+    'mancala.r3': 'तिम्रो भकारी दायाँतिरको ठूलो खाल्टो हो। धेरै बिउ हुने जित्छ।',
+    'mancala.pick': 'खाल्टो छान', 'mancala.again': 'फेरि!', 'mancala.steal': 'खोसियो!',
+
+    'reversi.name': 'पल्टाऊ', 'reversi.tag': 'घेर · पल्टाऊ',
+    'reversi.r1': 'उनका सिक्का सिधा लाइनमा घेरिने गरी आफ्नो सिक्का राख।',
+    'reversi.r2': 'घेरिएका सबै सिक्का तिम्रो रङमा पल्टिन्छन्। थोप्लाले जान मिल्ने ठाउँ देखाउँछ।',
+    'reversi.r3': 'चाल छैन? पालो छुट्छ। अन्त्यमा धेरै सिक्का हुने जित्छ।',
+    'reversi.pass': '{name} को चाल छैन',
 
     'stack.name': 'जनावरको थाक', 'stack.tag': 'खसाल · सन्तुलन',
     'stack.r1': 'जनावरलाई तानेर ठाउँ मिलाऊ, घुमाऊ, अनि टेम्पोको छानामा खसाल।',

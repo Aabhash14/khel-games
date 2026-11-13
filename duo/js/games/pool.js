@@ -67,7 +67,7 @@ export default {
       if (!canShoot()) return;
       try { cv.setPointerCapture(e.pointerId); } catch { /* synthetic or lost pointer */ }
       const [x, y] = toTable(e);
-      if (handBall && Math.hypot(x - cue.x, y - cue.y) < R * 3) aim = { mode: 'move', fx: x, fy: y };
+      if (handBall && Math.hypot(x - cue.x, y - cue.y) < R * 5) aim = { mode: 'move', fx: x, fy: y };
       else aim = { mode: 'aim', fx: x, fy: y };
     });
     cv.addEventListener('pointermove', (e) => {
@@ -76,7 +76,8 @@ export default {
       aim.fx = x; aim.fy = y;
       if (aim.mode === 'move') {
         const nx = Math.min(1 - R, Math.max(R, x)); const ny = Math.min(2 - R, Math.max(R, y));
-        if (balls.every((b) => b === cue || !b.on || Math.hypot(b.x - nx, b.y - ny) > 2 * R)) { cue.x = nx; cue.y = ny; }
+        const clearOfPockets = POCKETS.every(([px, py, pr]) => Math.hypot(nx - px, ny - py) > pr + R * 1.5);
+        if (clearOfPockets && balls.every((b) => b === cue || !b.on || Math.hypot(b.x - nx, b.y - ny) > 2 * R)) { cue.x = nx; cue.y = ny; }
       }
     });
     const release = () => {

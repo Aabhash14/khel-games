@@ -5,8 +5,9 @@ const COLS = 4; const ROWS = 6;
 export default {
   id: 'memory',
   mount(root, api) {
-    const pics = [...PICS].sort(() => Math.random() - 0.5).slice(0, (COLS * ROWS) / 2);
-    const deck = [...pics, ...pics].sort(() => Math.random() - 0.5);
+    const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    const pics = shuffle([...PICS]).slice(0, (COLS * ROWS) / 2);
+    const deck = shuffle([...pics, ...pics]);
     const score = [0, 0];
     let turn = api.first; let open = []; let lock = false; let left = pics.length;
     const timers = [];
