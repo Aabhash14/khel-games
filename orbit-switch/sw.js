@@ -1,6 +1,6 @@
 // Offline support, network first: online players always get the newest version,
 // and the last saved copy is used only when there is no connection.
-const CACHE = 'orbit-switch-v2';
+const CACHE = 'orbit-switch-v3';
 const ASSETS = ['./', './index.html', './style.css', './game.js', './icon.svg', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {

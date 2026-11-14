@@ -9,6 +9,7 @@ Made by **Aabhash Shahi**.
 
 | Game | What you do | Folder |
 | --- | --- | --- |
+| IPL Auction (आईपीएल लिलामी) | Run one franchise through a full IPL mega auction against nine computer owners, then play the whole season ball by ball: live matches, scorecards, points table, Orange and Purple Caps | `ipl-auction` |
 | Duo (जोडी) | Two players, one phone, 7 games: Memory, Pool, Who Is It?, Four in a Row, Dots & Boxes, Sea Battle, Animal Stack | `duo` |
 | Imposter (नक्कली को?) | Pass-the-phone party game: everyone gets the secret word except the imposter. Clue, argue, point on 3 | `imposter` |
 | Tuin Paar (तुइन पार) | River-crossing mind game: get everyone across on the tuin without anyone getting eaten. Daily puzzle, 12 levels, make your own | `tuin-paar` |

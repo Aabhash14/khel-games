@@ -277,8 +277,7 @@ button:disabled { cursor: default; }
 .pair .card3d.mini { --cw: 104px; }
 .match-num { margin: 6px 0 0; text-align: center; font: 400 clamp(84px, 26vw, 112px)/.95 var(--display); }
 .match-head { margin: 6px 0 0; text-align: center; font: 800 19px/1.3 var(--body); }
-.lines { list-style: none; padding: 0; margin: 18px 0 18px; display: grid; gap: 10px; }
-.lines { gap: 12px; }
+.lines { list-style: none; padding: 0; margin: 18px 0 18px; display: grid; gap: 12px; }
 .lines li { padding: 12px 14px; border-radius: 12px; background: var(--paper); color: var(--ink); font-weight: 800; box-shadow: var(--shadow); transform: rotate(-1deg); }
 .lines li:nth-child(even) { transform: rotate(.9deg); }
 

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo. Gold auction paddle on a night stage. -->
+  <defs>
+    <radialGradient id="ia-spot" cx="50%" cy="0%" r="90%"><stop offset="0" stop-color="#f2c14e" stop-opacity=".45"/><stop offset="1" stop-color="#f2c14e" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ia-disc" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#ffe08a"/><stop offset=".5" stop-color="#f2c14e"/><stop offset="1" stop-color="#b9852a"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="#0b0e1c"/>
+  <rect width="512" height="512" fill="url(#ia-spot)"/>
+  <g transform="rotate(-14 256 300)">
+    <rect x="236" y="300" width="40" height="150" rx="14" fill="#6b4226"/>
+    <circle cx="256" cy="210" r="136" fill="url(#ia-disc)"/>
+    <circle cx="256" cy="210" r="136" fill="none" stroke="#241a06" stroke-opacity=".18" stroke-width="10"/>
+    <text x="256" y="250" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="128" fill="#241a06">₹</text>
+  </g>
+</svg>

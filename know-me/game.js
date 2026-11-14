@@ -709,7 +709,8 @@
   window.addEventListener('hashchange', route);
   route();
 
+  // Register after load, so the offline copy (all fonts included) doesn't compete with the first screen's downloads.
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }
 })();

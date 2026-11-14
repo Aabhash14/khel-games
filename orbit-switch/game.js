@@ -24,7 +24,7 @@
 
   // ---------- Layout ----------
   let W = 0, H = 0, CX = 0, CY = 0, R_IN = 0, R_OUT = 0, PR = 0;
-  let bgStars = [];
+  let bgStars = [], glow = null, glowBox = null;
 
   function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -35,6 +35,13 @@
     CX = W / 2; CY = H / 2;
     const m = Math.min(W, H);
     R_OUT = m * 0.38; R_IN = m * 0.25; PR = Math.max(7, m * 0.022);
+    // Center glow, built once per size. It is fully transparent past radius gr, so render()
+    // only fills the part of the screen inside that circle's box (same pixels, far less work).
+    const gr = R_OUT * 1.5, gx = Math.max(0, CX - gr), gy = Math.max(0, CY - gr);
+    glow = ctx.createRadialGradient(CX, CY, 0, CX, CY, gr);
+    glow.addColorStop(0, 'rgba(60,242,255,0.09)');
+    glow.addColorStop(1, 'rgba(60,242,255,0)');
+    glowBox = [gx, gy, Math.min(W, CX + gr) - gx, Math.min(H, CY + gr) - gy];
     bgStars = Array.from({ length: Math.round((W * H) / 9000) }, () => ({
       x: Math.random() * W, y: Math.random() * H, s: Math.random() * 1.3 + 0.3, p: Math.random() * TAU,
     }));
@@ -249,12 +256,9 @@
     }
     ctx.globalAlpha = 1;
 
-    // center glow
-    const glow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R_OUT * 1.5);
-    glow.addColorStop(0, 'rgba(60,242,255,0.09)');
-    glow.addColorStop(1, 'rgba(60,242,255,0)');
+    // center glow (see resize)
     ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(glowBox[0], glowBox[1], glowBox[2], glowBox[3]);
 
     // rings
     for (let i = 0; i < 2; i++) {

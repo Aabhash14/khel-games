@@ -63,10 +63,22 @@ export function camApply(g) {
 export function camOverlay(g) {
   if (Cam.flash > 0) { g.fillStyle = `rgba(${Cam.flashCol},${Cam.flash * 0.6})`; g.fillRect(-50, -50, E.W + 100, E.H + 100); }
 }
-// Vignette: darkens the edges so the eye goes to the middle.
+// Vignette: darkens the edges so the eye goes to the middle. A full-screen radial gradient is one of the
+// slowest things to paint, so it is painted once per size and colour at full strength, then drawn every
+// frame with the strength as its alpha (same pixels).
+const vig = { c: null, key: '' };
 export function vignette(g, strength = 0.55, col = '10,4,8') {
-  const { W, H } = E;
-  const r = g.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.5, Math.max(W, H) * 0.8);
-  r.addColorStop(0, `rgba(${col},0)`); r.addColorStop(1, `rgba(${col},${strength})`);
-  g.fillStyle = r; g.fillRect(0, 0, W, H);
+  const { W, H, dpr } = E, key = col + '|' + W + '|' + H + '|' + dpr;
+  if (vig.key !== key) {
+    const c = vig.c || (vig.c = document.createElement('canvas'));
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    const v = c.getContext('2d'); v.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const r = v.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.5, Math.max(W, H) * 0.8);
+    r.addColorStop(0, `rgba(${col},0)`); r.addColorStop(1, `rgba(${col},1)`);
+    v.fillStyle = r; v.fillRect(0, 0, W, H);
+    vig.key = key;
+  }
+  const a = g.globalAlpha; g.globalAlpha = a * strength;
+  g.drawImage(vig.c, 0, 0, vig.c.width / dpr, vig.c.height / dpr);
+  g.globalAlpha = a;
 }

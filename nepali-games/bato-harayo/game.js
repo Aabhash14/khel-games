@@ -1225,6 +1225,7 @@
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    glows.clear(); vignette = null;
     portrait = H > W * 1.1;
     gy = H * (sidebar ? 0.6 : portrait ? 0.4 : 0.46);
     u = sidebar ? Math.min(H * 0.03, W * 0.05) : Math.min(H * 0.024, W * 0.045);
@@ -1235,11 +1236,41 @@
     fireflies = Array.from({ length: 26 }, () => ({ x: Math.random() * W, y: gy + rand(-H * 0.2, H * 0.1), p: rand(0, TAU), s: rand(0.5, 1.2) }));
   }
 
+  // Big gradient fills are very slow on phones that draw the canvas in software, so gradients
+  // are painted once into small offscreen canvases and copied (whole device pixels, so a copy
+  // is never resampled), with globalAlpha supplying any flicker. Same pixels, much less work.
+  const snap = (v) => Math.round(v * DPR) / DPR;
+  const glows = new Map(); // a few soft glow sprites, by size and colour
   function glow(x, y, r, rgb, a) {
-    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(1, `rgba(${rgb},0)`);
-    ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    const key = `${r}|${rgb}`;
+    let s = glows.get(key);
+    if (!s) {
+      if (glows.size > 8) glows.delete(glows.keys().next().value); // keep memory small
+      const n = Math.ceil(r * 2 * DPR), c = (s = document.createElement('canvas')).getContext('2d');
+      s.width = s.height = n;
+      const g = c.createRadialGradient(n / 2, n / 2, 0, n / 2, n / 2, r * DPR);
+      g.addColorStop(0, `rgba(${rgb},1)`); g.addColorStop(1, `rgba(${rgb},0)`);
+      c.fillStyle = g; c.fillRect(0, 0, n, n);
+      glows.set(key, s);
+    }
+    const ga = ctx.globalAlpha;
+    ctx.globalAlpha = ga * a; ctx.drawImage(s, snap(x - r), snap(y - r), s.width / DPR, s.height / DPR); ctx.globalAlpha = ga;
   }
+  // A vertical gradient is painted into a 1px-wide column (again only when its colours or size
+  // change) and stretched across the rect.
+  function vGrad(slot, x, y, w, h, y0, y1, stops) {
+    const rows = Math.max(1, Math.ceil(h * DPR)), key = `${DPR}|${rows}|${y0 - y}|${y1 - y}|${stops.join()}`;
+    const c = slot.c || (slot.c = document.createElement('canvas'));
+    if (slot.key !== key) {
+      slot.key = key; c.width = 1; c.height = rows;
+      const cx = c.getContext('2d'), g = cx.createLinearGradient(0, (y0 - y) * DPR, 0, (y1 - y) * DPR);
+      for (let i = 0; i < stops.length; i += 2) g.addColorStop(stops[i], stops[i + 1]);
+      cx.fillStyle = g; cx.fillRect(0, 0, 1, rows);
+    }
+    ctx.drawImage(c, 0, 0, 1, h * DPR, x, y, w, h);
+  }
+  const skyCol = {}, groundCol = {}, riverCol = {}, beamCol = {};
+  let vignette = null; // the dark edges: drawn once at full strength, then faded with globalAlpha
   function dot(x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
   function line(x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
   function poly(pts) { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fill(); }
@@ -1256,11 +1287,7 @@
   }
 
   function drawSky(dawnK) {
-    const g = ctx.createLinearGradient(0, 0, 0, gy);
-    g.addColorStop(0, mix('#03050f', '#2b3a6b', dawnK));
-    g.addColorStop(0.7, mix('#0a1130', '#c86b4a', dawnK));
-    g.addColorStop(1, mix('#141c44', '#f2b36b', dawnK));
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, gy + 2);
+    vGrad(skyCol, 0, 0, W, gy + 2, 0, gy, [0, mix('#03050f', '#2b3a6b', dawnK), 0.7, mix('#0a1130', '#c86b4a', dawnK), 1, mix('#141c44', '#f2b36b', dawnK)]);
     ctx.fillStyle = '#ffffff';
     for (const s of stars) { ctx.globalAlpha = (1 - dawnK) * (0.3 + 0.7 * Math.sin(time * 1.3 + s.p) ** 2); ctx.fillRect(s.x, s.y, s.s, s.s); }
     ctx.globalAlpha = 1;
@@ -1275,9 +1302,7 @@
       pts.forEach((y, i) => ctx.lineTo((i / (pts.length - 1)) * W, y));
       ctx.lineTo(W, gy + 2); ctx.closePath(); ctx.fill();
     });
-    const gg = ctx.createLinearGradient(0, gy, 0, H);
-    gg.addColorStop(0, mix('#0b1022', '#3a3a3a', dawnK * 0.6)); gg.addColorStop(1, '#03040a');
-    ctx.fillStyle = gg; ctx.fillRect(0, gy, W, H - gy);
+    vGrad(groundCol, 0, gy, W, H - gy, gy, H, [0, mix('#0b1022', '#3a3a3a', dawnK * 0.6), 1, '#03040a']);
   }
 
   function drawScene(n, dawnK) {
@@ -1292,9 +1317,7 @@
       }
       case 'river': {
         for (let i = 0; i < 10; i++) broad(rnd() * W, gy, u * (5 + rnd() * 3), back, rnd);
-        const g = ctx.createLinearGradient(0, gy + u, 0, H);
-        g.addColorStop(0, mix('#14244a', '#7a6a8a', dawnK)); g.addColorStop(1, '#050a18');
-        ctx.fillStyle = g; ctx.fillRect(0, gy + u, W, H);
+        vGrad(riverCol, 0, gy + u, W, H, gy + u, H, [0, mix('#14244a', '#7a6a8a', dawnK), 1, '#050a18']);
         ctx.strokeStyle = 'rgba(200,215,255,0.25)'; ctx.lineWidth = 1.5;
         for (let i = 0; i < 18; i++) { const y = gy + u * 2 + rnd() * (H - gy), x = ((rnd() * W + time * 30 * (0.5 + rnd())) % (W + 80)) - 40; line(x, y, x + u * (2 + rnd() * 3), y); }
         ctx.fillStyle = front; for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.ellipse(rnd() * W, gy + u * (2 + rnd() * 6), u * (1.5 + rnd() * 2), u * 0.8, 0, 0, TAU); ctx.fill(); }
@@ -1587,15 +1610,21 @@
     ctx.fillStyle = `rgba(0,0,8,${0.22 * (1 - dawnK)})`; ctx.fillRect(0, 0, W, H);
     const lit = state === 'play' && torchOn;
     if (lit) { // torch beam from where you stand
-      const g = ctx.createLinearGradient(0, H, 0, gy - u * 4);
-      g.addColorStop(0, hasTorch ? 'rgba(255,225,160,0.3)' : 'rgba(235,245,255,0.28)'); g.addColorStop(1, 'rgba(255,240,210,0)');
-      ctx.fillStyle = g; poly([[W * 0.42, H], [W * 0.58, H], [W * 0.88, gy - u * 4], [W * 0.12, gy - u * 4]]);
+      const top = gy - u * 4;
+      ctx.save(); ctx.beginPath(); ctx.moveTo(W * 0.42, H); ctx.lineTo(W * 0.58, H); ctx.lineTo(W * 0.88, top); ctx.lineTo(W * 0.12, top); ctx.closePath(); ctx.clip();
+      vGrad(beamCol, 0, top, W, H - top, H, top, [0, hasTorch ? 'rgba(255,225,160,0.3)' : 'rgba(235,245,255,0.28)', 1, 'rgba(255,240,210,0)']);
+      ctx.restore();
     }
     const f = state === 'play' ? fear / 100 * (lit ? 0.7 : 1) : 0.1;
     const pulse = f > 0.6 ? Math.max(0, Math.sin(time * lerp(6, 11, (f - 0.6) / 0.4))) * 0.08 : 0;
-    const v = ctx.createRadialGradient(W / 2, H * 0.4, Math.min(W, H) * 0.2, W / 2, H * 0.4, Math.max(W, H) * 0.75);
-    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, `rgba(0,0,0,${clamp(0.35 + 0.5 * f + pulse, 0, 0.95)})`);
-    ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+    if (!vignette) {
+      const c = (vignette = document.createElement('canvas')).getContext('2d');
+      vignette.width = canvas.width; vignette.height = canvas.height; c.setTransform(DPR, 0, 0, DPR, 0, 0);
+      const v = c.createRadialGradient(W / 2, H * 0.4, Math.min(W, H) * 0.2, W / 2, H * 0.4, Math.max(W, H) * 0.75);
+      v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,1)');
+      c.fillStyle = v; c.fillRect(0, 0, W, H);
+    }
+    ctx.globalAlpha = clamp(0.35 + 0.5 * f + pulse, 0, 0.95); ctx.drawImage(vignette, 0, 0, W, H); ctx.globalAlpha = 1;
   }
 
   // ---------- Input ----------

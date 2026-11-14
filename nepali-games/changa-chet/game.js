@@ -103,7 +103,7 @@
   let W = 0, H = 0, DPR = 1, U = 1, K = 30, VMAX = 400, FIG = 5, roofY = 0, PX = 0;
   const anchor = { x: 0, y: 0 };
   const sky = { x0: 0, x1: 0, y0: 0, y1: 0 };
-  let bgLayer = null, cityLayer = null;
+  let bgLayer = null, cityLayer = null, sunGlow = null;
   let clouds = [], farKites = [], flagLines = [];
 
   // ---------- State ----------
@@ -134,6 +134,7 @@
     sky.y1 = roofY - K * 3;
     buildLayers();
     buildDecor();
+    sunGlow = null;
     if (player) {
       player.x = clamp(player.x, sky.x0, sky.x1); player.y = clamp(player.y, sky.y0, sky.y1);
       player.tx = player.x; player.ty = player.y;
@@ -724,22 +725,41 @@
   }
 
   const tilt = (o) => clamp((o.vx / VMAX) * 0.6, -0.55, 0.55) + Math.sin(time * 3 + o.seed) * 0.05;
+  const snap = (v) => Math.round(v * DPR) / DPR; // whole device pixels: images are copied, not resampled
 
   function strokePts(pts) {
     ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
     for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
   }
 
+  // A full-screen gradient fill is very slow on phones that draw the canvas in software, so a
+  // vertical gradient is painted into a 1px-wide column (again only when its colours or size
+  // change) and stretched across the rect: same pixels, about the cost of a plain copy.
+  function vGrad(slot, x, y, w, h, y0, y1, stops) {
+    const rows = Math.max(1, Math.ceil(h * DPR)), key = `${DPR}|${rows}|${y0 - y}|${y1 - y}|${stops.join()}`;
+    const c = slot.c || (slot.c = document.createElement('canvas'));
+    if (slot.key !== key) {
+      slot.key = key; c.width = 1; c.height = rows;
+      const cx = c.getContext('2d'), g = cx.createLinearGradient(0, (y0 - y) * DPR, 0, (y1 - y) * DPR);
+      for (let i = 0; i < stops.length; i += 2) g.addColorStop(stops[i], stops[i + 1]);
+      cx.fillStyle = g; cx.fillRect(0, 0, 1, rows);
+    }
+    ctx.drawImage(c, 0, 0, 1, h * DPR, x, y, w, h);
+  }
+
+  const skyCol = {};
   function drawSky() {
-    const g = ctx.createLinearGradient(0, 0, 0, roofY);
-    g.addColorStop(0, mix('#3a8ee0', '#2b3d8c', tod));
-    g.addColorStop(0.6, mix('#8ccaf6', '#e9875c', tod));
-    g.addColorStop(1, mix('#dff3ff', '#ffcf8f', tod));
-    ctx.fillStyle = g; ctx.fillRect(-20, -20, W + 40, H + 40);
+    vGrad(skyCol, -20, -20, W + 40, H + 40, 0, roofY,
+      [0, mix('#3a8ee0', '#2b3d8c', tod), 0.6, mix('#8ccaf6', '#e9875c', tod), 1, mix('#dff3ff', '#ffcf8f', tod)]);
     const sx = W * 0.8, sy = lerp(H * 0.16, roofY - H * 0.2, tod), sr = U * 4.5;
-    const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr * 5);
-    glow.addColorStop(0, 'rgba(255,236,170,0.55)'); glow.addColorStop(1, 'rgba(255,236,170,0)');
-    ctx.fillStyle = glow; ctx.fillRect(sx - sr * 5, sy - sr * 5, sr * 10, sr * 10);
+    if (!sunGlow) { // the halo never changes, so it is painted once and copied each frame
+      const n = Math.ceil(sr * 10 * DPR), x = (sunGlow = document.createElement('canvas')).getContext('2d');
+      sunGlow.width = sunGlow.height = n;
+      const glow = x.createRadialGradient(n / 2, n / 2, 0, n / 2, n / 2, sr * 5 * DPR);
+      glow.addColorStop(0, 'rgba(255,236,170,0.55)'); glow.addColorStop(1, 'rgba(255,236,170,0)');
+      x.fillStyle = glow; x.fillRect(0, 0, n, n);
+    }
+    ctx.drawImage(sunGlow, snap(sx - sr * 5), snap(sy - sr * 5), sunGlow.width / DPR, sunGlow.height / DPR);
     ctx.fillStyle = mix('#fff6c8', '#ff9a4d', tod); ctx.beginPath(); ctx.arc(sx, sy, sr, 0, TAU); ctx.fill();
     ctx.fillStyle = `rgba(255,255,255,${0.85 - 0.3 * tod})`;
     for (const c of clouds) {
@@ -925,7 +945,7 @@
 
   function render() {
     ctx.save();
-    if (shake > 0) ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+    if (shake > 0) ctx.translate(snap((Math.random() - 0.5) * shake), snap((Math.random() - 0.5) * shake));
     drawSky();
     ctx.drawImage(bgLayer, 0, 0, W, H);
     drawFarKites();

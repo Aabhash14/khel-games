@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>IPL Auction · आईपीएल लिलामी</title>
+  <meta name="description" content="Run one IPL franchise in a full mega auction against nine computer teams. Keep up to six, bid with real purse and RTM rules, then play the season. English and Nepali.">
+  <meta name="theme-color" content="#0b0e1c">
+  <meta property="og:title" content="IPL Auction · आईपीएल लिलामी">
+  <meta property="og:description" content="₹120 Cr. Nine rival owners. One paddle. Build the squad that wins the IPL.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/anton-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/mukta-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=6">
+</head>
+<body>
+  <div class="glow" aria-hidden="true"><b id="heat"><i></i></b></div>
+  <div class="app" id="app">
+    <header class="bar">
+      <a class="home-link" id="homeLink" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="back">Khel</span></a>
+      <div class="bar-mid" id="barMid"></div>
+      <div class="bar-r">
+        <div class="lang" role="group" aria-label="Language · भाषा">
+          <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+        </div>
+        <button type="button" class="icon-btn" id="mute" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="sr-only" data-t="sound">Sound</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="stage">
+
+      <!-- HOME -->
+      <section class="screen on" data-screen="home" aria-labelledby="title">
+        <div class="hero">
+          <p class="kicker" data-t="kicker">Mega auction · 2027</p>
+          <h1 class="title" id="title"><span class="title-en">IPL<br>AUCTION</span><span class="title-ne" lang="ne">आईपीएल लिलामी</span></h1>
+          <div class="hero-paddle" aria-hidden="true"><span class="hp-disc"><span class="hp-num">₹120</span><span class="hp-cr">CR</span></span><span class="hp-handle"></span></div>
+          <p class="pitch" data-t="pitch"></p>
+        </div>
+        <div class="menu">
+          <button type="button" class="big-btn gold" id="goStart">
+            <span class="bb-main" data-t="start">Start the mega auction</span>
+            <span class="bb-sub" data-t="startSub"></span>
+          </button>
+          <button type="button" class="big-btn" id="goResume" hidden>
+            <span class="bb-main" data-t="cont">Continue</span>
+            <span class="bb-sub" id="resumeSub"></span>
+          </button>
+        </div>
+        <section class="how" aria-labelledby="howH">
+          <h2 id="howH" data-t="howTitle">How it works</h2>
+          <ol>
+            <li data-t="how1"></li>
+            <li data-t="how2"></li>
+            <li data-t="how3"></li>
+            <li data-t="how4"></li>
+          </ol>
+        </section>
+      </section>
+
+      <!-- AUCTION FORMAT -->
+      <section class="screen" data-screen="mode" aria-labelledby="modeH">
+        <header class="scr-head">
+          <h2 id="modeH" data-t="modeTitle">How do you start?</h2>
+          <p data-t="modeSub"></p>
+        </header>
+        <div class="mode-list">
+          <button type="button" class="mode-card" data-mode="fresh">
+            <span class="mc-k" data-t="modeFresh">Full new team</span>
+            <span class="mc-d" data-t="modeFreshSub"></span>
+          </button>
+          <button type="button" class="mode-card" data-mode="rtm">
+            <span class="mc-k" data-t="modeRtm">Retain + RTM</span>
+            <span class="mc-d" data-t="modeRtmSub"></span>
+          </button>
+        </div>
+      </section>
+
+      <!-- PICK FRANCHISE -->
+      <section class="screen" data-screen="pick" aria-labelledby="pickH">
+        <header class="scr-head">
+          <h2 id="pickH" data-t="pickTitle">Pick your franchise</h2>
+          <p data-t="pickSub"></p>
+        </header>
+        <ul class="team-grid" id="teamGrid"></ul>
+      </section>
+
+      <!-- RETENTION -->
+      <section class="screen" data-screen="retain" aria-labelledby="retH">
+        <header class="scr-head team-head" id="retHead">
+          <h2 id="retH" data-t="retTitle">Who do you keep?</h2>
+          <p data-t="retSub"></p>
+        </header>
+        <div class="ret-meter" id="retMeter" aria-live="polite"></div>
+        <ul class="ret-list" id="retList"></ul>
+        <div class="dock"><button type="button" class="big-btn gold" id="goAuction"><span class="bb-main" data-t="toAuction">Go to the auction</span></button></div>
+      </section>
+
+      <!-- AUCTION FLOOR -->
+      <section class="screen" data-screen="auction" aria-label="Auction">
+        <div class="board" id="board" role="list"></div>
+        <div class="floor">
+          <div class="set-row">
+            <span class="set-name" id="setName"></span>
+            <button type="button" class="link-btn" id="openUpcoming"><span data-t="upcoming">Coming up</span> ›</button>
+          </div>
+          <article class="card" id="card" aria-live="polite">
+            <div class="card-top">
+              <span class="avatar" id="cAvatar"></span>
+              <div class="card-id">
+                <h2 class="p-name" id="cName"></h2>
+                <p class="p-meta" id="cMeta"></p>
+              </div>
+              <button type="button" class="star-btn" id="cStar" aria-pressed="false"><span aria-hidden="true">★</span><span class="sr-only">Star</span></button>
+            </div>
+            <div class="card-facts">
+              <div class="fact"><span class="f-k" data-t="rating">Rating</span><span class="f-v" id="cRating"></span><span class="rbar"><i id="cRbar"></i></span></div>
+              <div class="fact"><span class="f-k" data-t="base">Base</span><span class="f-v" id="cBase"></span></div>
+              <div class="fact"><span class="f-k" data-t="lastTeam">IPL 2026</span><span class="f-v" id="cLast"></span></div>
+            </div>
+            <p class="rtm-note" id="cRtm" hidden></p>
+            <p class="needs" id="cNeeds"></p>
+            <div class="stamp" id="stamp" hidden></div>
+          </article>
+          <div class="bid-zone">
+            <p class="bid-k" id="bidK" data-t="current">Current bid</p>
+            <p class="bid-v" id="bidV">—</p>
+            <p class="bidder" id="bidder"></p>
+            <p class="comm" id="comm" aria-live="polite"></p>
+            <div class="hammer" aria-hidden="true"><i id="hammerBar"></i></div>
+            <p class="call" id="call" aria-live="assertive"></p>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="side-btns">
+            <button type="button" class="ghost-btn" id="btnSkip"><span data-t="skip">Skip player</span></button>
+            <button type="button" class="ghost-btn" id="btnSet"><span data-t="nextSet">Skip set</span><small data-t="nextSetSub">stops at ★</small></button>
+          </div>
+          <button type="button" class="paddle" id="paddle">
+            <span class="pd-disc"><span class="pd-k" id="pdK">BID</span><span class="pd-v" id="pdV"></span></span>
+            <span class="pd-handle" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="jump-btn" id="btnJump"><span data-t="jumpBtn">JUMP</span> <b id="jumpV"></b></button>
+          <p class="pd-note" id="pdNote"></p>
+          <button type="button" class="my-strip" id="myStrip"></button>
+          <p class="ticker" id="ticker" aria-live="off"></p>
+        </div>
+      </section>
+
+      <!-- FILL SQUAD -->
+      <section class="screen" data-screen="fill" aria-labelledby="fillH">
+        <header class="scr-head">
+          <h2 id="fillH"></h2>
+          <p data-t="fillSub"></p>
+        </header>
+        <ul class="ret-list" id="fillList"></ul>
+        <div class="dock"><button type="button" class="big-btn gold" id="fillDone"><span class="bb-main" data-t="fillDone">Done</span></button></div>
+      </section>
+
+      <!-- AUCTION RESULT -->
+      <section class="screen" data-screen="done" aria-labelledby="doneH">
+        <header class="scr-head team-head" id="doneHead">
+          <p class="kicker" data-t="doneTitle">Auction over</p>
+          <h2 id="doneH"></h2>
+        </header>
+        <div class="grade-row" id="gradeRow"></div>
+        <div class="hl-row" id="hlRow"></div>
+        <h3 class="sub-h" data-t="bestXI">Best XI</h3>
+        <ol class="xi" id="xiList"></ol>
+        <h3 class="sub-h" data-t="allTeams">All ten squads</h3>
+        <ul class="grades" id="gradesList"></ul>
+        <div class="dock col">
+          <button type="button" class="big-btn gold" id="goSeason"><span class="bb-main" data-t="startSeason">Start IPL 2027</span></button>
+          <div class="dock-row">
+            <button type="button" class="ghost-btn" id="shareDone" data-t="share">Share</button>
+            <button type="button" class="ghost-btn" id="againDone" data-t="again">New auction</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEASON HUB -->
+      <section class="screen" data-screen="hub" aria-labelledby="hubH">
+        <header class="scr-head">
+          <p class="kicker" id="hubKicker"></p>
+          <h2 id="hubH"></h2>
+          <p id="hubVerdict" class="verdict"></p>
+        </header>
+        <div class="champ" id="hubChamp" hidden></div>
+        <article class="fixture" id="nextFx"></article>
+        <div class="hub-btns" id="hubBtns"></div>
+        <div class="tabs" role="tablist" id="hubTabs">
+          <button type="button" role="tab" data-tab="table" aria-selected="true" data-t="tabTable">Table</button>
+          <button type="button" role="tab" data-tab="caps" aria-selected="false" data-t="tabCaps">Caps</button>
+          <button type="button" role="tab" data-tab="stats" aria-selected="false" data-t="tabStats">Stats</button>
+          <button type="button" role="tab" data-tab="results" aria-selected="false" data-t="tabResults">Results</button>
+          <button type="button" role="tab" data-tab="mine" aria-selected="false" data-t="tabMine">Mine</button>
+        </div>
+        <div class="tab-body" id="hubBody" role="tabpanel"></div>
+        <div class="dock col" id="hubEnd" hidden>
+          <button type="button" class="big-btn gold" id="hubShare"><span class="bb-main" data-t="share">Share</span></button>
+          <button type="button" class="ghost-btn" id="hubAgain" data-t="again">New auction</button>
+        </div>
+      </section>
+
+      <!-- PRE-MATCH: XI + toss -->
+      <section class="screen" data-screen="prematch" aria-labelledby="preH">
+        <header class="scr-head">
+          <p class="kicker" id="preKicker"></p>
+          <h2 id="preH"></h2>
+          <p id="preVenue"></p>
+        </header>
+        <div class="toss" id="toss"></div>
+        <h3 class="sub-h"><span data-t="pickXI">Your XI</span> <small id="xiCount"></small></h3>
+        <ul class="ret-list" id="xiPick"></ul>
+        <div class="dock col"><button type="button" class="big-btn gold" id="startMatch" disabled><span class="bb-main" data-t="startMatch">Start match</span></button></div>
+      </section>
+
+      <!-- LIVE MATCH -->
+      <section class="screen" data-screen="live" aria-label="Live match">
+        <div class="bug" id="bug"></div>
+        <p class="chase" id="chaseLine"></p>
+        <div class="crease">
+          <div class="batters" id="batters"></div>
+          <div class="bowler-row" id="bowlerRow"></div>
+          <div class="this-over" id="thisOver" aria-label="This over"></div>
+        </div>
+        <div class="flash" id="flash" aria-live="assertive"></div>
+        <ol class="feed" id="feed" aria-live="polite"></ol>
+        <div class="live-ctl" id="liveCtl">
+          <div class="intent" id="intentBox" hidden>
+            <p class="ctl-k" data-t="intent">Batting intent</p>
+            <div class="seg" role="group">
+              <button type="button" data-intent="-1" data-t="steady">Steady</button>
+              <button type="button" data-intent="auto" aria-pressed="true" data-t="balanced">Balanced</button>
+              <button type="button" data-intent="1" data-t="attack">Attack</button>
+            </div>
+          </div>
+          <div class="bowl-pick" id="bowlBox" hidden>
+            <p class="ctl-k"><span data-t="nextOver">Next over</span> <small id="bowlNote"></small></p>
+            <div class="chips" id="bowlChips"></div>
+          </div>
+          <div class="speed">
+            <button type="button" class="ghost-btn" id="lvPause" aria-pressed="false">⏸</button>
+            <button type="button" class="ghost-btn" id="lvSpeed">1×</button>
+            <button type="button" class="ghost-btn" id="lvOver" data-t="skipOver">Skip over</button>
+            <button type="button" class="ghost-btn" id="lvEnd" data-t="simEnd">Sim to end</button>
+          </div>
+        </div>
+        <div class="break" id="breakBox" hidden></div>
+      </section>
+
+      <!-- SCORECARD -->
+      <section class="screen" data-screen="card" aria-labelledby="cardH">
+        <header class="scr-head">
+          <p class="kicker" id="cardKicker"></p>
+          <h2 id="cardH"></h2>
+          <p id="cardRes" class="verdict"></p>
+          <p id="cardPotm" class="potm"></p>
+        </header>
+        <div class="tabs" role="tablist" id="cardTabs"></div>
+        <div id="cardBody"></div>
+        <div class="dock col"><button type="button" class="big-btn gold" id="cardBack"><span class="bb-main" data-t="continue">Continue</span></button></div>
+      </section>
+    </main>
+
+    <!-- Bottom sheet (squads, coming up) -->
+    <div class="sheet-back" id="sheetBack" hidden></div>
+    <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetH" hidden>
+      <header class="sheet-head"><h2 id="sheetH"></h2><button type="button" class="icon-btn" id="sheetClose"><span aria-hidden="true">✕</span><span class="sr-only" data-t="close">Close</span></button></header>
+      <div class="sheet-body" id="sheetBody"></div>
+    </section>
+
+    <!-- Modal (RTM) -->
+    <div class="modal-back" id="modalBack" hidden>
+      <section class="modal" id="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalH">
+        <h2 id="modalH"></h2>
+        <p id="modalP"></p>
+        <div class="stepper" id="stepper" hidden>
+          <button type="button" class="icon-btn" id="stepDown" aria-label="−">−</button>
+          <span id="stepV"></span>
+          <button type="button" class="icon-btn" id="stepUp" aria-label="+">+</button>
+        </div>
+        <div class="modal-btns" id="modalBtns"></div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" hidden></div>
+  </div>
+  <script src="js/data.js?v=6" defer></script>
+  <script src="js/rules.js?v=6" defer></script>
+  <script src="js/engine.js?v=6" defer></script>
+  <script src="js/season.js?v=6" defer></script>
+  <script src="js/i18n.js?v=6" defer></script>
+  <script src="js/audio.js?v=6" defer></script>
+  <script src="js/match.js?v=6" defer></script>
+  <script src="js/league.js?v=6" defer></script>
+  <script src="js/share.js?v=6" defer></script>
+  <script src="js/main.js?v=6" defer></script>
+  <script src="js/tour.js?v=6" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  </script>
+</body>
+</html>

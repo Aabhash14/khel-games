@@ -119,8 +119,11 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
   transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 .dice svg { width: 22px; height: 22px; fill: currentColor; transition: transform .5s var(--ease); }
-.dice:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgb(0 0 0 / .32); }
-.dice:hover svg, .dice.rolling svg { transform: rotate(180deg); }
+@media (hover: hover) {
+  .dice:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgb(0 0 0 / .32); }
+  .dice:hover svg { transform: rotate(180deg); }
+}
+.dice.rolling svg { transform: rotate(180deg); }
 
 /* the painted tin signboard */
 .sign {
@@ -195,14 +198,30 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
   text-shadow: 0 2px 0 rgba(0,0,0,.45);
   /* painted festival ribbon: red cloth, a slow sheen, stitched edge */
   background:
-    linear-gradient(100deg, transparent 38%, rgba(255,243,207,.22) 50%, transparent 62%) 0 0 / 250% 100% no-repeat,
     repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 2px, transparent 2px 5px),
     #b3180f;
   outline: 2px dashed rgba(255,243,207,.55);
   outline-offset: -5px;
   box-shadow: 0 5px 0 #6b0f0a, 0 10px 14px rgba(0,0,0,.35);
   rotate: -2deg;
+}
+.byline > span { position: relative; }   /* text paints above the sheen */
+/* the sheen is its own layer that slides across, so it never repaints the ribbon */
+.byline .sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.byline .sheen::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 100%;
+  background: linear-gradient(100deg, transparent 38%, rgba(255,243,207,.22) 50%, transparent 62%);
+  transform: translateX(-100%);
   animation: sheen 5s ease-in-out infinite;
+  will-change: transform;
 }
 .byline::before, .byline::after {   /* folded swallowtail ends */
   content: '';
@@ -216,8 +235,8 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
 .byline::before { left: -.8em; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 40% 50%); }
 .byline::after { right: -.8em; clip-path: polygon(0 0, 100% 0, 60% 50%, 100% 100%, 0 100%); }
 @keyframes sheen {
-  0%, 40% { background-position: 130% 0, 0 0, 0 0; }
-  80%, 100% { background-position: -30% 0, 0 0, 0 0; }
+  0%, 40% { transform: translateX(-100%); }
+  80%, 100% { transform: translateX(100%); }
 }
 .byline .by { font-size: .6em; opacity: .85; margin-right: .15em; }
 .byline .wave span { display: inline-block; animation: wave 2.4s ease-in-out infinite; animation-delay: calc(var(--i) * .09s); }
@@ -225,11 +244,11 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
 .byline [lang="ne"] { display: inline-block; font-family: 'Mukta', sans-serif; font-weight: 800; animation: bob 2.4s ease-in-out infinite; }
 @keyframes wave {
   0%, 60%, 100% { transform: translateY(0) rotate(0); }
-  30% { transform: translateY(-.28em) rotate(-5deg); color: #f2b51d; }
+  30% { transform: translateY(-.28em) rotate(-5deg); }
 }
 @keyframes bob {
-  0%, 100% { transform: translateY(0); color: #fff3cf; }
-  50% { transform: translateY(-.12em); color: #f2b51d; }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-.12em); }
 }
 
 /* ---------- shelves ---------- */
@@ -252,6 +271,10 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
   scrollbar-width: thin;
   scrollbar-color: var(--wood-hi) transparent;
   -webkit-overflow-scrolling: touch;
+  /* shelves below the fold skip rendering until scrolled near: 3D boxes are costly to
+     lay out and paint on cheap phones. The scroller already clips, so nothing looks different. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 340px;
 }
 .scroller::-webkit-scrollbar { height: 6px; }
 .scroller::-webkit-scrollbar-thumb { background: var(--wood-hi); border-radius: 3px; }
@@ -333,8 +356,10 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
   transform: rotateY(var(--rest, 0deg));
   transition: transform .8s var(--ease);
 }
-.box:not(.is-open):hover .box-3d { transform: translateY(-10px) translateZ(14px) rotateY(calc(var(--rest, 0deg) * 1.15)); }
-.box:not(.is-open):hover::after { transform: scale(.86); opacity: .7; }
+@media (hover: hover) {
+  .box:not(.is-open):hover .box-3d { transform: translateY(-10px) translateZ(14px) rotateY(calc(var(--rest, 0deg) * 1.15)); }
+  .box:not(.is-open):hover::after { transform: scale(.86); opacity: .7; }
+}
 .box.is-open .box-3d { transform: translateY(-22px) translateZ(30px) rotateY(180deg); animation: pull-turn .95s var(--ease) both; }
 @keyframes pull-turn {
   0%   { transform: translateY(0) translateZ(0) rotateY(var(--rest, 0deg)); }
@@ -519,7 +544,7 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
 }
 .play span[lang="ne"] { font-family: var(--body); font-weight: 800; letter-spacing: 0; }
 .play svg { width: 1em; height: 1em; fill: var(--accent); }
-.play:hover { transform: translateY(-1px); box-shadow: 0 4px 3px color-mix(in srgb, var(--bg) 55%, #000), 0 8px 16px rgb(0 0 0 / .28); }
+@media (hover: hover) { .play:hover { transform: translateY(-1px); box-shadow: 0 4px 3px color-mix(in srgb, var(--bg) 55%, #000), 0 8px 16px rgb(0 0 0 / .28); } }
 .play:active { transform: translateY(2px); box-shadow: 0 1px 2px color-mix(in srgb, var(--bg) 55%, #000), 0 2px 4px rgb(0 0 0 / .25); }
 #orbit-switch .play { background: var(--accent); color: var(--bg); box-shadow: 0 3px 2px #8e1a54, 0 6px 12px rgb(0 0 0 / .3); }
 #orbit-switch .play svg { fill: var(--bg); }
@@ -646,5 +671,5 @@ html[lang="ne"] [data-l="en"] { display: none !important; }
   .box-3d, .box::after, .dice, .dice svg, .play { transition: none !important; }
   .box:not(.is-open):hover .box-3d { transform: rotateY(var(--rest, 0deg)); }
   .box.is-open .box-3d { transform: rotateY(180deg); animation: none; }
-  .byline, .byline .wave span, .byline [lang="ne"] { animation: none !important; }
+  .byline .sheen::before, .byline .wave span, .byline [lang="ne"] { animation: none !important; }
 }

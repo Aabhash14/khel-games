@@ -1,0 +1,14 @@
+{
+  "name": "IPL Auction · आईपीएल लिलामी",
+  "short_name": "IPL Auction",
+  "description": "Run one IPL franchise in a full mega auction against nine computer teams, then play the season.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0e1c",
+  "theme_color": "#0b0e1c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

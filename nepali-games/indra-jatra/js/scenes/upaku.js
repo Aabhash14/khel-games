@@ -22,6 +22,7 @@ function layout() {
   const { W, H } = E;
   lay.S = Math.max(0.7, Math.min(1.6, Math.min(W / 420, H / 760)));
   lay.tx = W / 2; lay.ty = Math.min(H * 0.8, H - 150 * lay.S); // the thali
+  figures.clear();
 }
 
 export const upakuScene = {
@@ -141,6 +142,29 @@ function silhouette(g, x, top, h, kind, sway, rim, tm) {
   // a person seen from behind, slightly out of focus like a foreground figure in a film
   const sw = Math.sin(sway) * h * 0.012, X = x + sw;
   const r = h * 0.075, hy = top + r, nk = hy + r * 0.95, sh = nk + h * 0.07;
+  // the blurred figure only moves, so it is painted once into a sprite (a canvas blur every frame is very slow)
+  const f = figure(kind, h, rim);
+  g.drawImage(f.c, X - f.ox, top - f.oy, f.c.width / E.dpr, f.c.height / E.dpr);
+  if (kind === 'aama') { // her own lamp, held in front of her: we see its glow around her
+    const lx = X + rim * h * 0.16, ly = sh + h * 0.12, fl = 1 + Math.sin(tm * 11) * 0.08;
+    const gl = g.createRadialGradient(lx, ly, 0, lx, ly, h * 0.45 * fl);
+    gl.addColorStop(0, 'rgba(255,190,100,.42)'); gl.addColorStop(1, 'rgba(255,150,60,0)');
+    g.globalCompositeOperation = 'lighter'; g.fillStyle = gl; g.fillRect(lx - h * 0.5, ly - h * 0.5, h, h); g.globalCompositeOperation = 'source-over';
+  }
+}
+const figures = new Map();
+function figure(kind, h, rim) {
+  const key = kind + ':' + h + ':' + rim + ':' + E.dpr;
+  let f = figures.get(key);
+  if (f) return f;
+  const blur = Math.max(1.5, h * 0.012), pad = Math.ceil(blur * 4) + 4;
+  const ox = Math.ceil(h * 0.21 + 2.2) + pad, oy = pad;
+  const c = document.createElement('canvas');
+  c.width = Math.ceil(ox * 2 * E.dpr); c.height = Math.ceil((h * 1.6 + pad * 2) * E.dpr);
+  const g = c.getContext('2d');
+  g.setTransform(E.dpr, 0, 0, E.dpr, 0, 0);
+  const X = ox, top = oy;
+  const r = h * 0.075, hy = top + r, nk = hy + r * 0.95, sh = nk + h * 0.07;
   const path = (dx) => {
     const Q = X + dx;
     g.beginPath();
@@ -156,8 +180,7 @@ function silhouette(g, x, top, h, kind, sway, rim, tm) {
     g.lineTo(Q + r * 0.42, nk - r * 0.2);
     g.closePath();
   };
-  g.save();
-  if ('filter' in g) g.filter = `blur(${Math.max(1.5, h * 0.012).toFixed(1)}px)`;
+  if ('filter' in g) g.filter = `blur(${blur.toFixed(1)}px)`;
   path(rim * 2.2); g.fillStyle = 'rgba(255,178,100,.55)'; g.fill();
   path(0);
   const body = g.createLinearGradient(0, top, 0, top + h * 1.4);
@@ -167,13 +190,9 @@ function silhouette(g, x, top, h, kind, sway, rim, tm) {
     g.beginPath(); g.moveTo(X - h * 0.19, sh + h * 0.2); g.quadraticCurveTo(X, sh + h * 0.27, X + h * 0.19, sh + h * 0.17);
     g.strokeStyle = 'rgba(165,34,26,.85)'; g.lineWidth = h * 0.02; g.stroke(); // red border of her haku patasi
   }
-  g.restore();
-  if (kind === 'aama') { // her own lamp, held in front of her: we see its glow around her
-    const lx = X + rim * h * 0.16, ly = sh + h * 0.12, fl = 1 + Math.sin(tm * 11) * 0.08;
-    const gl = g.createRadialGradient(lx, ly, 0, lx, ly, h * 0.45 * fl);
-    gl.addColorStop(0, 'rgba(255,190,100,.42)'); gl.addColorStop(1, 'rgba(255,150,60,0)');
-    g.globalCompositeOperation = 'lighter'; g.fillStyle = gl; g.fillRect(lx - h * 0.5, ly - h * 0.5, h, h); g.globalCompositeOperation = 'source-over';
-  }
+  f = { c, ox, oy };
+  figures.set(key, f);
+  return f;
 }
 function thali(g, x, y, s, tm, bob) {
   const yy = y + Math.sin(bob * 7) * 3 * s;

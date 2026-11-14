@@ -109,8 +109,26 @@
     dice.classList.add('rolling');
     setTimeout(() => dice.classList.remove('rolling'), 500);
     pick.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'center', inline: 'center' });
-    setTimeout(() => open(pick), reduceMotion.matches ? 0 : 550);
+    if (reduceMotion.matches) { open(pick); return; }
+    afterScroll(() => open(pick));
   });
+
+  // Turn the box over once scrolling has settled (page and shelf), not at a fixed guess,
+  // so the flip never starts while the box is still sliding into view.
+  function afterScroll(fn) {
+    let quiet, done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(quiet); clearTimeout(cap);
+      document.removeEventListener('scroll', onScroll, true);
+      fn();
+    };
+    const onScroll = () => { clearTimeout(quiet); quiet = setTimeout(finish, 90); };
+    document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    quiet = setTimeout(finish, 140);        // already in view: nothing scrolls
+    const cap = setTimeout(finish, 1200);   // never wait longer than this
+  }
 
   /* ---- a shared link like /#mol-molai opens that box ---- */
   const fromHash = location.hash && document.getElementById(location.hash.slice(1));

@@ -1057,7 +1057,6 @@
     ui.rep.innerHTML = Array.from({ length: 6 }, (_, i) => `<i class="${i < filled ? (G.rep < 0 ? 'bad' : 'on') : ''}"></i>`).join('');
     ui.rep.setAttribute('aria-label', `${t('rep')}: ${G.rep}`);
   }
-  function flashMoney() { /* the money figure rolls on its own when it changes */ }
 
   // ---------- Flow ----------
   function coach(when) {
@@ -1241,7 +1240,6 @@
     audio.deal();
     if (it === 'goat') audio.bleat();
     vibrate(30);
-    flashMoney();
     fx.push({ kind: 'stamp', t: 0 });
     curItem = null;
     view = 'shop';
@@ -1684,13 +1682,28 @@
     return [top, bot];
   }
 
+  // The scene height eases toward the top of the panel; VHt is where it is heading.
+  let VHt = 0;
+  function settleVH(dt) { VHt = targetVH(); VHs = lerp(VHs || H, VHt, Math.min(1, dt * 8)); }
+
+  // In play the patro band (top) and the panel (bottom) are opaque, so only the strip of canvas between them is drawn.
+  // The clip needs save/restore; the pen (colours, line width and caps, font) is carried over to the next frame
+  // as it always was, so every frame draws exactly as before.
+  const PEN = ['fillStyle', 'strokeStyle', 'lineWidth', 'lineCap', 'lineJoin', 'miterLimit', 'font', 'textAlign', 'textBaseline', 'globalAlpha'];
   function render(dt) {
-    VHs = lerp(VHs || H, targetVH(), Math.min(1, dt * 8));
+    settleVH(dt);
+    const top = state === 'play' ? Math.max(0, Math.floor(hudBottom() * DPR) - 2) / DPR : 0;
+    const bot = state === 'play' && !sidebar ? Math.min(H, (Math.ceil(ui.panel.getBoundingClientRect().top * DPR) + 2) / DPR) : H;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, top, W, bot - top); ctx.clip();
     ctx.clearRect(0, 0, W, H);
     if (state === 'play' && (view === 'map' || mapWalk)) drawFullMap();
     else if (state === 'play' && (view === 'shop' || view === 'haggle') && curShop && !walkAnim) drawShopClose(dt);
     else drawLane(dt);
     drawFx(dt);
+    const pen = PEN.map((k) => ctx[k]);
+    ctx.restore();
+    PEN.forEach((k, i) => { ctx[k] = pen[i]; });
   }
 
   // ----- Asan bazaar: the lane, the Annapurna temple at the chowk, the crowd -----
@@ -1721,14 +1734,14 @@
     };
   }
 
-  // Each house is drawn once into its own small canvas, then copied every frame.
+  // Each house is drawn once into its own small canvas, then copied every frame (scaled to the street's current size).
   const facadeCache = new Map();
-  function facade(i, shop) {
-    const key = `${i}|${shop ? shop.id : ''}|${Math.round(SW / 6)}|${Math.round(gy / 6)}|${lang}|${DPR}`;
+  function facade(i, shop, w = SW, gq = gy) {
+    const key = `${i}|${shop ? shop.id : ''}|${Math.round(w / 6)}|${Math.round(gq / 6)}|${lang}|${DPR}`;
     let f = facadeCache.get(key);
     if (f) return f;
     if (facadeCache.size > 110) facadeCache.clear();
-    const w = SW, gq = gy, pad = Math.ceil(SW * 0.1);
+    const pad = Math.ceil(w * 0.1);
     const c = document.createElement('canvas');
     c.width = Math.ceil((w + pad * 2) * DPR); c.height = Math.ceil((gq + 2) * DPR);
     const o = c.getContext('2d');
@@ -2005,8 +2018,7 @@
 
   // Annapurna temple at Asan chowk: three gilded roofs, bells, the long golden banner
   let templeCache = null, templeKey = '';
-  function temple() {
-    const T = Math.min(SW * 1.05, gy * 0.6);
+  function temple(T) {
     const key = `${Math.round(T / 4)}|${DPR}`;
     if (templeKey === key) return templeCache;
     const wd = T * 2.2, ht = T * 1.45;
@@ -2177,6 +2189,8 @@
     const vh = VHs;
     gy = vh * 0.82;
     SW = clamp(vh * 0.62, W / 3.6, W / 1.6);
+    // Houses and the temple are cached at the size the street is easing toward, so they are not redrawn on every step of the ease.
+    const fw = clamp(VHt * 0.62, W / 3.6, W / 1.6), fg = VHt * 0.82;
     const LT = laneTole(), TT = TOLE[LT], n = laneN(), base = TT.idx * 40, isAsan = LT === 'asan', total = n * SW;
     let target;
     if (state === 'play' && G) target = playerWX() - W / 2;
@@ -2200,7 +2214,7 @@
     // a second row of houses behind, hazy: seen over low rooftops and across the chowk
     const bz = 0.78, bw = SW * bz, bcam = camX * 0.88;
     for (let i = Math.floor(bcam / bw) - 1; i < Math.floor(bcam / bw) + W / bw + 2; i++) {
-      const f = facade(500 + i, null), sx = (SW / f.w) * bz, sy = (gy / f.gq) * bz, x = i * bw - bcam;
+      const f = facade(500 + i, null, fw, fg), sx = (SW / f.w) * bz, sy = (gy / f.gq) * bz, x = i * bw - bcam;
       ctx.drawImage(f.c, x - f.pad * sx, gy - gy * 0.04 - f.gq * sy, (f.c.width / DPR) * sx, (f.c.height / DPR) * sy);
     }
     ctx.fillStyle = 'rgba(190,205,222,0.42)'; ctx.fillRect(0, 0, W, gy);
@@ -2222,7 +2236,7 @@
         const x = i * SW - camX;
         if (x > W + SW * 0.2 || x + SW * 1.2 < 0) continue;
         const shop = G && i >= 0 && i < n ? shopAt(i, LT) : null;
-        const f = facade(base + i, shop);
+        const f = facade(base + i, shop, fw, fg);
         blitFacade(f, x);
         tops[i] = f;
         if (shop) drawShopLife(shop, x, vh);
@@ -2234,8 +2248,8 @@
         else if (b && yb < ya - 2) drawSideWall(ex, yb, ya, b.side, false);
       }
       if (isAsan) {
-        const tc = temple(), tx = -SW - camX;
-        if (tx + tc.wd / 2 > 0 && tx - tc.wd / 2 < W) ctx.drawImage(tc.c, tx - tc.wd / 2, gy - tc.ht, tc.wd, tc.ht);
+        const tc = temple(Math.min(fw * 1.05, fg * 0.6)), k = Math.min(SW * 1.05, gy * 0.6) / tc.T, wd = tc.wd * k, ht = tc.ht * k, tx = -SW - camX;
+        if (tx + wd / 2 > 0 && tx - wd / 2 < W) ctx.drawImage(tc.c, tx - wd / 2, gy - ht, wd, ht);
       }
       drawWires();
       drawStreet(gy, camX, vpY);
@@ -2319,10 +2333,11 @@
     ctx.fillStyle = col; ctx.fillText(text, x, y);
   }
   // The map is printed in the patro's two inks: black streets on paper, red for what matters to you.
-  function drawMap(rect, full) {
-    const f = mapFit(rect), X = (x) => f.ox + x * f.sc, Y = (y) => f.oy + y * f.sc;
-    const INK = '#141414', RED = '#d7261e', PAPER = '#fdfcf8';
-    ctx.save();
+  // The paper, ponds, parks and streets never change, so they are drawn once per map size into a spare canvas
+  // (lined up with the screen's device pixels) and copied every frame.
+  const mapBase = { mini: null, full: null };
+  function drawMapBase(rect, full, f, X, Y) {
+    const INK = '#141414', PAPER = '#fdfcf8';
     ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.fillStyle = '#f1efe8'; ctx.fill(); ctx.clip();
     for (const a of MAP.a) {
       ctx.beginPath();
@@ -2349,6 +2364,26 @@
         ctx.stroke();
       }
     }
+  }
+  function drawMap(rect, full) {
+    const f = mapFit(rect), X = (x) => f.ox + x * f.sc, Y = (y) => f.oy + y * f.sc;
+    const INK = '#141414', RED = '#d7261e', PAPER = '#fdfcf8';
+    const kind = full ? 'full' : 'mini', key = `${rect.x}|${rect.y}|${rect.w}|${rect.h}|${DPR}`;
+    let b = mapBase[kind];
+    if (!b || b.key !== key) {
+      const dx = Math.floor(rect.x * DPR) - 1, dy = Math.floor(rect.y * DPR) - 1, c = b ? b.c : document.createElement('canvas');
+      c.width = Math.ceil((rect.x + rect.w) * DPR) + 1 - dx; c.height = Math.ceil((rect.y + rect.h) * DPR) + 1 - dy;
+      const o = c.getContext('2d');
+      o.setTransform(DPR, 0, 0, DPR, -dx, -dy);
+      withCtx(o, () => drawMapBase(rect, full, f, X, Y));
+      b = mapBase[kind] = { key, c, dx, dy };
+    }
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(b.c, b.dx, b.dy);
+    ctx.restore();
+    ctx.save();
+    ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip();
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const drawPath = (pts, col, w, dash) => {
       ctx.strokeStyle = col; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.lineCap = 'butt';
       ctx.beginPath(); pts.forEach((p, i) => { if (i) ctx.lineTo(X(p[0]), Y(p[1])); else ctx.moveTo(X(p[0]), Y(p[1])); }); ctx.stroke();
@@ -3031,9 +3066,13 @@
     talkT = Math.max(0, talkT - dt);
   }
 
-  function drawFx(dt) {
+  function ageFx(dt) {
+    if (!fx.length) return;
     for (const f of fx) f.t += dt;
     fx = fx.filter((f) => f.t < 1.6);
+  }
+  function drawFx(dt) {
+    ageFx(dt);
     for (const f of fx) {
       if (f.kind === 'stamp') {
         const a = f.t < 0.15 ? f.t / 0.15 : 1 - Math.max(0, f.t - 1.1) / 0.5, s = 1 + Math.max(0, 0.15 - f.t) * 4;
@@ -3124,6 +3163,10 @@
   setMuteUI();
   setVoiceUI();
   applyLang();
+  // The month sheet, the result sheet and the list are opaque pages over the whole canvas. Once one has
+  // faded in (0.25 s), stop drawing the scene behind it; the clocks keep running.
+  const coverState = () => (ui.menu.classList.contains('hidden') ? 0 : 1) | (ui.over.classList.contains('hidden') ? 0 : 2) | (ui.sheet.classList.contains('hidden') ? 0 : 4);
+  let covered = coverState(), seenAt = -Infinity;
   let last = performance.now();
   function frame(now) {
     const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
@@ -3131,7 +3174,11 @@
     if (walkAnim) walkAnim.t += dt;
     if (mapWalk) mapWalk.t += dt;
     audio.tickAmb(dt);
-    render(dt);
+    const c = coverState();
+    if (!c || c !== covered) seenAt = now;
+    covered = c;
+    if (now - seenAt < 400) render(dt);
+    else { settleVH(dt); ageFx(dt); talkT = Math.max(0, talkT - dt); }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

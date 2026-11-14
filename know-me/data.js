@@ -297,7 +297,6 @@ const FRIEND_TIERS = [
 ];
 
 const UI = {
-  brand: ['Know Me', 'मलाई चिन'],
   packLine: ['8 cards inside. One of them is you.', 'भित्र ८ कार्ड। एउटा तिमी हौ।'],
   tear: ['Tear open the pack', 'प्याक च्यात'],
   howLong: ['8 quick questions · 1 minute', '८ छोटा प्रश्न · १ मिनेट'],

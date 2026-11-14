@@ -1,6 +1,6 @@
 // Offline support, network first: online players always get the newest version,
 // and the last saved copy is used only when there is no connection.
-const CACHE = 'know-me-v4';
+const CACHE = 'know-me-v5';
 const ASSETS = ['./', './index.html', './style.css', './data.js', './game.js', './icon.svg', './manifest.webmanifest',
   './fonts/anton-400-latin.woff2', './fonts/mukta-500-latin.woff2', './fonts/mukta-500-devanagari.woff2', './fonts/mukta-700-latin.woff2',
   './fonts/mukta-700-devanagari.woff2', './fonts/mukta-800-latin.woff2', './fonts/mukta-800-devanagari.woff2'];

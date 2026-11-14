@@ -617,8 +617,11 @@
       onProgress(++done, need.length);
     }));
     if (qs.some((q) => !q)) throw new Error('photos');
-    // Warm up the other photos in the background.
-    for (const q of qs) for (const id of q.pids || [q.subject]) loadImage(id);
+    // Warm up the photos the round will show (the answer's photo, or both in Who's Older), two at a time
+    // in question order, so the next question's photo arrives first and no data goes on photos never shown.
+    const warm = [...new Set(qs.flatMap((q) => q.duo || [q.subject]))];
+    const warmNext = () => { if (warm.length) loadImage(warm.shift()).then(warmNext); };
+    warmNext(); warmNext();
     return qs;
   }
 

@@ -62,9 +62,19 @@ void main(){
   c += (hash(v * 800.0 + time) - 0.5) * 0.035;
   gl_FragColor = vec4(clamp(c, 0.0, 1.0), alpha);
 }`;
+// The same 5x5 box blur, run once per photo into a texture, so backdrops cost one sample a pixel per frame.
+const VS_BLUR = 'attribute vec2 p; varying vec2 v; void main(){ v = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }';
+const FS_BLUR = `precision mediump float;
+varying vec2 v;
+uniform sampler2D tex; uniform float blur;
+void main(){
+  vec3 c = vec3(0.0);
+  for (int i = -2; i <= 2; i++) for (int j = -2; j <= 2; j++) c += texture2D(tex, v + vec2(float(i), float(j)) * blur).rgb;
+  gl_FragColor = vec4(c / 25.0, 1.0);
+}`;
 
-let cv, gl, prog, U = {}, fallback = null;
-const tex = {}, imgs = {}, loading = {};
+let cv, gl, prog, blurProg = null, U = {}, fallback = null, drawn = true;
+const tex = {}, imgs = {}, loading = {}, blurred = {};
 const st = { cur: null, prev: null, fade: 1, pointer: [0, 0], par: [0, 0], tilt: null, darken: 0, darkenT: 0, push: 0, pushT: 0, pan: 0, panT: 0, t: 0, visible: false, slides: null, slideT: 0 };
 
 export const Photo = {
@@ -84,10 +94,16 @@ export const Photo = {
         const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
         for (const n of ['tex', 'scale', 'offset', 'par', 'horizon', 'alpha', 'expo', 'con', 'sat', 'vig', 'blur', 'time', 'flick', 'darken', 'b0', 'b1', 'b2', 'bd', 'tint']) U[n] = gl.getUniformLocation(prog, n);
         gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        try { // optional: without it the main shader blurs as before
+          const bp = gl.createProgram();
+          gl.attachShader(bp, sh(gl.VERTEX_SHADER, VS_BLUR)); gl.attachShader(bp, sh(gl.FRAGMENT_SHADER, FS_BLUR));
+          gl.bindAttribLocation(bp, loc, 'p'); gl.linkProgram(bp);
+          if (gl.getProgramParameter(bp, gl.LINK_STATUS)) blurProg = { p: bp, tex: gl.getUniformLocation(bp, 'tex'), blur: gl.getUniformLocation(bp, 'blur') };
+        } catch (e) { blurProg = null; }
       } catch (e) { console.warn('photo shader', e); gl = null; }
     }
     if (!gl) fallback = cv.getContext('2d');
-    addEventListener('pointermove', (e) => { st.pointer = [(e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1]; }, { passive: true });
+    addEventListener('pointermove', (e) => { st.pointer = [(e.clientX / E.W) * 2 - 1, (e.clientY / E.H) * 2 - 1]; }, { passive: true });
     addEventListener('deviceorientation', (e) => {
       if (e.gamma == null) return;
       st.tilt = [Math.max(-1, Math.min(1, e.gamma / 25)), Math.max(-1, Math.min(1, (e.beta - 45) / 25))];
@@ -120,8 +136,35 @@ export const Photo = {
 function load(key) {
   if (imgs[key] || !PHOTOS[key]) return loading[key];
   const im = new Image(); im.decoding = 'async'; im.src = 'photos/' + PHOTOS[key].file; imgs[key] = im;
-  loading[key] = im.decode().then(() => { if (gl) { const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); tex[key] = t; } }).catch(() => {});
+  loading[key] = im.decode().then(() => { if (gl) { const t = newTexture(); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); tex[key] = t; } }).catch(() => {});
   return loading[key];
+}
+function newTexture() {
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return t;
+}
+// the photo blurred once into its own texture (null if the GPU can't render to a texture)
+function blurredTex(key, amount) {
+  const id = key + '@' + amount;
+  if (id in blurred) return blurred[id];
+  blurred[id] = null;
+  const im = imgs[key], w = im.naturalWidth, h = im.naturalHeight;
+  const out = newTexture();
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  const fb = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, out, 0);
+  if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
+    gl.viewport(0, 0, w, h); gl.disable(gl.BLEND);
+    gl.useProgram(blurProg.p); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex[key]);
+    gl.uniform1i(blurProg.tex, 0); gl.uniform1f(blurProg.blur, amount);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    blurred[id] = out;
+  } else gl.deleteTexture(out);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.deleteFramebuffer(fb);
+  gl.useProgram(prog); gl.enable(gl.BLEND); gl.viewport(0, 0, cv.width, cv.height);
+  return blurred[id];
 }
 function set(key, o) {
   if (st.cur && st.cur.key === key && !o.restart) { Object.assign(st.cur, { grade: GRADES[o.grade || st.cur.gradeName] || st.cur.grade, gradeName: o.grade || st.cur.gradeName }); return; }
@@ -135,11 +178,12 @@ function resize() {
   const dpr = Math.min(1.25, devicePixelRatio || 1);
   cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
   if (gl) gl.viewport(0, 0, cv.width, cv.height);
+  drawn = true; // a resized canvas is blank: paint it again
 }
 // cover-fit with zoom, focus and drift: returns uv = v * scale + offset
 function fit(layer) {
   const im = imgs[layer.key]; if (!im || !im.naturalWidth) return null;
-  const ia = im.naturalWidth / im.naturalHeight, sa = innerWidth / innerHeight;
+  const ia = im.naturalWidth / im.naturalHeight, sa = E.W / E.H; // E.W/H mirror innerWidth/Height without forcing a layout every frame
   let sx = 1, sy = 1;
   if (ia > sa) sx = sa / ia; else sy = ia / sa;
   const k = Math.min(1, layer.t / layer.dur), ease = k * k * (3 - 2 * k);
@@ -170,6 +214,8 @@ function loop(now) {
   if (st.prev && st.fade < 1) layers.push([st.prev, 1]);
   if (st.cur) layers.push([st.cur, st.prev ? st.fade : 1]);
   for (const [L] of layers) L.t += dt;
+  // no photo (the top-down chariot drive): clear once, then leave the canvas alone
+  if (!layers.length) { if (!drawn) return; drawn = false; } else drawn = true;
   if (gl) {
     gl.clearColor(0.07, 0.04, 0.07, 1); gl.clear(gl.COLOR_BUFFER_BIT);
     for (const [L, a] of layers) drawGL(L, a);
@@ -182,13 +228,14 @@ function drawGL(L, alpha) {
   const t = tex[L.key], f = fit(L); if (!t || !f) return;
   L.fit = f;
   const s = L.spec, g = L.grade, b = s.blobs, P = (i) => b[i] || [0, 0, 0.001, 0.001, 0];
-  gl.bindTexture(gl.TEXTURE_2D, t); gl.uniform1i(U.tex, 0);
+  const bt = g.blur && blurProg ? blurredTex(L.key, g.blur) : null; // pre-blurred: the shader skips its own blur
+  gl.bindTexture(gl.TEXTURE_2D, bt || t); gl.uniform1i(U.tex, 0);
   gl.uniform2f(U.scale, f.sx, f.sy); gl.uniform2f(U.offset, f.ox, f.oy);
   const amt = E.reduced ? 0 : 0.018;
   gl.uniform2f(U.par, st.par[0] * amt, st.par[1] * amt * 0.6);
   gl.uniform1f(U.horizon, s.horizon); gl.uniform1f(U.alpha, alpha);
   gl.uniform1f(U.expo, g.exp); gl.uniform1f(U.con, g.con); gl.uniform1f(U.sat, g.sat); gl.uniform1f(U.vig, g.vig);
-  gl.uniform1f(U.blur, g.blur); gl.uniform1f(U.time, st.t); gl.uniform1f(U.flick, E.reduced ? 0 : g.flick); gl.uniform1f(U.darken, st.darken);
+  gl.uniform1f(U.blur, bt ? 0 : g.blur); gl.uniform1f(U.time, st.t); gl.uniform1f(U.flick, E.reduced ? 0 : g.flick); gl.uniform1f(U.darken, st.darken);
   gl.uniform3f(U.tint, ...g.tint);
   for (let i = 0; i < 3; i++) gl.uniform4f(U['b' + i], P(i)[0], P(i)[1], P(i)[2], P(i)[3]);
   gl.uniform3f(U.bd, P(0)[4], P(1)[4], P(2)[4]);

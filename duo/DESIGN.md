@@ -1,6 +1,6 @@
 # Duo · जोडी — Tempo Art
 
-Chosen 2026-11-12 from five directions (mock-ups in `design-options/`). Duo looks like the back of a hand-painted Nepali truck or tempo: saturated painted panels, white pinstripes, sign-painter capitals, brushy Devanagari, and bumper stripes framing every screen.
+Chosen 2026-11-12 from five design directions. Duo looks like the back of a hand-painted Nepali truck or tempo: saturated painted panels, white pinstripes, sign-painter capitals, brushy Devanagari, and bumper stripes framing every screen.
 
 ## Palette
 
