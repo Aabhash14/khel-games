@@ -1,0 +1,14 @@
+{
+  "name": "Lakhey Run · लाखे दौड",
+  "short_name": "Lakhey Run",
+  "description": "You teased Majipa Lakhey. Now run through old Kathmandu before he catches you. Works offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#2a160c",
+  "theme_color": "#2a160c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Lakhey Run · लाखे दौड</title>
+  <meta name="description" content="You teased Majipa Lakhey at Indra Jatra. Now run through old Kathmandu as a Newar boy or girl before he catches you. A 3D endless runner in English and Nepali.">
+  <meta name="theme-color" content="#2a160c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/yatra-one-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+  <canvas id="gl" aria-label="Lakhey Run game"></canvas>
+
+  <div id="loading" class="screen show">
+    <div class="load-mask" aria-hidden="true"></div>
+    <p data-t="loading">Lighting the lamps…</p>
+  </div>
+
+  <!-- menu -->
+  <section id="menu" class="screen" aria-labelledby="title">
+    <header class="top">
+      <a class="hub" href="../" aria-label="Khel home"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <div class="chips">
+        <span class="chip" title="Mohar"><i class="ico coin"></i><b id="bank">0</b></span>
+        <span class="chip" title="Yomari"><i class="ico yom"></i><b id="yom">0</b></span>
+      </div>
+      <button class="round" id="lang" type="button" aria-label="Language">ने</button>
+      <button class="round" id="snd" type="button" aria-label="Sound"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </header>
+    <div class="logo">
+      <h1 id="title"><span class="en">Lakhey Run</span><span class="ne" lang="ne">लाखे दौड</span></h1>
+      <p class="tag" data-t="tag"></p>
+    </div>
+    <div class="dock">
+      <p class="best"><span data-t="best"></span> <b id="best">0</b></p>
+      <div class="who" role="radiogroup" aria-label="Runner">
+        <button class="pick" type="button" role="radio" data-who="m" aria-checked="true"><i class="sw sw-m" aria-hidden="true"></i><span class="col"><b data-t="boy"></b><small data-t="boySub"></small></span></button>
+        <button class="pick" type="button" role="radio" data-who="f" aria-checked="false"><i class="sw sw-f" aria-hidden="true"></i><span class="col"><b data-t="girl"></b><small data-t="girlSub"></small></span></button>
+      </div>
+      <button class="btn main" id="play" type="button"><span data-t="run">Run!</span></button>
+      <button class="btn daily" id="daily" type="button"><span class="col"><span data-t="daily"></span><small data-t="dailySub"></small></span><b id="dailyBest"></b></button>
+      <div class="row">
+        <button class="btn small" id="howBtn" type="button" data-t="howTitle"></button>
+        <button class="btn small" id="shopBtn" type="button"><i class="ico yom"></i><span data-t="shopTitle"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- in-run HUD -->
+  <section id="hud" class="screen" aria-live="off">
+    <div class="hud-top">
+      <div class="scorebox">
+        <b id="score">0</b>
+        <span id="dist">0 m</span>
+      </div>
+      <div class="pw" id="pw"></div>
+      <div class="hud-right">
+        <span class="chip"><i class="ico coin"></i><b id="hc">0</b></span>
+        <button class="round" id="pauseBtn" type="button" aria-label="Pause"><svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg></button>
+      </div>
+    </div>
+    <div id="hint" class="hint"></div>
+    <div id="toast" class="toast"></div>
+    <button id="naach" class="naach" type="button" aria-label="Naach">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" class="trk"/><circle cx="50" cy="50" r="44" class="fill" id="naachRing"/></svg>
+      <span data-t="naach">Naach!</span>
+    </button>
+  </section>
+
+  <!-- pause -->
+  <section id="pause" class="screen dim">
+    <div class="panel">
+      <h2 data-t="paused"></h2>
+      <button class="btn main" id="resume" type="button" data-t="resume"></button>
+      <button class="btn small" id="quit" type="button" data-t="home"></button>
+    </div>
+  </section>
+
+  <!-- revive -->
+  <section id="revive" class="screen dim">
+    <div class="panel">
+      <h2 id="deathMsg"></h2>
+      <p data-t="revive"></p>
+      <div class="yomari-big"><i class="ico yom"></i><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" class="trk"/><circle cx="50" cy="50" r="46" class="fill" id="revRing"/></svg></div>
+      <button class="btn main" id="revBtn" type="button"></button>
+      <button class="btn small" id="revNo" type="button" data-t="noThanks"></button>
+    </div>
+  </section>
+
+  <!-- results -->
+  <section id="over" class="screen dim">
+    <div class="panel results">
+      <p class="kicker" id="overWhy"></p>
+      <h2 data-t="over"></h2>
+      <p class="newbest" id="newBest" data-t="newBest" hidden></p>
+      <div class="big"><b id="oScore">0</b><span data-t="score"></span></div>
+      <div class="stats">
+        <div><span data-t="dist"></span><b id="oDist">0</b></div>
+        <div><span data-t="coins"></span><b id="oCoins">0</b></div>
+        <div><span data-t="best"></span><b id="oBest">0</b></div>
+      </div>
+      <button class="btn main" id="again" type="button" data-t="again"></button>
+      <div class="row">
+        <button class="btn small" id="shareBtn" type="button" data-t="share"></button>
+        <button class="btn small" id="homeBtn" type="button" data-t="home"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- how to play -->
+  <section id="how" class="screen dim">
+    <div class="panel">
+      <h2 data-t="howTitle"></h2>
+      <ol class="how">
+        <li><i class="g g-lr"></i><span data-t="how1"></span></li>
+        <li><i class="g g-up"></i><span data-t="how2"></span></li>
+        <li><i class="g g-dn"></i><span data-t="how3"></span></li>
+        <li><i class="g g-turn"></i><span data-t="how4"></span></li>
+        <li><i class="g g-naach"></i><span data-t="how5"></span></li>
+      </ol>
+      <p class="keys" data-t="keys"></p>
+      <p class="about" data-t="about"></p>
+      <button class="btn main close" type="button">OK</button>
+    </div>
+  </section>
+
+  <!-- yomari stall -->
+  <section id="shop" class="screen dim">
+    <div class="panel">
+      <h2 data-t="shopTitle"></h2>
+      <p data-t="shopNote"></p>
+      <div class="yomari-big"><i class="ico yom"></i></div>
+      <p class="have"><i class="ico yom"></i> <b id="shopYom">0</b> · <i class="ico coin"></i> <b id="shopBank">0</b></p>
+      <button class="btn main" id="buyBtn" type="button"></button>
+      <p class="warn" id="buyWarn" hidden data-t="notEnough"></p>
+      <button class="btn small close" type="button">OK</button>
+    </div>
+  </section>
+
+  <section id="nogl" class="screen dim"><div class="panel"><p data-t="noGL"></p></div></section>
+
+  <script src="js/vendor/three.min.js"></script>
+  <script src="js/i18n.js?v=3"></script>
+  <script src="js/audio.js?v=3"></script>
+  <script src="js/tex.js?v=3"></script>
+  <script src="js/chars.js?v=3"></script>
+  <script src="js/world.js?v=3"></script>
+  <script src="js/game.js?v=3"></script>
+  <script src="js/main.js?v=3"></script>
+</body>
+</html>

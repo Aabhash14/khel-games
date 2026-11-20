@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches lakhey-run/icon.svg (Majipa Lakhey mask, red mane, marigold strip). -->
+  <defs><clipPath id="lr-clip"><circle cx="256" cy="256" r="216"/></clipPath></defs>
+  <g clip-path="url(#lr-clip)">
+    <rect width="512" height="512" fill="#2a160c"/>
+    <path d="M0 420h512v92H0z" fill="#9a3a22"/>
+    <path d="M0 420h512v14H0z" fill="#ff8a1f"/>
+    <circle cx="256" cy="250" r="190" fill="#c4170f"/>
+    <circle cx="256" cy="250" r="190" fill="none" stroke="#e8321c" stroke-width="28" stroke-dasharray="16 20"/>
+    <ellipse cx="256" cy="266" rx="112" ry="138" fill="#d61c12"/>
+    <circle cx="256" cy="158" r="24" fill="#a80f09" stroke="#fff3e0" stroke-width="6"/>
+    <path d="M160 218q38-46 84-8M352 218q-38-46-84-8" fill="none" stroke="#f0821f" stroke-width="20" stroke-linecap="round"/>
+    <path d="M174 240q28-24 60 0q-32 24-60 0zM278 240q32-24 60 0q-28 24-60 0z" fill="#fcf7ec" stroke="#2462c9" stroke-width="6"/>
+    <circle cx="204" cy="240" r="10" fill="#140504"/><circle cx="308" cy="240" r="10" fill="#140504"/>
+    <path d="M242 250h28l10 58h-48z" fill="#f2be3a"/>
+    <path d="M192 332q64-36 128 0q-64 52-128 0z" fill="#f39ab4" stroke="#7a1630" stroke-width="5"/>
+    <path d="M210 334q46-20 92 0q-46 28-92 0z" fill="#3a0405"/>
+    <path d="M210 328q-6 32 12 50M302 328q6 32-12 50" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="150" cy="294" r="13" fill="#2f9e4a" stroke="#f2c14e" stroke-width="5"/><circle cx="362" cy="294" r="13" fill="#2f9e4a" stroke="#f2c14e" stroke-width="5"/>
+  </g>
+</svg>
