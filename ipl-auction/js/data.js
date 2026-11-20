@@ -359,9 +359,18 @@
   Nicholas Kirton|-|CAN|BAT|64|1
   `;
 
+  // Playing styles (our reading of how each plays, not official data).
+  // Batting: P = power hitter (big strike rate, more risk), A = anchor (builds an innings, fewer sixes early).
+  // Bowling: D = death-overs specialist, N = new-ball / powerplay bowler.
+  const POWER = 'Abhishek Sharma|Travis Head|Heinrich Klaasen|Nicholas Pooran|Phil Salt|Suryakumar Yadav|Rishabh Pant|Jos Buttler|Tim David|Shimron Hetmyer|Rinku Singh|Shivam Dube|Liam Livingstone|Glenn Maxwell|Harry Brook|Jake Fraser-McGurk|Vaibhav Sooryavanshi|Priyansh Arya|Prabhsimran Singh|Shashank Singh|Ashutosh Sharma|Dewald Brevis|Rovman Powell|Marcus Stoinis|Hardik Pandya|Sunil Narine|Cameron Green|Ishan Kishan|Yashasvi Jaiswal|Will Jacks|Finn Allen|Romario Shepherd|Sherfane Rutherford|Abdul Samad|Aniket Verma|Mitchell Marsh|Sanju Samson|Rahmanullah Gurbaz|Tristan Stubbs|David Miller|Sikandar Raza|Dipendra Singh Airee|Kushal Malla|Rohit Sharma|Venkatesh Iyer|Naman Dhir|Jitesh Sharma|Ayush Mhatre|Urvil Patel|Rajat Patidar|Ryan Rickelton|Josh Inglis|Quinton de Kock|Brandon King';
+  const ANCHOR = 'Virat Kohli|Shubman Gill|Ruturaj Gaikwad|Sai Sudharsan|KL Rahul|Kane Williamson|Joe Root|Steve Smith|Ajinkya Rahane|Devdutt Padikkal|Aiden Markram|Devon Conway|Pathum Nissanka|Ibrahim Zadran|Reeza Hendricks|Rohit Paudel|Kushal Mendis|Shai Hope|Daryl Mitchell|Karun Nair|Sarfaraz Khan|Ben Duckett|Rachin Ravindra|Tilak Varma|Paul Stirling|Aasif Sheikh';
+  const DEATH = 'Jasprit Bumrah|Arshdeep Singh|Matheesha Pathirana|T Natarajan|Harshal Patel|Mitchell Starc|Avesh Khan|Mustafizur Rahman|Prasidh Krishna|Sandeep Sharma|Pat Cummins|Kagiso Rabada|Yash Dayal|Harshit Rana|Anrich Nortje|Lockie Ferguson|Naveen-ul-Haq|Nathan Ellis|Alzarri Joseph|Mohsin Khan|Tushar Deshpande';
+  const NEWBALL = 'Trent Boult|Bhuvneshwar Kumar|Mohammed Siraj|Deepak Chahar|Josh Hazlewood|Mohammed Shami|Khaleel Ahmed|Jofra Archer|Fazalhaq Farooqi|Mitchell Starc|Matt Henry|Mukesh Kumar|Ishant Sharma|Akash Deep|Mark Wood|Marco Jansen|Josh Little|Saurabh Netravalkar|Sompal Kami';
+  const has = (list, n) => list.split('|').includes(n);
+
   const PLAYERS = RAW.trim().split('\n').filter((l) => !l.trim().startsWith('--')).map((line, i) => {
     const [name, team, country, role, r, capped] = line.trim().split('|');
-    return { id: i, name, team, country, role, r: +r, capped: capped === '1', os: country !== 'IND' };
+    return { id: i, name, team, country, role, r: +r, capped: capped === '1', os: country !== 'IND', bs: has(POWER, name) ? 'P' : has(ANCHOR, name) ? 'A' : '', ws: has(DEATH, name) ? 'D' : has(NEWBALL, name) ? 'N' : '' };
   });
 
 

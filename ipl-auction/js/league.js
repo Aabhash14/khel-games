@@ -19,22 +19,58 @@
       fix(ids[i], ids[j]); fix(ids[i], ids[k]);
     }
     for (let i = 0; i < 5; i++) { const f = pairs.find((p) => (p[0] === ids[i] && p[1] === ids[i + 5]) || (p[1] === ids[i] && p[0] === ids[i + 5])); pairs.push([f[1], f[0]]); }
-    // Spread the games out: build match days where no team plays twice.
-    const left = pairs.slice().sort(() => Math.random() - 0.5);
-    const order = [];
-    while (left.length) {
-      const busy = new Set();
-      for (let i = 0; i < left.length && busy.size < 4;) {
-        const [a, b] = left[i];
-        if (!busy.has(a) && !busy.has(b)) { order.push(left.splice(i, 1)[0]); busy.add(a); busy.add(b); } else i++;
-      }
-      if (!busy.size) order.push(left.shift());
-    }
+    const order = roundsOf(pairs, ids);
     s.league = {
       fixtures: order.map(([a, b], i) => ({ id: i + 1, a, b, venue: a, stage: 'league' })),
       results: {}, next: 0, myXI: null, champion: null,
     };
     return s.league;
+  }
+
+  // Order the 70 games as 14 rounds of 5, where every team plays exactly once per round.
+  // So at any moment no team is more than one game ahead of another (like the real schedule's balance).
+  // Each round is a perfect matching found by a small randomised search; if a later round gets stuck,
+  // start again with a new shuffle. A fallback always picks the teams with the fewest games so far.
+  function roundsOf(pairs, ids) {
+    const shuffle = (arr) => { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
+    for (let attempt = 0; attempt < 300; attempt++) {
+      const left = shuffle(pairs.slice());
+      const order = [];
+      let ok = true;
+      while (left.length) {
+        const round = matching(left, ids);
+        if (!round) { ok = false; break; }
+        for (const p of shuffle(round)) { order.push(p); left.splice(left.indexOf(p), 1); }
+      }
+      if (ok) return order;
+    }
+    // Fallback: always schedule the pair whose teams have played least.
+    const left = shuffle(pairs.slice()); const played = Object.fromEntries(ids.map((t) => [t, 0])); const order = [];
+    while (left.length) {
+      left.sort((x, y) => (played[x[0]] + played[x[1]]) - (played[y[0]] + played[y[1]]));
+      const p = left.shift(); played[p[0]]++; played[p[1]]++; order.push(p);
+    }
+    return order;
+  }
+  // One game for every team: depth-first search over the remaining pairs.
+  function matching(left, ids) {
+    const used = new Set(); const chosen = [];
+    let steps = 0;
+    const go = () => {
+      if (++steps > 4000) return false;
+      const t = ids.find((x) => !used.has(x));
+      if (!t) return true;
+      for (const p of left) {
+        if (chosen.includes(p) || (p[0] !== t && p[1] !== t)) continue;
+        const o = p[0] === t ? p[1] : p[0];
+        if (used.has(o)) continue;
+        used.add(t); used.add(o); chosen.push(p);
+        if (go()) return true;
+        used.delete(t); used.delete(o); chosen.pop();
+      }
+      return false;
+    };
+    return go() ? chosen.slice() : null;
   }
 
   const ownerOf = (s) => {
@@ -55,8 +91,29 @@
     return bestXI(s.teams[t].squad.map((e) => e.pid)).map((p) => p.id);
   }
 
+  // Seasons saved before balanced rounds: reorder the unplayed league games once so the
+  // team with the fewest games always plays next, and renumber them in order.
+  function rebalance(L) {
+    if (L.bal) return;
+    L.bal = 1;
+    const ids = Object.keys(L.fixtures.reduce((o, f) => { o[f.a] = 1; o[f.b] = 1; return o; }, {}));
+    const played = Object.fromEntries(ids.map((t) => [t, 0]));
+    const done = L.fixtures.slice(0, L.next);
+    done.forEach((f) => { if (f.stage === 'league') { played[f.a]++; played[f.b]++; } });
+    const left = L.fixtures.slice(L.next).filter((f) => f.stage === 'league' && !L.results[f.id]);
+    if (left.length !== L.fixtures.length - L.next) return; // playoffs already drawn: leave it alone
+    const order = [];
+    while (left.length) {
+      left.sort((x, y) => Math.max(played[x.a], played[x.b]) - Math.max(played[y.a], played[y.b]) || (played[x.a] + played[x.b]) - (played[y.a] + played[y.b]));
+      const f = left.shift(); played[f.a]++; played[f.b]++; order.push(f);
+    }
+    order.forEach((f, i) => { f.id = L.next + i + 1; });
+    L.fixtures = [...done, ...order];
+  }
+
   function nextFixture(s) {
     const L = s.league;
+    rebalance(L);
     if (L.next < L.fixtures.length) return L.fixtures[L.next];
     if (L.champion) return null;
     // Playoffs are added as the bracket fills in.
@@ -84,9 +141,23 @@
     if (fx.stage === 'final') L.champion = m.result.w;
   }
 
+  const squadOf = (s, t) => s.teams[t].squad.map((e) => e.pid);
+  // Computer captains (and "sim my match") use their Impact Player at the innings break.
+  function aiImpact(s, m, teams) {
+    const done = [];
+    for (const t of teams) {
+      const sg = M.suggestSub(m, t, squadOf(s, t));
+      if (sg && M.impactSub(m, t, sg.out, sg.in)) done.push({ t, ...sg });
+    }
+    return done;
+  }
+
   function simFixture(s, fx) {
     const tw = Math.random() < 0.5 ? fx.a : fx.b;
     const m = startMatch(s, fx, { w: tw, d: aiToss(tw) });
+    let guard = 0;
+    while (!m.done && m.i === 0 && guard++ < 400) M.step(m);
+    aiImpact(s, m, [m.a, m.b]);
     M.runToEnd(m);
     record(s, fx, m);
     return L_res(s, fx);
@@ -152,5 +223,5 @@
     };
   }
 
-  IPLA.league = { newLeague, nextFixture, startMatch, record, simFixture, table, stats, teamXI, validXI, aiToss, ownerOf };
+  IPLA.league = { aiImpact, squadOf, newLeague, nextFixture, startMatch, record, simFixture, table, stats, teamXI, validXI, aiToss, ownerOf };
 })();

@@ -26,7 +26,7 @@
   let keepSel = [];
   let ffSet = null;      // set index being skipped, or null
   let screen = 'home';
-  const timers = { ai: null, raf: null, next: null, think: null };
+  const timers = { ai: null, raf: null, next: null, think: null, proxy: null };
   let hammer = null;     // { start, dur, stage }
   let hammerAnim = null; // the hammer bar's compositor animation
 
@@ -71,6 +71,7 @@
 
   function show(name) {
     screen = name;
+    document.body.dataset.screen = name;
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('on', s.dataset.screen === name));
     window.scrollTo(0, 0);
     if (name !== 'auction') { A.crowdOff(); $('barMid').textContent = ''; }
@@ -193,7 +194,7 @@
   }
 
   function clearTimers() {
-    clearTimeout(timers.ai); clearTimeout(timers.next); clearTimeout(timers.think); cancelAnimationFrame(timers.raf);
+    clearTimeout(timers.ai); clearTimeout(timers.next); clearTimeout(timers.think); clearTimeout(timers.proxy); cancelAnimationFrame(timers.raf);
     timers.ai = timers.next = null; hammer = null;
     if (hammerAnim) hammerAnim.pause();
   }
@@ -204,7 +205,7 @@
     const L = E.currentLot(S);
     lot = E.startLot(S, L.pid);
     lot.set = L.set; lot.open = false; lot.done = false;
-    if (ffSet != null && (L.set !== ffSet || S.star.includes(L.pid))) ffSet = null;
+    if (ffSet != null && (L.set !== ffSet || (S.star.includes(L.pid) && !maxFor(L.pid)))) ffSet = null;
     renderCard(true);
     renderBid();
     renderBoard();
@@ -259,6 +260,7 @@
     if (holder) $('cRtm').textContent = holder === S.user ? `★ ${t('rtmAvail', { t: p.team })} (${t('rtmCards')}: ${num(S.teams[S.user].rtm)})` : t('rtmAvail', { t: p.team });
     const star = S.star.includes(p.id);
     $('cStar').setAttribute('aria-pressed', String(star));
+    renderMax();
     // Scouting hint: which teams are short of this role, and how many have him on their wishlist.
     const short = TEAMS.filter((T) => T.id !== S.user && E.counts(S, T.id)[p.role] < E.TARGET[p.role] - 1 && E.maxBid(S, T.id, p.id) >= lot.base).map((T) => T.id);
     const wish = TEAMS.filter((T) => E.isTarget(S, T.id, p.id)).length;
@@ -328,7 +330,8 @@
         const c = document.createElement('button');
         c.type = 'button'; c.className = 'chip'; c.dataset.t = T.id; c.setAttribute('role', 'listitem');
         teamVars(c, T.id);
-        c.innerHTML = `<span class="ch-code">${T.id}</span><span class="ch-p"></span><span class="ch-n"></span>`;
+        c.innerHTML = `<span class="ch-code">${T.id}</span><span class="ch-p"></span><span class="ch-n"></span><span class="ch-pad" aria-hidden="true"></span>`;
+      c.title = `${T.name} · ${t(`persona_${T.bid}`)}`;
         c.addEventListener('click', () => openSquad(T.id));
         b.append(c);
       }
@@ -426,6 +429,7 @@
     clearTimeout(timers.think);
     const before = { bidder: lot.bidder, bid: lot.bid, in: new Set(lot.in), top: S.top || 0 };
     E.placeBid(lot, team, amt);
+    raisePaddle(team, amt);
     const mine = team === S.user;
     A.paddle(mine, amt);
     if (info.jump) A.jump();
@@ -443,6 +447,10 @@
       msg = mine ? t('comm_youJump', { p: money(amt) }) : t('comm_jump', { t: team, p: money(amt) }); kind = 'hot';
     } else if (before.bid == null) {
       msg = t('comm_open', { t: team, p: money(amt) });
+    } else if (!before.in.has(team) && !mine && teamById[team].bid === 'sniper' && hammer && hammer.stage >= 1) {
+      msg = t('comm_snipe', { t: team }); kind = 'hot';
+    } else if (!mine && lot.vals[team] < amt && (lot.cnt[team] || 0) >= 5 && !lot.push[team]) {
+      msg = t('comm_carried', { t: team }); kind = 'hot';
     } else if (!before.in.has(team) && !mine) {
       const nem = E.nemesis(S);
       msg = nem && nem.team === team && lot.in.has(S.user) ? t('comm_rival', { t: team }) : t('comm_join', { t: team });
@@ -467,7 +475,53 @@
     $('call').textContent = ''; $('call').classList.remove('hot');
     startHammer(HAMMER_MS);
     scheduleAI();
+    if (team !== S.user) scheduleProxy();
   }
+
+  // ---------- auto-bid (max bid on a player) ----------
+  const maxFor = (pid) => (S.maxBid && S.maxBid[pid]) || 0;
+  function proxyCan() {
+    const amt = E.lotNext(lot);
+    return lot.bidder !== S.user && amt <= maxFor(lot.pid) && !E.blockReason(S, S.user, lot.pid, amt) ? amt : 0;
+  }
+  // Your auto-bid answers like a person would: a short beat after you are outbid.
+  function scheduleProxy() {
+    clearTimeout(timers.proxy);
+    if (!maxFor(lot.pid)) return;
+    const token = lot.bids;
+    timers.proxy = setTimeout(() => {
+      if (!lot.open || lot.done || lot.bids !== token) return;
+      const amt = proxyCan();
+      if (amt) placeBid(S.user, amt, { auto: true });
+      else if (lot.bidder !== S.user) comm(t('comm_autoDone', { p: money(maxFor(lot.pid)) }), 'tell');
+    }, rand(450, 900));
+  }
+  function renderMax() {
+    const mx = maxFor(lot.pid);
+    const b = $('cMax');
+    b.setAttribute('aria-pressed', String(!!mx));
+    b.innerHTML = mx ? `<small>${t('autoUpTo')}</small> ${money(mx)}` : t('maxBid');
+  }
+  $('cMax').addEventListener('click', async () => {
+    if (!lot || lot.done) return;
+    A.tap();
+    const pid = lot.pid; const p = P[pid];
+    const cap = E.maxBid(S, S.user, pid);
+    const min = Math.max(lot.base, E.lotNext(lot));
+    if (cap < min) { toast(t('blockPurse')); return; }
+    if (!S.maxBid) S.maxBid = {};
+    const cur = maxFor(pid);
+    const bigStep = (v) => (v < 100 ? 10 : v < 300 ? 25 : v < 1000 ? 50 : 100);
+    const r = await modal({
+      title: t('maxBidTitle', { name: p.name }), text: t('maxBidSub'),
+      stepper: { min, max: cap, start: Math.min(cap, Math.max(min, cur || min * 2)), step: bigStep },
+      buttons: [{ label: (v) => t('maxSet', { p: money(v) }), val: 'set', gold: true }, { label: cur ? t('maxClear') : t('close'), val: 'clear' }],
+    });
+    if (r.val === 'set') { S.maxBid[pid] = r.value; if (!S.star.includes(pid)) S.star = [...S.star, pid]; }
+    else delete S.maxBid[pid];
+    save(); renderCard(); renderPaddle();
+    if (lot && lot.open && !lot.done && lot.pid === pid) { const amt = proxyCan(); if (amt) placeBid(S.user, amt, { auto: true }); }
+  });
 
   function shake() {
     const f = document.querySelector('.floor');
@@ -491,7 +545,14 @@
     if (lot.done) return;
     clearTimers();
     lot.open = false;
-    E.autoResolve(S, lot);
+    // The computer teams finish the lot; your auto-bid (if any) keeps answering up to its limit.
+    for (let g = 0; g < 400; g++) {
+      const n = E.aiNext(S, lot);
+      if (n) { E.placeBid(lot, n.team, n.amt); if (n.jump) E.applyFear(S, lot); }
+      const amt = proxyCan();
+      if (amt) { E.placeBid(lot, S.user, amt); continue; }
+      if (!n) break;
+    }
     renderBid();
     hammerDown(true);
   }
@@ -508,7 +569,7 @@
   async function hammerDown(fast = false) {
     if (lot.done) return;
     lot.done = true; lot.open = false;
-    clearTimeout(timers.ai); clearTimeout(timers.think); timers.ai = null;
+    clearTimeout(timers.ai); clearTimeout(timers.think); clearTimeout(timers.proxy); timers.ai = null;
     renderPaddle();
     hammerBar(0);
     const pid = lot.pid;
@@ -578,7 +639,8 @@
       $('modalH').textContent = title;
       $('modalP').textContent = text;
       const st = $('stepper');
-      let value = stepper ? stepper.min : null;
+      let value = stepper ? (stepper.start || stepper.min) : null;
+    const stepOf = stepper && stepper.step ? stepper.step : R.step;
       const btnWrap = $('modalBtns'); btnWrap.innerHTML = '';
       const els = buttons.map((b) => {
         const el = document.createElement('button');
@@ -594,8 +656,8 @@
       };
       st.hidden = !stepper;
       if (stepper) {
-        $('stepUp').onclick = () => { const nv = value + R.step(value); if (nv <= stepper.max) { value = nv; A.tap(); paint(); } };
-        $('stepDown').onclick = () => { if (value > stepper.min) { let v = stepper.min; while (v + R.step(v) < value) v += R.step(v); value = v; A.tap(); paint(); } };
+        $('stepUp').onclick = () => { const nv = Math.min(stepper.max, value + stepOf(value)); if (nv > value) { value = nv; A.tap(); paint(); } };
+        $('stepDown').onclick = () => { if (value > stepper.min) { let v = stepper.min; while (v + stepOf(v) < value) v += stepOf(v); value = v; A.tap(); paint(); } };
       }
       paint();
       $('modalBack').hidden = false;
@@ -657,9 +719,17 @@
   $('sheetBack').addEventListener('click', closeSheet);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
 
+  // A team raises its paddle at its table on the board.
+  function raisePaddle(team, amt) {
+    const pad = document.querySelector(`.chip[data-t="${team}"] .ch-pad`);
+    if (!pad) return;
+    pad.textContent = crShort(amt);
+    pad.classList.remove('up'); void pad.offsetWidth; pad.classList.add('up');
+  }
+
   function squadHtml(id) {
     const T = S.teams[id]; const n = E.counts(S, id);
-    let h = `<div class="sq-sum"><span class="tag">${t('purse')}: ${money(T.purse)}</span><span class="tag">${num(n.n)}/${num(R.MAX_SQUAD)}</span><span class="tag os">✈ ${num(n.os)}/${num(R.MAX_OVERSEAS)}</span><span class="tag">RTM ${num(T.rtm)}</span></div>`;
+    let h = `${teamById[id] && id !== S.user ? `<p class="note"><b>${t('persona_' + teamById[id].bid)}</b>: ${t('personaD_' + teamById[id].bid)}</p>` : ''}<div class="sq-sum"><span class="tag">${t('purse')}: ${money(T.purse)}</span><span class="tag">${num(n.n)}/${num(R.MAX_SQUAD)}</span><span class="tag os">✈ ${num(n.os)}/${num(R.MAX_OVERSEAS)}</span><span class="tag">RTM ${num(T.rtm)}</span></div>`;
     for (const role of E.ROLES) {
       const rows = T.squad.filter((e) => P[e.pid].role === role).sort((a, b) => b.price - a.price);
       if (!rows.length) continue;
@@ -683,7 +753,7 @@
     for (let i = S.idx + 1; i < Math.min(S.lots.length, S.idx + 60); i++) {
       const L = S.lots[i]; const p = P[L.pid];
       if (L.set !== lastSet) { h += `<p class="up-set">${setName(S.sets[L.set])}</p>`; lastSet = L.set; }
-      h += `<button type="button" class="up-row" data-pid="${p.id}" aria-pressed="${S.star.includes(p.id)}"><span class="u-star">★</span><span class="u-main">${esc(p.name)}${p.os ? ' ✈' : ''}<small>${t(`role_${p.role}`)} · ${cname(p.country)} · ${lastTeam(p)} · ${money(R.basePrice(p))}</small></span><span class="pr-r">${num(p.r)}</span></button>`;
+      h += `<button type="button" class="up-row" data-pid="${p.id}" aria-pressed="${S.star.includes(p.id)}"><span class="u-star">★</span><span class="u-main">${esc(p.name)}${p.os ? ' ✈' : ''}<small>${t(`role_${p.role}`)} · ${cname(p.country)} · ${lastTeam(p)} · ${money(R.basePrice(p))}${maxFor(p.id) ? ` · <b>${t('autoUpTo')} ${money(maxFor(p.id))}</b>` : ''}</small></span><span class="pr-r">${num(p.r)}</span></button>`;
     }
     const body = openSheet(t('upcoming'), h);
     body.querySelectorAll('.up-row').forEach((b) => b.addEventListener('click', () => {

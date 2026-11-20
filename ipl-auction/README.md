@@ -16,7 +16,8 @@ Plain HTML, CSS and JavaScript. No framework, no build step, no backend. Works o
 4. **Auction:** two marquee sets, then capped and uncapped sets by role (batters, all-rounders, keepers, fast bowlers, spinners). After that, an accelerated round brings back a shortlist of up to 40 unsold players.
    - The hammer falls after 3 seconds with no bid (going once, twice, sold).
    - **Skip player:** drop out and let the computer finish the lot instantly.
-   - **Skip set:** fast-forward the set. It stops at any player you starred in *Coming up*.
+   - **Skip set:** fast-forward the set. It stops at any player you starred in *Coming up*, unless you gave him an auto-bid.
+   - **Max bid (auto-bid):** tap *Max bid* on a player card and set your limit. The game bids for you, a beat after each rival bid, up to that price, live or while skipping. Players with auto-bids show it in *Coming up*.
    - **RTM (2025 rules):** the former team says it will match, the top bidder gets one final raise, then the former team matches or lets go. You face this from both sides.
 5. **Fill:** if you finish under 18 players, you sign leftovers at base price. The list only shows players you can actually sign.
 6. **Results:** analyst grade (ranked by best-XI strength), best steal, biggest buy, all ten squads.
@@ -26,6 +27,7 @@ Plain HTML, CSS and JavaScript. No framework, no build step, no backend. Works o
      - While bowling, choose who bowls the next over (max 4 overs each, no bowler twice in a row) or leave it on Auto.
      - The live view has a score bar, the batters at the crease, the bowler's figures, ball chips for the current over and commentary.
      - Speeds are 1× to 15×, and you can pause, skip an over or simulate to the end.
+   - **Impact Player (IPL rule):** at the innings break each side may swap one XI player for one from its squad (max 4 overseas still applies). The chasing side usually brings in a batter, the defending side a bowler. Computer captains make the swap a real captain would; you pick yours from two drop-downs (the game suggests one). The scorecard shows who came in.
    - **Other matches:** simulated one at a time, or straight through to your next match.
    - **Hub tabs:** a points table with real NRR, form and the playoff bracket; Orange and Purple Caps; stats leaders (sixes, fours, highest scores, best figures, best SR, best economy); every result with a full scorecard; and your own fixtures and top performers.
    - **Scorecards:** batting with dismissals, extras, total and run rate, did not bat, fall of wickets, bowling figures, a runs-per-over chart and the player of the match.
@@ -80,6 +82,8 @@ Each computer team works out a value for every player, and that value changes as
 - **Scarcity:** when few good players of a role are left and many teams are short of that role, prices for it rise.
 - **Budget pacing:** a team's spending shifts with how much money it has per open squad slot.
 - **Grudges:** two teams that fought hard (5+ bids each) bid up to 12% harder against each other next time. Your most frequent opponent becomes your **rival** (⚔ on the board).
+- **Heat of battle:** deep in a one-on-one war (4+ bids each), owners get carried away and bid up to 12% past their plan (big spenders and star-chasers most), softened above ₹26 Cr so records fall only in the biggest wars. Commentary calls it: "*X refuse to back down!*"; a sniper coming in after "going once" gets "*X strike late!*".
+- **On screen:** each bid pops a paddle in the team colours with the amount on that team's table in the board, and the floor sits in an auction-hall backdrop (LED wall, stage beams, ten team tables; no logos). Each franchise's personality (Big spender, Waits for the war, Late striker, Price pusher) shows in its squad sheet.
 - **Bidding styles** (`bid` in `data.js`):
   - *Aggressive* (PBKS, KKR, SRH): bids quickly, makes jump bids to the next round number, and isn't scared off by jumps.
   - *Patient* (CSK, GT): only joins once a fight is already on.
@@ -121,4 +125,8 @@ Each delivery picks an outcome (dot, 1, 2, 3, 4, 6 or out, plus wides, no-balls 
 
 Computer captains pick bowlers by skill and phase: pace up front and at the death, spin in the middle. A feasibility check means the 20 overs can always be bowled within the 4-overs-each rule.
 
-**Calibration:** over 300 simulated matches the engine gives a first-innings average of about 180, 16–17 sixes and 2 fifties per match, about 15–19 hundreds per 100 matches, about 16% of innings bowled out and chases won about half the time. Over a full season the Orange Cap usually lands around 650–900 runs and the Purple Cap around 25–30 wickets.
+**Playing styles:** batters are tagged power hitters (more sixes, more risk) or anchors (rotate the strike, cash in once set); bowlers are death specialists (yorkers in overs 17-20, captains save them for then) or new-ball bowlers (swing in the powerplay). Batting orders follow a real T20 shape: specialist batters in the top four (power hitters open, anchors at three or four), then finishers and all-rounders, then the bowlers. Even the best batter always has a fair chance of getting out each ball.
+
+**Live win predictor:** the broadcast shows each side's win % every ball (first innings: projected total against the ground's par; chase: runs needed against what the balls and wickets left usually produce).
+
+**Calibration** (300 matches and full seasons): first-innings average about 186, 17-19 sixes and 2.1 fifties per match, about 19 hundreds per 100 matches, 15% of innings bowled out, about 5 wides an innings, chases won about half the time. Season leaders: Orange Cap about 720-760 runs, top-10 run-scorers averaging about 46 at a strike rate near 166, Purple Cap 25-30 wickets at an economy near 9, close to IPL 2024-25. The caps tables show average and strike rate; the stats tab adds most 50+ scores and best batting average.

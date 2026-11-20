@@ -187,6 +187,8 @@
     if (target) v *= 1.3;
     const base = R.basePrice(p);
     if (s.phase !== 'main' && c.n < R.MIN_SQUAD) v = Math.max(v, base * 1.3);
+    // Soft ceiling: nobody values a player much past the real record (₹27 Cr), even with a full purse.
+    if (v > 2200) v = 2200 + (v - 2200) * 0.3;
     return Math.min(v, cap, target ? cap : Math.max(base, spendable));
   }
 
@@ -239,6 +241,15 @@
   function limitFor(s, lot, t) {
     let lim = lot.vals[t] * (1 + Math.min(0.12, 0.03 * rivalry(s, t, lot.bidder)));
     if (lot.push[t] && lot.bidder && lot.bidder !== t && lot.bids < 14) lim = Math.max(lim, lot.push[t]);
+    // Heat of battle: deep in a one-on-one war, owners get carried away and go a little past their plan.
+    // Big spenders and star-chasers most of all. (Still capped by what they can afford.)
+    const mine = lot.cnt[t] || 0; const theirs = lot.cnt[lot.bidder] || 0;
+    if (mine >= 4 && theirs >= 4) {
+      const T = teamById[t];
+      const k = T.bid === 'aggressive' || (T.style.star || 1) > 1 ? 0.02 : 0.012;
+      lim *= 1 + Math.min(0.12, k * (Math.min(mine, theirs) - 3));
+      if (lim > 2600) lim = 2600 + (lim - 2600) * 0.3; // record-breaking wars happen, but rarely by much
+    }
     return lim;
   }
 

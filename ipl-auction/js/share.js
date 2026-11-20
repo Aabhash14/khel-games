@@ -23,7 +23,7 @@
     const accent = T.id === 'GT' ? T.c2 : T.c1;
 
     // stage
-    x.fillStyle = '#0b0e1c'; x.fillRect(0, 0, W, H);
+    x.fillStyle = '#061136'; x.fillRect(0, 0, W, H);
     const g = x.createRadialGradient(W / 2, -100, 50, W / 2, -100, 1300);
     g.addColorStop(0, 'rgba(242,193,78,0.35)'); g.addColorStop(1, 'rgba(242,193,78,0)');
     x.fillStyle = g; x.fillRect(0, 0, W, H);
@@ -76,7 +76,7 @@
     // highlights
     const box = (bx, label, item) => {
       if (!item) return;
-      x.fillStyle = '#141a30'; x.beginPath(); x.roundRect(bx, 1700 - 30, 450, 150, 22); x.fill();
+      x.fillStyle = '#0c1d55'; x.beginPath(); x.roundRect(bx, 1700 - 30, 450, 150, 22); x.fill();
       x.strokeStyle = accent; x.lineWidth = 4; x.stroke();
       x.fillStyle = '#a3a8c0'; x.font = mukta(26); x.fillText(label.toUpperCase(), bx + 28, 1716);
       x.fillStyle = '#f4efe4'; fit(x, item.name, 400, anton, 46); x.fillText(item.name, bx + 28, 1772);

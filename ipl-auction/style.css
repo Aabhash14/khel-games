@@ -455,3 +455,119 @@ button:disabled { cursor: default; }
 .manhattan { display: flex; align-items: flex-end; gap: 3px; height: 110px; padding: 18px 0 0; border-bottom: 1px solid var(--line); }
 .manhattan span { position: relative; flex: 1; min-height: 3px; border-radius: 3px 3px 0 0; background: linear-gradient(var(--gold), var(--gold-deep)); }
 .manhattan i { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-style: normal; font-size: 0.6rem; color: var(--mute); }
+
+/* ---------- auto-bid + Impact Player ---------- */
+.card-acts { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: none; }
+.max-btn { min-height: 34px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--mute); font-weight: 800; font-size: 0.75rem; white-space: nowrap; line-height: 1.1; }
+.max-btn small { display: block; font-size: 0.62rem; font-weight: 500; }
+.max-btn[aria-pressed="true"] { color: var(--gold-ink); background: var(--gold); border-color: var(--gold); }
+.impact { text-align: left; display: grid; gap: 8px; padding: 12px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--line); }
+.impact .ctl-k { margin: 0; color: var(--gold); }
+.imp-sub, .imp-ai { margin: 0; font-size: 0.82rem; color: var(--mute); }
+.imp-ai { color: var(--ink); font-weight: 800; }
+.impact label { display: grid; grid-template-columns: 3.2em 1fr; align-items: center; gap: 8px; font-weight: 800; font-size: 0.85rem; }
+.impact select { min-height: 44px; width: 100%; border-radius: 10px; border: 1px solid var(--line); background: var(--bg2); color: var(--ink); font: inherit; font-weight: 500; padding: 0 8px; }
+/* keep wide children (bowler chips, long names in pickers) from widening the page */
+.live-ctl > *, .impact label > * { min-width: 0; }
+.impact label { grid-template-columns: 3.2em minmax(0, 1fr); }
+
+/* ---------- auction hall backdrop + paddles at the tables ---------- */
+.hall { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
+.hall svg { width: 100%; height: 100%; display: block; max-width: 520px; margin: 0 auto; }
+body[data-screen="auction"] .hall { opacity: 1; }
+.chip { position: relative; }
+.ch-pad { position: absolute; left: 50%; top: 2px; width: 44px; height: 44px; margin-left: -22px; border-radius: 50%; display: grid; place-items: center; background: var(--c1); color: var(--ci); box-shadow: inset 0 -4px 0 var(--c2), 0 6px 14px rgba(0, 0, 0, 0.5); font: 400 0.95rem/1 var(--display); letter-spacing: 0.02em; opacity: 0; transform: translateY(16px) scale(0.4); pointer-events: none; }
+.ch-pad.up { animation: padUp 0.95s cubic-bezier(.2, .9, .3, 1) both; }
+@keyframes padUp { 0% { opacity: 0; transform: translateY(16px) scale(0.4); } 18% { opacity: 1; transform: translateY(-2px) scale(1.05) rotate(-6deg); } 70% { opacity: 1; transform: translateY(0) scale(1) rotate(-4deg); } 100% { opacity: 0; transform: translateY(-6px) scale(0.95) rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .ch-pad.up { animation: none; opacity: 0; } }
+
+/* ---------- live win predictor ---------- */
+.wp { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: 'k k k' 'l bar r'; gap: 2px 8px; align-items: center; margin-top: 6px; font-size: 0.75rem; color: var(--mute); }
+.wp:empty { display: none; }
+.wp-k { grid-area: k; text-align: center; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; font-size: 0.65rem; }
+.wp-bar { grid-area: bar; display: flex; height: 8px; border-radius: 8px; overflow: hidden; background: var(--bg3); }
+.wp-bar i { display: block; height: 100%; background: var(--c); transition: width 0.5s ease; }
+.wp-l { grid-area: l; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.wp-r { grid-area: r; font-weight: 800; color: var(--ink); white-space: nowrap; }
+
+/* =====================================================================
+   IPL broadcast skin: deep IPL blue, orange-to-gold accents, slanted
+   parallelogram panels and cut-corner cards like the TV graphics.
+   (Colours and shapes only: no logos or broadcaster marks.)
+   ===================================================================== */
+:root {
+  --bg: #061136; --bg2: #0c1d55; --bg3: #13297a;
+  --line: rgba(150, 180, 255, 0.18);
+  --mute: #a6b6e0;
+  --gold: #ffb627; --gold-deep: #d85f00; --gold-ink: #1d0e00;
+  --orange: #ff7a1a;
+  --cut: 14px;
+  --slant: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  --cutbox: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+}
+body { background: var(--bg); }
+.glow { background:
+    radial-gradient(120% 60% at 50% -10%, rgba(40, 95, 255, 0.5), transparent 60%),
+    radial-gradient(90% 50% at 50% 115%, rgba(255, 122, 26, 0.22), transparent 70%),
+    linear-gradient(180deg, #08205f 0%, #061136 45%, #030a24 100%); }
+.glow b { background: radial-gradient(120% 55% at 50% -8%, rgba(255, 182, 39, 0.3), transparent 62%); }
+.kicker { color: var(--orange); }
+.scr-head h2 { text-transform: uppercase; letter-spacing: 0.03em; }
+.scr-head h2::after { content: ""; display: block; width: 56px; height: 4px; margin-top: 8px; background: linear-gradient(90deg, var(--orange), var(--gold)); transform: skewX(-24deg); }
+.team-head h2::after { background: currentColor; opacity: 0.6; }
+.sub-h { text-transform: uppercase; color: var(--gold); }
+.sub-h::after { content: ""; display: block; width: 36px; height: 3px; margin-top: 6px; background: linear-gradient(90deg, var(--orange), var(--gold)); transform: skewX(-24deg); }
+.sub-h.cap::after { display: none; }
+
+/* buttons: orange-gold slanted primary, blue panels for the rest */
+.big-btn.gold { background: linear-gradient(90deg, var(--orange), var(--gold)); color: var(--gold-ink); border-radius: 0; clip-path: var(--slant); box-shadow: none; text-transform: uppercase; letter-spacing: 0.04em; }
+.big-btn.gold:active { transform: translateY(2px); box-shadow: none; filter: brightness(0.95); }
+.big-btn.gold:focus-visible { outline: none; box-shadow: inset 0 0 0 3px #fff; }
+.big-btn, .ghost-btn, .mode-card, .seg button, .chip-b { background: linear-gradient(180deg, #14307f, #0c1d55); border-color: rgba(120, 160, 255, 0.28); border-radius: 6px; }
+.mode-card { clip-path: var(--cutbox); border-radius: 0; }
+.mc-k { color: var(--gold); text-transform: uppercase; }
+.seg button[aria-pressed="true"], .chip-b.on { background: linear-gradient(90deg, var(--orange), var(--gold)); color: var(--gold-ink); border-color: transparent; }
+
+/* team code pills: slanted like the broadcast */
+.t-code, .bidder .pill, .g-code { border-radius: 0; clip-path: var(--slant); padding: 0 12px; }
+.grades .g-code { padding: 0 8px; }
+
+/* auction floor */
+.set-name { background: linear-gradient(90deg, var(--orange), var(--gold)); color: var(--gold-ink); padding: 5px 16px 4px; clip-path: var(--slant); }
+.card { border-radius: 0; border: 0; clip-path: var(--cutbox); background: linear-gradient(135deg, #16328a 0%, #0c1f5c 55%, #081646 100%); box-shadow: inset 0 3px 0 var(--orange); }
+.card .avatar { border-radius: 0; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); box-shadow: none; }
+.p-name { text-transform: uppercase; }
+.fact { background: rgba(3, 10, 36, 0.45); border-radius: 0; border-left: 3px solid var(--orange); }
+.bid-zone { margin: 6px -16px 0; padding: 10px 16px 8px; background: linear-gradient(90deg, transparent, rgba(10, 26, 80, 0.94) 10%, rgba(10, 26, 80, 0.94) 90%, transparent); border-top: 2px solid var(--gold); border-bottom: 2px solid var(--gold); }
+.bid-k { color: var(--orange); }
+.chip { border-radius: 4px; background: #0c1d55; }
+.stamp b { border-radius: 0; clip-path: var(--slant); border-width: 0; padding: 6px 26px 8px; background: var(--sc, var(--gold)); color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); }
+.stamp.unsold b { background: #3a4670; color: #d7def5; }
+.jump-btn { border-radius: 0; clip-path: var(--slant); padding: 6px 22px; background: rgba(10, 26, 80, 0.9); }
+.my-strip { border-radius: 0; clip-path: var(--cutbox); background: linear-gradient(90deg, #0c1d55, #14307f); }
+
+/* season hub, tables, scorecards */
+.tabs button { border-radius: 0; clip-path: var(--slant); padding: 6px 18px; background: #0c1d55; }
+.tabs button[aria-selected="true"] { background: linear-gradient(90deg, var(--orange), var(--gold)); color: var(--gold-ink); }
+.fixture, .crease, .toss, .impact, .hl, .brk-card, .modal { border-radius: 0; clip-path: var(--cutbox); border-color: rgba(120, 160, 255, 0.28); background: linear-gradient(135deg, #14307f, #0a1a4d); }
+.brk-card { box-shadow: inset 0 3px 0 var(--orange); }
+.champ { border-radius: 0; clip-path: var(--cutbox); }
+.pts th, .stat th, .sc th { background: linear-gradient(90deg, #13297a, #0c1d55); color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; }
+.pts tr.q td { background: rgba(255, 122, 26, 0.08); }
+.ko li, .games li, .grades button, .prow { border-radius: 0; clip-path: var(--cutbox); background: linear-gradient(90deg, #0f2462, #0a1a4d); }
+.prow[aria-pressed="true"] { background: linear-gradient(90deg, rgba(255, 122, 26, 0.35), #0a1a4d); }
+
+/* live score bug: blue bar, orange underline, gold overs tag */
+.bug { background: linear-gradient(90deg, #0a1d5c, #163a9c 55%, #0a1d5c); border-top: 0; border-bottom: 3px solid var(--orange); }
+.bug .t-code { font-size: 1.1rem; padding: 2px 14px; }
+.bug-ov { background: var(--gold); color: var(--gold-ink); padding: 3px 10px 2px; clip-path: var(--slant); }
+.chase { margin: 0 -16px; padding: 6px 16px; background: rgba(255, 122, 26, 0.12); }
+.ball { border-radius: 0; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); border: 0; }
+.ball.f { background: #1f6fd1; } .ball.s { background: linear-gradient(135deg, var(--orange), #c2185b); } .ball.w { background: #d32f2f; }
+.flash { border-radius: 0; clip-path: var(--slant); padding: 10px 34px; }
+.flash.s { background: linear-gradient(90deg, var(--orange), #c2185b); }
+.wp-bar { border-radius: 0; clip-path: var(--slant); height: 10px; }
+.manhattan span { background: linear-gradient(var(--gold), var(--orange)); border-radius: 0; }
+.sheet { background: #0a1a4d; }
+.pts thead tr, .stat thead tr, .sc thead tr { background: linear-gradient(90deg, #13297a, #0c1d55); }
+.pts th, .stat th, .sc th { background: transparent; }

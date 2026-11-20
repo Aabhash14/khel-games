@@ -2,8 +2,8 @@
 // Pages: network first, so online players always get the newest version.
 // Scripts, styles, fonts and icons: cache first. They are versioned (?v=N), so a
 // new release has new URLs and is fetched fresh. Bump V here and in index.html together.
-const V = 6;
-const CACHE = 'ipl-auction-v7';
+const V = 13;
+const CACHE = 'ipl-auction-v14';
 const ASSETS = ['./', './index.html', `./style.css?v=${V}`, './icon.svg', './manifest.webmanifest',
   ...['data', 'rules', 'engine', 'season', 'i18n', 'audio', 'match', 'league', 'share', 'main', 'tour'].map((m) => `./js/${m}.js?v=${V}`),
   './fonts/anton-400-latin.woff2', './fonts/mukta-500-latin.woff2', './fonts/mukta-500-devanagari.woff2',

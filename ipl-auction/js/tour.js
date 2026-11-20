@@ -148,10 +148,10 @@
       body.innerHTML = h;
     } else if (tab === 'caps') {
       const st = Lg.stats(s);
-      let h = `<h3 class="sub-h cap orange">${t('orangeCap')}</h3><div class="table-wrap"><table class="stat"><thead><tr><th></th><th>${t('mShort')}</th><th>${t('runs')}</th><th>${t('hs')}</th><th>${t('sr')}</th></tr></thead><tbody>`;
-      st.orange.slice(0, 10).forEach((x, i) => { h += `<tr class="${x.t === u ? 'me' : ''}${i === 0 ? ' lead' : ''}"><td>${playerCell(x.pid, x.t)}</td><td>${num(x.m)}</td><td><b>${num(x.r)}</b></td><td>${num(x.hs)}${x.hsNo ? '*' : ''}</td><td>${dec(x.sr, 1)}</td></tr>`; });
-      h += `</tbody></table></div><h3 class="sub-h cap purple">${t('purpleCap')}</h3><div class="table-wrap"><table class="stat"><thead><tr><th></th><th>${t('mShort')}</th><th>${t('wkts')}</th><th>${t('econ')}</th><th>${t('best')}</th></tr></thead><tbody>`;
-      st.purple.slice(0, 10).forEach((x, i) => { h += `<tr class="${x.t === u ? 'me' : ''}${i === 0 ? ' lead' : ''}"><td>${playerCell(x.pid, x.t)}</td><td>${num(x.m)}</td><td><b>${num(x.w)}</b></td><td>${dec(x.econ)}</td><td>${num(x.best[0])}/${num(x.best[1])}</td></tr>`; });
+      let h = `<h3 class="sub-h cap orange">${t('orangeCap')}</h3><div class="table-wrap"><table class="stat"><thead><tr><th></th><th>${t('mShort')}</th><th>${t('runs')}</th><th>${t('avg')}</th><th>${t('sr')}</th><th>${t('hs')}</th></tr></thead><tbody>`;
+      st.orange.slice(0, 10).forEach((x, i) => { h += `<tr class="${x.t === u ? 'me' : ''}${i === 0 ? ' lead' : ''}"><td>${playerCell(x.pid, x.t)}</td><td>${num(x.m)}</td><td><b>${num(x.r)}</b></td><td>${dec(x.avg, 1)}</td><td>${dec(x.sr, 1)}</td><td>${num(x.hs)}${x.hsNo ? '*' : ''}</td></tr>`; });
+      h += `</tbody></table></div><h3 class="sub-h cap purple">${t('purpleCap')}</h3><div class="table-wrap"><table class="stat"><thead><tr><th></th><th>${t('mShort')}</th><th>${t('wkts')}</th><th>${t('avg')}</th><th>${t('econ')}</th><th>${t('best')}</th></tr></thead><tbody>`;
+      st.purple.slice(0, 10).forEach((x, i) => { h += `<tr class="${x.t === u ? 'me' : ''}${i === 0 ? ' lead' : ''}"><td>${playerCell(x.pid, x.t)}</td><td>${num(x.m)}</td><td><b>${num(x.w)}</b></td><td>${x.avg != null ? dec(x.avg, 1) : '-'}</td><td>${dec(x.econ)}</td><td>${num(x.best[0])}/${num(x.best[1])}</td></tr>`; });
       h += '</tbody></table></div>';
       body.innerHTML = Object.keys(L.results).length ? h : `<p class="empty">${t('noStats')}</p>`;
     } else if (tab === 'stats') {
@@ -160,6 +160,8 @@
       body.innerHTML = Object.keys(L.results).length ? [
         list(t('mostSixes'), st.sixes, (x) => num(x.f6)),
         list(t('mostFours'), st.fours, (x) => num(x.f4)),
+        list(t('most50s'), [...Object.values(st.bat)].map((x) => ({ ...x, n50: x.f50 + x.f100 })).filter((x) => x.n50).sort((a, b) => b.n50 - a.n50 || b.r - a.r), (x) => `${num(x.n50)} <small>(${num(x.f100)}×100)</small>`),
+        list(t('bestAvg'), st.orange.filter((x) => x.inn >= 6), (x) => dec(x.avg, 1)),
         list(t('highScores'), st.hs, (x) => `${num(x.r)}${x.no ? '*' : ''} <small>(${num(x.b)})</small>`),
         list(t('bestFigs'), st.best, (x) => `${num(x.w)}/${num(x.r)} <small>(${ovs(x.balls)})</small>`),
         list(t('bestSR'), st.sr, (x) => dec(x.sr, 1)),
@@ -363,6 +365,14 @@
       const rate = (crr * I.balls + 9 * 36) / (I.balls + 36);
       html($('chaseLine'), `${t('crr')} ${dec(crr)} · ${t('proj')} ${num(Math.round(I.runs + rate * (120 - I.balls) / 6))}`);
     }
+    // win predictor, like the broadcast
+    const wp = $('winBar');
+    if (m.done) html(wp, '');
+    else {
+      const pb = Math.round(M.winProb(m) * 100);
+      const tb = teamById[I.bat]; const tf = teamById[I.bowlT];
+      html(wp, `<span class="wp-k">${t('winProb')}</span><div class="wp-bar"><i style="width:${pb}%;--c:${tb.c1}"></i><i style="width:${100 - pb}%;--c:${tf.c1}"></i></div><span class="wp-l">${I.bat} ${num(pb)}%</span><span class="wp-r">${num(100 - pb)}% ${I.bowlT}</span>`);
+    }
     // batters
     const bat = (idx, strike) => {
       const c = I.card[idx]; if (!c || c.out) return '';
@@ -435,6 +445,19 @@
     live.brk = true;
     A.tensionOff();
     const m = live.m; const I = m.inns[0];
+    const s = S(); const u = s.user; const opp = m.a === u ? m.b : m.a;
+    // Impact Player: the computer side makes its swap now; you choose yours below.
+    const aiSubs = Lg.aiImpact(s, m, [opp]);
+    const squad = Lg.squadOf(s, u);
+    const bench = squad.filter((id) => !m.xi[u].includes(id));
+    const sug = M.suggestSub(m, u, squad);
+    const opt = (id, sel) => `<option value="${id}" ${sel ? 'selected' : ''}>${esc(short(id))} · ${t(`role_${P[id].role}`)}${P[id].os ? ' ✈' : ''} · ${num(P[id].r)}</option>`;
+    const outSel = sug ? sug.out : [...m.xi[u]].sort((x, y) => P[x].r - P[y].r)[0];
+    const impactHtml = bench.length ? `<div class="impact"><p class="ctl-k">${t('impactTitle')}</p><p class="imp-sub">${t(m.b === u ? 'impactBat' : 'impactBowl')}</p>
+      <label>${t('impactOut')}<select id="impOut">${m.xi[u].map((id) => opt(id, id === outSel)).join('')}</select></label>
+      <label>${t('impactIn')}<select id="impIn"><option value="">${t('impactNone')}</option>${[...bench].sort((x, y) => P[y].r - P[x].r).map((id) => opt(id, sug && id === sug.in)).join('')}</select></label></div>` : '';
+    const aiLine = aiSubs.map((x) => `<p class="imp-ai">${t('impactAI', { t: x.t, in: esc(short(x.in)), out: esc(short(x.out)) })}</p>`).join('');
+    aiSubs.forEach((x) => live.feed.unshift({ k: 'over', txt: t('impactAI', { t: x.t, in: esc(short(x.in)), out: esc(short(x.out)) }) }));
     const top = I.card.filter((c) => c.batted).sort((a, b) => b.r - a.r)[0];
     const bb = Object.entries(I.bowl).sort((a, b) => b[1].w - a[1].w || a[1].r - b[1].r)[0];
     const box = $('breakBox');
@@ -443,9 +466,18 @@
       <p class="brk-score">${pill(I.bat)} ${num(I.runs)}/${num(I.wkts)} <small>(${ovs(I.balls)})</small></p>
       <p>${top ? `${esc(name(top.pid))} ${num(top.r)} (${num(top.b)})` : ''}${bb ? ` · ${esc(name(+bb[0]))} ${num(bb[1].w)}/${num(bb[1].r)}` : ''}</p>
       <p class="brk-need">${t('needToWin', { t: m.b, n: num(m.target), b: num(120) })}</p>
+      ${aiLine}${impactHtml}
       <button type="button" class="big-btn gold" id="brkGo"><span class="bb-main">${t('startChase')}</span></button></div>`;
     A.applause();
-    $('brkGo').addEventListener('click', () => { A.tap(); box.hidden = true; live.brk = false; live.overBalls = []; live.feed.unshift({ k: 'over', txt: `${t('chaseOn', { t: m.b, n: num(m.target) })}` }); renderLive(); schedule(900); });
+    $('brkGo').addEventListener('click', () => {
+      const inSel = $('impIn');
+      if (inSel && inSel.value) {
+        const outPid = +$('impOut').value; const inPid = +inSel.value;
+        if (!M.impactSub(m, u, outPid, inPid)) { ui().toast(t('xiErrOs')); return; }
+        A.sting();
+        live.feed.unshift({ k: 'over', txt: t('impactAI', { t: u, in: esc(short(inPid)), out: esc(short(outPid)) }) });
+      }
+      A.tap(); box.hidden = true; live.brk = false; live.overBalls = []; live.feed.unshift({ k: 'over', txt: `${t('chaseOn', { t: m.b, n: num(m.target) })}` }); renderLive(); schedule(900); });
   }
 
   function endMatch() {
@@ -481,7 +513,8 @@
     $('cardKicker').textContent = `${stageName(fx)} · ${venueName(fx.venue)}`;
     $('cardH').innerHTML = `${pill(r.inns[0].t)} ${t('vs')} ${pill(r.inns[1].t)}`;
     $('cardRes').textContent = resultText(r);
-    $('cardPotm').innerHTML = `${t('potm')}: <b>${esc(name(r.res.potm))}</b> · ${t('tossLine', { t: r.toss.w, d: t(r.toss.d) })}`;
+    const subs = Object.entries(r.subs || {}).map(([tm, x]) => `<br>${t('impactAI', { t: tm, in: esc(name(x.in)), out: esc(name(x.out)) })}`).join('');
+    $('cardPotm').innerHTML = `${t('potm')}: <b>${esc(name(r.res.potm))}</b> · ${t('tossLine', { t: r.toss.w, d: t(r.toss.d) })}${subs}`;
     $('cardTabs').innerHTML = r.inns.map((I, i) => `<button type="button" role="tab" aria-selected="${i === cardView.inn}" data-i="${i}">${I.t} ${num(I.runs)}/${num(I.wkts)}</button>`).join('');
     $('cardTabs').querySelectorAll('[data-i]').forEach((b) => b.addEventListener('click', () => { A.tap(); cardView.inn = +b.dataset.i; renderCard(); }));
     const I = r.inns[cardView.inn];
