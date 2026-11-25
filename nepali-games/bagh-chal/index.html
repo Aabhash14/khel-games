@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bagh-Chal · बाघ चाल</title>
+  <meta name="description" content="Nepal's own board game: 4 tigers against 20 goats on a carved wooden board. Play the computer at three levels, pass and play with a friend, or take on the Daily Bagh. English and Nepali.">
+  <meta name="theme-color" content="#1b0c06">
+  <meta property="og:title" content="Bagh-Chal · बाघ चाल">
+  <meta property="og:description" content="4 tigers. 20 goats. Eat 5, or trap all 4. A new Daily Bagh board every day.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body data-screen="home">
+  <div class="app" id="app">
+    <header class="bar">
+      <a class="home-link" href="../../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="back">Khel</span></a>
+      <div class="bar-r">
+        <div class="lang" role="group" aria-label="Language · भाषा">
+          <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+        </div>
+        <button type="button" class="icon-btn" id="mute" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="sr-only" data-t="sound">Sound</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- HOME -->
+      <section class="screen on" data-screen="home" aria-labelledby="title">
+        <div class="hero">
+          <p class="kicker" data-t="kicker">Nepal's own board game</p>
+          <h1 class="title" id="title"><span class="t-en">Bagh Chal</span><span class="t-ne" lang="ne">बाघ चाल</span></h1>
+          <div class="hero-stage" aria-hidden="true"><canvas id="heroArt" class="hero-art"></canvas></div>
+          <p class="pitch" data-t="pitch">4 tigers. 20 goats. Eat 5, or trap all 4.</p>
+        </div>
+        <div class="menu">
+          <button type="button" class="big-btn resume" id="goResume" hidden>
+            <span class="bb-main" data-t="resume">Continue your game</span>
+            <span class="bb-sub" id="resumeSub"></span>
+          </button>
+          <button type="button" class="big-btn brass daily" id="goDaily">
+            <span class="bb-main" id="dailyMain">Daily Bagh</span>
+            <span class="bb-sub" id="dailySub"></span>
+          </button>
+          <button type="button" class="big-btn" id="goAI">
+            <span class="bb-main" data-t="vsAI">Play the computer</span>
+            <span class="bb-sub" data-t="vsAISub">Pick a side, pick a level</span>
+          </button>
+          <button type="button" class="big-btn" id="goPass">
+            <span class="bb-main" data-t="pass">Pass and play</span>
+            <span class="bb-sub" data-t="passSub">Two players, one phone</span>
+          </button>
+          <button type="button" class="big-btn ghost" id="goLearn">
+            <span class="bb-main" data-t="learn">Learn in a minute</span>
+            <span class="bb-sub" data-t="learnSub">Drop, jump, trap</span>
+          </button>
+        </div>
+        <p class="record" id="homeRecord"></p>
+      </section>
+
+      <!-- SETUP -->
+      <section class="screen" data-screen="setup" aria-labelledby="setupH">
+        <div class="sub-head">
+          <button type="button" class="back-btn" data-go="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only" data-t="home">Home</span></button>
+          <h2 id="setupH" data-t="setupTitle">New game</h2>
+        </div>
+        <fieldset class="field">
+          <legend data-t="youPlay">You play</legend>
+          <div class="sides">
+            <button type="button" class="side-card" data-side="G" aria-pressed="true">
+              <canvas data-token="G" width="64" height="64" aria-hidden="true"></canvas>
+              <span class="sc-name" data-t="goats">Goats</span>
+              <span class="sc-sub" data-t="goatsSub">Trap all 4 tigers</span>
+            </button>
+            <button type="button" class="side-card" data-side="T" aria-pressed="false">
+              <canvas data-token="T" width="64" height="64" aria-hidden="true"></canvas>
+              <span class="sc-name" data-t="tigers">Tigers</span>
+              <span class="sc-sub" data-t="tigersSub">Eat 5 goats</span>
+            </button>
+          </div>
+        </fieldset>
+        <fieldset class="field">
+          <legend data-t="level">Level</legend>
+          <div class="levels">
+            <button type="button" data-level="easy" aria-pressed="false"><b data-t="easy">Easy</b><small data-t="easySub">Makes mistakes</small></button>
+            <button type="button" data-level="medium" aria-pressed="true"><b data-t="medium">Medium</b><small data-t="mediumSub">Plays fair</small></button>
+            <button type="button" data-level="hard" aria-pressed="false"><b data-t="hard">Hard</b><small data-t="hardSub">No mercy</small></button>
+          </div>
+        </fieldset>
+        <p class="record" id="setupRecord" aria-live="polite"></p>
+        <button type="button" class="big-btn brass" id="startBtn"><span class="bb-main" data-t="start">Start</span></button>
+      </section>
+
+      <!-- PLAY -->
+      <section class="screen play" data-screen="play" aria-labelledby="playLabel">
+        <div class="hud">
+          <button type="button" class="back-btn" id="playBack"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only" data-t="menu">Menu</span></button>
+          <h2 class="play-label" id="playLabel"></h2>
+          <button type="button" class="hud-btn" id="newBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="newGame">New</span></button>
+        </div>
+        <div class="play-grid">
+          <div class="board-col">
+            <div class="tag tag-t" id="tagT">
+              <canvas data-token="T" width="30" height="30" aria-hidden="true"></canvas>
+              <span class="tag-name"><b data-t="bagh">Bagh</b><span class="who" id="whoT"></span></span>
+              <span class="tag-count"><b id="capN">0</b>/<span id="capMax">5</span> <span data-t="eaten">eaten</span></span>
+            </div>
+            <div class="stage" id="stage">
+              <canvas id="cv"></canvas>
+              <div class="pts" id="pts" role="group" aria-label="Bagh-Chal board"></div>
+            </div>
+            <div class="tag tag-g" id="tagG">
+              <canvas data-token="G" width="30" height="30" aria-hidden="true"></canvas>
+              <span class="tag-name"><b data-t="bakhra">Bakhra</b><span class="who" id="whoG"></span></span>
+              <span class="tag-count"><span id="handWrap"><b id="handN">20</b> <span data-t="inHand">in hand</span> · </span><b id="trapN">0</b>/<span id="trapMax">4</span> <span data-t="trappedN">trapped</span></span>
+            </div>
+          </div>
+          <div class="side-col">
+            <div class="coach" id="coach" hidden>
+              <p class="coach-step" id="coachStep"></p>
+              <p class="coach-text" id="coachText"></p>
+              <button type="button" class="link-btn" id="skipLearn" data-t="skip">Skip</button>
+            </div>
+            <p class="sub" id="sub" aria-live="polite"></p>
+            <div class="controls">
+              <button type="button" class="ctl" id="undoBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="undo">Undo</span></button>
+              <button type="button" class="ctl" id="hintBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg><span data-t="hints">Hints</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="sheet-wrap" id="sheetWrap" hidden>
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetH" tabindex="-1"></div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="js/rules.js?v=3"></script>
+  <script src="js/ai.js?v=3"></script>
+  <script src="js/i18n.js?v=3"></script>
+  <script src="js/art.js?v=3"></script>
+  <script src="js/view.js?v=3"></script>
+  <script src="js/audio.js?v=3"></script>
+  <script src="js/share.js?v=3"></script>
+  <script src="js/main.js?v=3"></script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(function () {});
+  </script>
+</body>
+</html>

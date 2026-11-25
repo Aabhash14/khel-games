@@ -5,9 +5,9 @@ A collection of small browser games with Nepali vibes. Each game is a self-conta
 | Folder | Game | Status |
 |---|---|---|
 | [changa-chet](changa-chet/) | Dashain kite fight | Playable |
-| [bagh-chal](bagh-chal/) | Tigers & Goats board game | Planned |
-| [momo-rush](momo-rush/) | Momo stall time-management | Planned |
-| [tihar-diyo](tihar-diyo/) | Light-the-diyos tile puzzle | Planned |
+| [bagh-chal](bagh-chal/) | Tigers & Goats board game | Playable |
+| [momo-rush](momo-rush/) | Momo stall time-management | Playable |
+| [tihar-diyo](tihar-diyo/) | Light-the-diyos tile puzzle | Playable |
 | [himal-climb](himal-climb/) | Himalayan climbing arcade | Playable |
 | [bato-harayo](bato-harayo/) | Lost at night: a story game of strangers and directions | Playable |
 | [mol-molai](mol-molai/) | Dashain bazaar haggling: bluff, read faces, bring home the change | Playable |

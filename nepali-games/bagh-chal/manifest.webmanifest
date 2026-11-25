@@ -1,0 +1,14 @@
+{
+  "name": "Bagh-Chal · बाघ चाल",
+  "short_name": "Bagh-Chal",
+  "description": "Nepal's own board game: 4 tigers against 20 goats. Play the computer, a friend, or the Daily Bagh.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1b0c06",
+  "theme_color": "#1b0c06",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

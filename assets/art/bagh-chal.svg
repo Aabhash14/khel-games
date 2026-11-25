@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches nepali-games/bagh-chal (lacquered sal-wood board, brass inlay and studs, brass bagh token, clay goats). -->
+  <defs>
+    <clipPath id="bc-clip"><circle cx="256" cy="256" r="216"/></clipPath>
+    <radialGradient id="bc-lamp" cx=".32" cy=".2" r=".9"><stop offset="0" stop-color="#6a3a1e"/><stop offset=".55" stop-color="#3c1d10"/><stop offset="1" stop-color="#170904"/></radialGradient>
+    <linearGradient id="bc-brass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe3a0"/><stop offset=".45" stop-color="#d9a948"/><stop offset="1" stop-color="#6e4512"/></linearGradient>
+    <radialGradient id="bc-clay" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#d2b98c"/></radialGradient>
+  </defs>
+  <g clip-path="url(#bc-clip)">
+    <rect width="512" height="512" fill="url(#bc-lamp)"/>
+    <path d="M40 150q120-14 230 4t240-6M40 330q140 14 250-2t220 8M40 420q130-10 240 2" fill="none" stroke="#120602" stroke-width="3" opacity=".5"/>
+    <g fill="none" stroke="#0e0503" stroke-width="13" stroke-linecap="round" transform="translate(3 4)">
+      <path d="M86 86v340M171 86v340M256 86v340M341 86v340M426 86v340M86 86h340M86 171h340M86 256h340M86 341h340M86 426h340M86 86l340 340M426 86L86 426M256 86l170 170-170 170L86 256z"/>
+    </g>
+    <g fill="none" stroke="url(#bc-brass)" stroke-width="8" stroke-linecap="round">
+      <path d="M86 86v340M171 86v340M256 86v340M341 86v340M426 86v340M86 86h340M86 171h340M86 256h340M86 341h340M86 426h340M86 86l340 340M426 86L86 426M256 86l170 170-170 170L86 256z"/>
+    </g>
+    <g fill="url(#bc-brass)"><circle cx="171" cy="86" r="11"/><circle cx="341" cy="171" r="11"/><circle cx="86" cy="341" r="11"/><circle cx="426" cy="256" r="11"/><circle cx="256" cy="426" r="11"/><circle cx="171" cy="256" r="11"/></g>
+    <circle cx="250" cy="248" r="92" fill="#0a0402" opacity=".55" transform="translate(10 14)"/>
+    <circle cx="250" cy="248" r="92" fill="url(#bc-brass)"/>
+    <circle cx="250" cy="248" r="79" fill="#8f1e16"/>
+    <circle cx="250" cy="248" r="69" fill="#4f310b"/>
+    <path d="M208 196q-12-30 20-18q22-6 44 0q32-12 20 18l18 30-10 10 8 22-18 8q-20 38-40 38t-40-38l-18-8 8-22-10-10z" fill="url(#bc-brass)"/>
+    <path d="M220 230q12-12 24 0q-12 6-24 0zM256 230q12-12 24 0q-12 6-24 0zM238 260h24l-12 14z" fill="#3e2204"/>
+    <path d="M234 202l4 18M250 198v18M266 202l-4 18M212 252l-14 4M288 252l14 4" stroke="#3e2204" stroke-width="6" stroke-linecap="round"/>
+    <g transform="translate(366 366)">
+      <circle r="52" fill="#0a0402" opacity=".5" transform="translate(6 9)"/>
+      <circle r="52" fill="#b0582e"/><circle r="43" fill="url(#bc-clay)"/>
+      <path d="M-10-16q-6-22-22-18M10-16q6-22 22-18" fill="none" stroke="#5d3f25" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="-9" cy="2" r="4.5" fill="#2b1a0e"/><circle cx="9" cy="2" r="4.5" fill="#2b1a0e"/><ellipse cy="-12" rx="3.5" ry="5" fill="#b3261e"/>
+    </g>
+    <g transform="translate(116 386) rotate(-20)">
+      <circle r="38" fill="#b0582e"/><circle r="31" fill="url(#bc-clay)"/>
+      <path d="M-7-12q-4-16-16-13M7-12q4-16 16-13" fill="none" stroke="#5d3f25" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="-7" cy="1" r="3.5" fill="#2b1a0e"/><circle cx="7" cy="1" r="3.5" fill="#2b1a0e"/>
+    </g>
+  </g>
+  <circle cx="256" cy="256" r="212" fill="none" stroke="url(#bc-brass)" stroke-width="8"/>
+</svg>

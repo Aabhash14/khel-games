@@ -1,9 +1,8 @@
 // Synthesised sound, no files.
-// Base layer: wooden paddle knocks, bells for going once/twice, the gavel, a crowd murmur.
-// Tension layer that climbs with the price:
-//   ₹5 Cr  heartbeat          ₹10 Cr + low drone that rises with the price
-//   ₹15 Cr + snare roll       ₹20 Cr + high riser and faster everything
-//   ₹25 Cr + full roar        past the IPL record: air horn
+// One-off sounds only: paddle knocks, bells for going once/twice, the gavel, crowd roars on
+// fours, sixes, wickets and big sales. No constant background noise (no crowd hiss, no drone).
+// Tension at big prices: a heartbeat from ₹10 Cr, a snare roll from ₹20 Cr, a drum and brass
+// hit at every ₹5 Cr mark, and an air horn past the IPL record.
 (() => {
   'use strict';
   const IPLA = (globalThis.IPLA = globalThis.IPLA || {});
@@ -171,7 +170,7 @@
     const L = tens.level;
     const bpm = 64 + L * 16 + Math.min(24, tens.bids);
     // heartbeat (lub-dub)
-    if (L >= 1) {
+    if (L >= 2) {
       while (tens.nextBeat < now + 0.12) {
         const at = tens.nextBeat;
         tone({ type: 'sine', f: 62, f2: 40, at, a: 0.006, d: 0.16, v: 0.35 + L * 0.08 });
@@ -180,8 +179,8 @@
       }
     } else tens.nextBeat = now + 0.1;
     // snare roll from ₹15 Cr, getting faster and louder
-    if (L >= 3) {
-      const rate = 10 + (L - 3) * 6;
+    if (L >= 4) {
+      const rate = 12 + (L - 4) * 6;
       while (tens.nextRoll < now + 0.12) {
         hiss({ at: tens.nextRoll, a: 0.002, d: 0.045, v: 0.05 + (L - 3) * 0.04 + Math.random() * 0.02, f: 2400, q: 0.8 });
         tens.nextRoll += 1 / rate;
@@ -201,10 +200,10 @@
     const f = 55 * Math.pow(2, Math.min(price, 3500) / 2500);
     tens.o1.frequency.setTargetAtTime(f, t, 0.3);
     tens.o2.frequency.setTargetAtTime(f * 1.012, t, 0.3);
-    tens.g.gain.setTargetAtTime(L >= 2 ? 0.04 + (L - 2) * 0.025 : 0.0001, t, 0.4);
+    tens.g.gain.setTargetAtTime(0.0001, t, 0.4); // low drone removed (too constant)
     tens.fl.frequency.setTargetAtTime(180 + L * 260 + Math.min(bids, 30) * 10, t, 0.4);
     tens.o3.frequency.setTargetAtTime(700 + Math.min(price, 3500) / 3, t, 0.5);
-    tens.g3.gain.setTargetAtTime(L >= 4 ? 0.012 + (L - 4) * 0.01 : 0.0001, t, 0.5);
+    tens.g3.gain.setTargetAtTime(0.0001, t, 0.5); // high riser removed (too whiny)
     heat(Math.min(1, 0.1 + L * 0.18 + Math.min(bids, 20) / 60));
     return L > before ? L : 0; // a tier crossed (caller plays the milestone)
   }
@@ -219,7 +218,10 @@
   }
 
   // ---------- crowd bed ----------
+  // The always-on crowd murmur was removed (players found the constant hiss irritating).
+  // crowdOn stays as a no-op so callers don't change; roars on fours, sixes and sales still play.
   function crowdOn() {
+    return;
     const c = ac(); if (!c || crowd) return;
     const src = c.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
     const fl = c.createBiquadFilter(); fl.type = 'bandpass'; fl.frequency.value = 500; fl.Q.value = 0.7;

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches nepali-games/tihar-diyo (Tihar night, carved Newari window, oil channels, kalash, marigold swag, diyos). -->
+  <defs>
+    <linearGradient id="td-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0a26"/><stop offset="1" stop-color="#3b2a66"/></linearGradient>
+    <radialGradient id="td-glow"><stop offset="0" stop-color="#ffb238" stop-opacity=".55"/><stop offset="1" stop-color="#ffb238" stop-opacity="0"/></radialGradient>
+    <clipPath id="td-clip"><circle cx="256" cy="256" r="216"/></clipPath>
+  </defs>
+  <g clip-path="url(#td-clip)">
+    <rect width="512" height="512" fill="url(#td-sky)"/>
+    <g fill="#fff3dc"><circle cx="120" cy="90" r="2"/><circle cx="380" cy="76" r="2.4"/><circle cx="300" cy="58" r="1.6"/><circle cx="196" cy="64" r="1.4"/></g>
+    <path d="M60 128h392l-30-34H90z" fill="#7a3016"/>
+    <rect x="72" y="128" width="368" height="384" fill="#eadcc0"/>
+    <rect x="72" y="408" width="368" height="104" fill="#9e2a1c"/>
+    <circle cx="256" cy="268" r="200" fill="url(#td-glow)"/>
+    <path d="M160 168a96 52 0 0 1 192 0z" fill="#33170a"/>
+    <circle cx="256" cy="150" r="13" fill="#e0aa3c"/>
+    <rect x="128" y="166" width="256" height="232" rx="8" fill="#33170a"/>
+    <rect x="146" y="184" width="220" height="196" fill="#0a0503"/>
+    <g fill="#6e3c18"><rect x="150" y="188" width="68" height="60" rx="8"/><rect x="222" y="188" width="68" height="60" rx="8"/><rect x="294" y="188" width="68" height="60" rx="8"/><rect x="150" y="252" width="68" height="60" rx="8"/><rect x="222" y="252" width="68" height="60" rx="8"/><rect x="294" y="252" width="68" height="60" rx="8"/><rect x="150" y="316" width="68" height="60" rx="8"/><rect x="222" y="316" width="68" height="60" rx="8"/><rect x="294" y="316" width="68" height="60" rx="8"/></g>
+    <path d="M184 282v64h72v-128h72v64h-2" fill="none" stroke="#120804" stroke-width="22"/>
+    <path d="M184 282v64h72v-128h72v64" fill="none" stroke="#f2a51e" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="184" cy="276" r="20" fill="#e0aa3c"/><path d="M174 258l10-16 10 16z" fill="#2f8a3c"/><path d="M165 278h38" stroke="#d7261e" stroke-width="4"/>
+    <path d="M308 290h40c-2 14-10 20-20 20s-18-6-20-20z" fill="#c4642f"/>
+    <path d="M346 288c-8-6-9-15 0-28 9 13 8 22 0 28z" fill="#ffc23a"/>
+    <path d="M118 136q69 48 138 0q69 48 138 0" fill="none" stroke="#ff9500" stroke-width="16" stroke-linecap="round" stroke-dasharray="1 17"/>
+    <path d="M127 141q60 36 120 0M265 141q60 36 120 0" fill="none" stroke="#ffd000" stroke-width="9" stroke-linecap="round" stroke-dasharray="1 34"/>
+    <g fill="#c4642f"><path d="M196 424h28c-2 10-7 14-14 14s-12-4-14-14z"/><path d="M242 424h28c-2 10-7 14-14 14s-12-4-14-14z"/><path d="M288 424h28c-2 10-7 14-14 14s-12-4-14-14z"/></g>
+    <g fill="#ffc23a"><path d="M222 422c-6-4-6-11 0-20 6 9 6 16 0 20z"/><path d="M268 422c-6-4-6-11 0-20 6 9 6 16 0 20z"/><path d="M314 422c-6-4-6-11 0-20 6 9 6 16 0 20z"/></g>
+    <path d="M150 512a106 70 0 0 1 212 0" fill="#e0237a"/><path d="M178 512a78 50 0 0 1 156 0" fill="#ffd000"/><path d="M204 512a52 32 0 0 1 104 0" fill="#1fa463"/>
+  </g>
+</svg>

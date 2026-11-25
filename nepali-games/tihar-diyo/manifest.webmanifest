@@ -1,0 +1,14 @@
+{
+  "name": "Tihar Diyo · तिहार दियो",
+  "short_name": "Tihar Diyo",
+  "description": "A Tihar night puzzle. Turn the tiles so the oil flows and every diyo on the house lights up.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#120d2e",
+  "theme_color": "#120d2e",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -100,18 +100,9 @@ With all ten teams run by the computer, a full auction sells about 180–190 pla
 
 ## Sound
 
-Everything is generated in code (`audio.js`), with no audio files. The sound builds as the price climbs:
+Everything is generated in code (`audio.js`), with no audio files, and there is no constant background noise: no crowd hiss and no drone. Sounds play only when something happens: paddle knocks (higher in pitch as the price climbs), bells for going once/twice (deep bongs past ₹10 Cr), the gavel, and crowd roars for big sales, fours, sixes and wickets.
 
-| Price | Added |
-|---|---|
-| ₹5 Cr | heartbeat (it gets faster with every bid) |
-| ₹10 Cr | low drone whose pitch rises with the price; "going once/twice" become deep bongs |
-| ₹15 Cr | snare roll |
-| ₹20 Cr | high riser |
-| ₹25 Cr | everything faster and louder |
-| Above ₹27 Cr (IPL record) | air horn, timpani and a roar |
-
-Each ₹5 Cr mark also gets a timpani hit, a brass stab and a slight screen shake, and the stage glow shifts from gold to red. Paddle knocks rise in pitch with the price.
+Tension at big prices: a heartbeat from ₹10 Cr, a snare roll from ₹20 Cr, a drum and brass hit at every ₹5 Cr mark, and an air horn past the IPL record (₹27 Cr). In a tight chase, the heartbeat starts in the last 4 overs and the roll in the last 2.
 
 ## How a match is simulated
 

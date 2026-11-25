@@ -19,15 +19,14 @@ Made by **Aabhash Shahi**.
 | Indra Jatra (इन्द्रजात्रा) | Eight days of Yenya: raise the Yosin, carry Aji's flame, dare Majipa Lakhey, drive Kumari's chariot | `nepali-games/indra-jatra` |
 | Changa Chet (चङ्गा चेट) | Dashain kite fight over Kathmandu rooftops | `nepali-games/changa-chet` |
 | Himal Climb (हिमाल चढाइ) | Climb the 10 highest mountains on their real routes | `nepali-games/himal-climb` |
-| Bagh-Chal (बाघ चाल) | The traditional Nepali tiger and goats board game | `nepali-games/bagh-chal` |
-| Momo Rush (मःम रश) | Momo shop rush | `nepali-games/momo-rush` |
-| Tihar Diyo (तिहार दियो) | Light the diyos for Tihar | `nepali-games/tihar-diyo` |
+| Bagh-Chal (बाघ चाल) | Nepal's own board game on a carved wooden board: 4 tigers against 20 goats. Play the computer (3 levels), a friend on one phone, or the Daily Bagh | `nepali-games/bagh-chal` |
+| Momo Rush (मःम रश) | Run a Kathmandu momo stall for a week: buy stock, fold, steam and serve, and decide who gets udharo | `nepali-games/momo-rush` |
+| Tihar Diyo (तिहार दियो) | Turn the tiles so oil reaches every diyo without a drop spilling: 30 levels over the five nights of Tihar, plus a daily puzzle | `nepali-games/tihar-diyo` |
 | Know Me | Open a pack, pull your personality card, dare friends to guess your answers | `know-me` |
 | Pro Scout | Guess the athlete from a pixelated photo, career path, nickname or flag | `pro-scout` |
 | Orbit Switch | One-button arcade: switch orbits, dodge blocks, grab stars | `orbit-switch` |
 
 Several games are English and Nepali (use the EN / ने toggle). Each game folder has its own README with details.
-Some folders (Bagh-Chal, Momo Rush, Tihar Diyo) currently hold only a README.
 
 ## Run locally
 

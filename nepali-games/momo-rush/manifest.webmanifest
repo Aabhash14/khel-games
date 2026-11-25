@@ -1,0 +1,14 @@
+{
+  "name": "Momo Rush · मःम रश",
+  "short_name": "Momo Rush",
+  "description": "Run a Kathmandu evening momo stall for a week. Fold, steam, serve, read tricky customers and make rent.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121638",
+  "theme_color": "#121638",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

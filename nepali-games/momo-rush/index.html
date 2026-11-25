@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Momo Rush · मःम रश</title>
+  <meta name="description" content="Run a Kathmandu evening momo stall for a week. Buy filling at the bazaar, fold, steam and serve, read tricky customers, and make rent. English and Nepali.">
+  <meta name="theme-color" content="#121638">
+  <meta property="og:title" content="Momo Rush · मःम रश">
+  <meta property="og:description" content="Fold, steam, serve. Udharo or cash only? Make rent by the end of the week.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <script>
+    // preload the two display fonts over http(s) only; file:// blocks crossorigin preloads
+    if (location.protocol !== 'file:') ['pacifico-400-latin', 'mukta-800-latin'].forEach(function (f) {
+      var l = document.createElement('link'); l.rel = 'preload'; l.as = 'font'; l.type = 'font/woff2'; l.crossOrigin = ''; l.href = 'fonts/' + f + '.woff2'; document.head.appendChild(l);
+    });
+  </script>
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="bar" id="bar">
+      <a class="home-link" href="../../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="back">Khel</span></a>
+      <div class="bar-r">
+        <div class="lang" role="group" aria-label="Language · भाषा">
+          <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+        </div>
+        <button type="button" class="icon-btn mute" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="sr-only" data-t="sound">Sound</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="stage">
+      <!-- HOME -->
+      <section class="screen on" data-screen="home" aria-labelledby="title">
+        <div class="tarp" aria-hidden="true"></div>
+        <div class="hero">
+          <p class="kicker" data-t="kicker">Evening momo stall · 5 days</p>
+          <h1 class="title" id="title"><span class="title-en">Momo Rush</span><span class="title-ne" lang="ne">मःम रश</span></h1>
+          <canvas class="hero-art" id="heroArt" width="400" height="190" aria-hidden="true"></canvas>
+          <p class="pitch" data-t="pitch"></p>
+        </div>
+        <div class="menu">
+          <button type="button" class="big-btn cont" id="goCont" hidden>
+            <span class="bb-main" data-t="cont">Continue</span>
+            <span class="bb-sub" id="contSub"></span>
+          </button>
+          <button type="button" class="big-btn daily" id="goDaily">
+            <span class="bb-main" id="dailyMain"></span>
+            <span class="bb-sub" id="dailySub"></span>
+          </button>
+          <button type="button" class="big-btn" id="goWeek">
+            <span class="bb-main" data-t="newWeek">Start a week</span>
+            <span class="bb-sub" id="weekSub"></span>
+          </button>
+        </div>
+        <p class="best" id="bestLine"></p>
+        <details class="how">
+          <summary data-t="howTitle">How to play</summary>
+          <ol>
+            <li data-t="how1"></li>
+            <li data-t="how2"></li>
+            <li data-t="how3"></li>
+            <li data-t="how4"></li>
+            <li data-t="how5"></li>
+            <li id="how6"></li>
+          </ol>
+          <p class="keys" data-t="keys"></p>
+        </details>
+        <p class="credits" data-t="credits"></p>
+      </section>
+
+      <!-- BAZAAR -->
+      <section class="screen" data-screen="bazaar" aria-labelledby="bazH">
+        <div class="day-head">
+          <p class="day-chip" id="bazDay"></p>
+          <h2 id="bazH" data-t="bazaar">Morning bazaar</h2>
+          <p class="cash-chip"><span data-t="cash">Cash</span> <b id="bazCash"></b></p>
+        </div>
+        <article class="rumour" id="rumour" aria-live="polite">
+          <p class="r-src" id="rSrc"></p>
+          <p class="r-text" id="rText"></p>
+          <p class="r-q" id="rQ"></p>
+        </article>
+        <p class="new-today" id="newToday" hidden></p>
+        <p class="hint" data-t="tapScoop">Tap a bowl to add a plate of filling</p>
+        <div class="bowls" id="bowls"></div>
+        <p class="yday" id="yday"></p>
+        <p class="owned" id="owned" hidden></p>
+        <p class="broke" id="broke" hidden></p>
+        <div class="spendbar">
+          <p><span data-t="spend">Spend</span> <b id="spendN"></b></p>
+          <p><span data-t="after">Left</span> <b id="leftN"></b></p>
+        </div>
+        <button type="button" class="big-btn go" id="openBtn"><span class="bb-main" data-t="open">Open the stall</span></button>
+      </section>
+
+      <!-- PLAY -->
+      <section class="screen play" data-screen="play" aria-label="Momo Rush">
+        <div class="play-wrap" id="playWrap">
+          <canvas id="game" role="application" tabindex="0"></canvas>
+          <div class="hud" id="hud">
+            <button type="button" class="hud-btn" id="pauseBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg><span class="sr-only" data-t="pause">Pause</span></button>
+            <div class="clock" aria-hidden="true">
+              <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" class="trk"/><circle cx="18" cy="18" r="15" class="arc" id="clockArc"/></svg>
+              <span id="clockDay"></span>
+            </div>
+            <p class="hud-time"><b id="clockT">6:00</b><span data-t="pm">PM</span></p>
+            <p class="hud-money"><span data-t="take">Today</span><b id="takeN">0</b></p>
+            <p class="hud-tips"><span data-t="tips">Tips</span><b id="tipsN">0</b></p>
+            <p class="hud-stars" id="hudStars" aria-hidden="true"></p>
+          </div>
+          <p class="subs" id="subs" aria-live="polite"></p>
+          <p class="coach" id="coach" aria-live="polite" hidden></p>
+          <div class="banner" id="banner" hidden><p class="bn-k" id="bnK"></p><p class="bn-t" id="bnT"></p></div>
+          <div class="rotate" id="rotateNote"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.5 18.5h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><p data-t="rotate"></p></div>
+          <div class="card" id="card" role="dialog" aria-modal="false" aria-labelledby="cardWho" hidden>
+            <div class="card-in" id="cardIn">
+              <p class="card-who" id="cardWho"></p>
+              <p class="card-ask" id="cardAsk"></p>
+              <p class="card-tell" id="cardTell"></p>
+              <div class="card-timer"><i id="cardTimer"></i></div>
+              <div class="card-btns">
+                <button type="button" class="no" id="cardNo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cardNoT"></span></button>
+                <span class="swipe-hint" data-t="tSwipe"></span>
+                <button type="button" class="yes" id="cardYes"><span id="cardYesT"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <span class="stamp yes-stamp" aria-hidden="true" data-t="yes"></span>
+              <span class="stamp no-stamp" aria-hidden="true" data-t="no"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EVENING REPORT -->
+      <section class="screen" data-screen="report" aria-labelledby="repH">
+        <div class="receipt" id="receipt">
+          <h2 id="repH"></h2>
+          <ul class="tally" id="tally"></ul>
+          <ul class="ledger" id="ledger"></ul>
+          <ul class="notes" id="notes"></ul>
+          <div class="rep-row"><span data-t="rep">Reputation</span><span class="stars" id="repStars"></span></div>
+        </div>
+        <button type="button" class="big-btn go" id="repNext"><span class="bb-main" id="repNextT"></span></button>
+      </section>
+
+      <!-- UPGRADES -->
+      <section class="screen" data-screen="upgrade" aria-labelledby="upH">
+        <div class="day-head">
+          <h2 id="upH" data-t="upgTitle">Spend your tips?</h2>
+          <p class="cash-chip"><span data-t="tipJar">Tip jar</span> <b id="upTips"></b></p>
+        </div>
+        <p class="hint" data-t="upgNote"></p>
+        <div class="upgs" id="upgs"></div>
+        <button type="button" class="big-btn" id="upSkip"><span class="bb-main" data-t="keepTips">Keep the tips</span></button>
+      </section>
+
+      <!-- WEEK RESULT -->
+      <section class="screen" data-screen="week" aria-labelledby="wkH">
+        <p class="kicker" id="wkMode"></p>
+        <h2 class="wk-title" id="wkH"></h2>
+        <p class="wk-best" id="wkBest" hidden data-t="newBest"></p>
+        <div class="wk-big"><span id="wkPL"></span><b id="wkProfit"></b></div>
+        <p class="wk-stars" id="wkStars"></p>
+        <ul class="wk-lines" id="wkLines"></ul>
+        <div class="wk-calls" id="wkCallsBox" hidden><p class="wk-calls-h" data-t="c_head">Your calls this week</p><ul id="wkCalls"></ul></div>
+        <div class="story-prev" id="storyPrev" aria-hidden="true"></div>
+        <div class="row">
+          <button type="button" class="big-btn go slim" id="shareBtn"><span class="bb-main" data-t="share">Share story</span></button>
+          <button type="button" class="big-btn slim" id="copyBtn"><span class="bb-main" data-t="copyText">Copy result</span></button>
+        </div>
+        <div class="row">
+          <button type="button" class="big-btn slim" id="againBtn"><span class="bb-main" data-t="again">New week</span></button>
+          <button type="button" class="big-btn slim" id="homeBtn"><span class="bb-main" data-t="home">Home</span></button>
+        </div>
+      </section>
+    </main>
+
+    <div class="sheet-wrap" id="pauseSheet" hidden>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pauseH" tabindex="-1">
+        <h2 id="pauseH" data-t="paused">Paused</h2>
+        <button type="button" class="big-btn go" id="resumeBtn"><span class="bb-main" data-t="resume">Back to the stall</span></button>
+        <div class="sheet-row">
+          <div class="lang" role="group" aria-label="Language · भाषा">
+            <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+            <button type="button" data-set-lang="ne" aria-pressed="false" lang="ne">ने</button>
+          </div>
+          <button type="button" class="icon-btn mute" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="sr-only" data-t="sound">Sound</span>
+          </button>
+        </div>
+        <button type="button" class="big-btn" id="quitBtn"><span class="bb-main" data-t="quit">Quit to menu</span><span class="bb-sub" data-t="quitNote"></span></button>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <noscript><p class="noscript">Momo Rush needs JavaScript. · मःम रश खेल्न JavaScript चाहिन्छ।</p></noscript>
+  <script src="js/rules.js?v=5"></script>
+  <script src="js/i18n.js?v=5"></script>
+  <script src="js/audio.js?v=5"></script>
+  <script src="js/art.js?v=5"></script>
+  <script src="js/share.js?v=5"></script>
+  <script src="js/main.js?v=5"></script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(function () {});
+  </script>
+</body>
+</html>
