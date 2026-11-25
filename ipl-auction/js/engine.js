@@ -62,17 +62,25 @@
       const squad = retainedPrices(keep);
       teams[T.id] = { id: T.id, purse: R.PURSE - R.retentionCost(keep), squad, rtm: mode === 'fresh' ? 0 : R.MAX_RETAIN - keep.length };
     }
-    const pool = P.filter((p) => !retained.has(p.id)).sort((a, b) => b.r - a.r);
+    const pool = P.filter((p) => !retained.has(p.id) && !p.gone).sort((a, b) => b.r - a.r);
+    const { sets, lots } = buildSets(pool, 12);
+    const s = { v: 1, mode, seed, user, teams, sets, lots, idx: 0, phase: 'main', results: {}, unsold: [], star: [], log: [], riv: {}, top: 0 };
+    planTargets(s);
+    return s;
+  }
+
+  // Sets like the real auction: marquee names first, then capped and uncapped sets by role.
+  function buildSets(pool, nMarquee) {
     const sets = [];
     const lots = [];
     const pushSet = (key, capped, players) => {
       sets.push({ key, capped, n: players.length });
       players.forEach((p) => lots.push({ pid: p.id, set: sets.length - 1 }));
     };
-    const marquee = pool.filter((p) => p.capped).slice(0, 12);
+    const marquee = pool.filter((p) => p.capped).slice(0, nMarquee);
     const mSet = new Set(marquee.map((p) => p.id));
     pushSet('marquee', true, marquee.slice(0, 6));
-    pushSet('marquee', true, marquee.slice(6));
+    if (marquee.length > 6) pushSet('marquee', true, marquee.slice(6));
     for (const capped of [true, false]) {
       const size = capped ? 8 : 10;
       const byRole = Object.fromEntries(ROLES.map((r) => [r, pool.filter((p) => p.capped === capped && p.role === r && !mSet.has(p.id))]));
@@ -81,7 +89,37 @@
         for (const r of order) if (byRole[r].length) pushSet(r, capped, byRole[r].splice(0, size));
       }
     }
-    const s = { v: 1, mode, seed, user, teams, sets, lots, idx: 0, phase: 'main', results: {}, unsold: [], star: [], log: [], riv: {}, top: 0 };
+    return { sets, lots };
+  }
+
+  // Career mode: next year's mini auction. Every team keeps the players it chose (at the price it paid),
+  // its purse is the new year's purse minus those salaries, and there are no RTM cards.
+  // keepUser: player ids you keep. The career block (s.w) carries on.
+  function newMini(prev, keepUser) {
+    const W = IPLA.world;
+    const y = prev.w.year;
+    const purse = W.purseFor(y);
+    const teams = {};
+    const kept = new Set();
+    for (const T of TEAMS) {
+      const old = prev.teams[T.id].squad;
+      const keep = T.id === prev.user
+        ? old.filter((e) => keepUser.includes(e.pid) && !P[e.pid].gone).map((e) => ({ pid: e.pid, price: e.price }))
+        : W.aiKeep(prev, T.id);
+      keep.forEach((e) => kept.add(e.pid));
+      const squad = keep.map((e) => ({ pid: e.pid, price: e.price, how: 'kept' }));
+      teams[T.id] = { id: T.id, purse: Math.max(0, purse - squad.reduce((x, e) => x + e.price, 0)), squad, rtm: 0 };
+    }
+    // The shortlist: the best names not kept, plus every young prospect with a real ceiling.
+    const free = P.filter((p) => !kept.has(p.id) && !p.gone).sort((a, b) => b.r - a.r);
+    const open = Object.values(teams).reduce((x, T) => x + Math.max(0, 22 - T.squad.length), 0);
+    const n = Math.max(60, Math.min(150, Math.round(open * 1.5)));
+    const pick = new Set(free.slice(0, n).map((p) => p.id));
+    free.filter((p) => p.age <= 21 && p.pot >= 74).forEach((p) => pick.add(p.id));
+    const pool = free.filter((p) => pick.has(p.id));
+    const { sets, lots } = buildSets(pool, 6);
+    const seed = Math.floor(Math.random() * 1e9);
+    const s = { v: 1, mode: 'mini', seed, user: prev.user, teams, sets, lots, idx: 0, phase: 'main', results: {}, unsold: [], star: [], log: [], riv: prev.riv || {}, top: 0, w: prev.w };
     planTargets(s);
     return s;
   }
@@ -144,6 +182,9 @@
     if (!p.capped) v *= st.young || 1;
     if (p.capped && !p.os) v *= st.old || 1;
     if (p.team === t) v *= 1.1;
+    // Young players are bought for what they can become; veterans for what is left.
+    if (p.age != null && p.age <= 23 && p.pot > p.r) v *= 1 + (p.pot - p.r) * 0.012;
+    if (p.age != null && p.age >= 34) v *= p.age >= 36 ? 0.75 : 0.88;
     return v;
   }
 
@@ -372,7 +413,7 @@
   function leftovers(s) {
     const taken = new Set();
     for (const T of Object.values(s.teams)) T.squad.forEach((e) => taken.add(e.pid));
-    return P.filter((p) => !taken.has(p.id)).sort((a, b) => b.r - a.r);
+    return P.filter((p) => !taken.has(p.id) && !p.gone).sort((a, b) => b.r - a.r);
   }
 
   // Computer teams under 18 sign the best leftovers at base price.
@@ -398,5 +439,5 @@
     while (first > 0 && s.lots[first - 1].set === setIdx) first--;
     return { set: s.sets[setIdx], pos: s.idx - first + 1, n: s.sets[setIdx].n };
   }
-  IPLA.engine = { P, ROLES, TARGET, isTarget, rivalry, noteRivalry, nemesis, jumpTo, applyFear, stillIn, limitFor, aiRetain, newGame, counts, blockReason, maxBid, BUDGET_REF, aiValue, startLot, lotNext, placeBid, aiNext, autoResolve, rtmHolder, aiWantsRtm, aiFinalRaise, aiMatches, assign, markUnsold, currentLot, advance, leftovers, fillAI, setProgress };
+  IPLA.engine = { P, ROLES, TARGET, isTarget, rivalry, noteRivalry, nemesis, jumpTo, applyFear, stillIn, limitFor, aiRetain, newGame, newMini, counts, blockReason, maxBid, BUDGET_REF, aiValue, startLot, lotNext, placeBid, aiNext, autoResolve, rtmHolder, aiWantsRtm, aiFinalRaise, aiMatches, assign, markUnsold, currentLot, advance, leftovers, fillAI, setProgress };
 })();

@@ -3,7 +3,9 @@
 (() => {
   'use strict';
   const IPLA = (globalThis.IPLA = globalThis.IPLA || {});
-  const { teamById, VENUES, SEASON } = IPLA.data;
+  const { teamById, VENUES } = IPLA.data;
+  const W = IPLA.world;
+  const R = IPLA.rules;
   const { P } = IPLA.engine;
   const Lg = IPLA.league;
   const M = IPLA.match;
@@ -54,6 +56,20 @@
     return `${t('runOut')} (${short(f)})`;
   }
   const isMine = (fx) => fx.a === S().user || fx.b === S().user;
+  const yearNow = () => W.year(S());
+  const formBadge = (pid) => { const k = W.formKey(W.form(S(), pid)); return `<i class="fb ${k}" title="${t('form_' + k)}">${W.FORM_ICON[k]}</i>`; };
+  const injText = (x) => t('injShort', { n: x.n === 1 ? t('games1') : t('gamesN', { n: num(x.n) }) });
+  const pitchLine = (fx) => { const pi = W.pitchFor(fx); return `${t('pitch_' + pi.k)}${pi.dew ? ` · 💧 ${t('dewL')}` : ''}`; };
+
+  // ---------- news ----------
+  function newsText(x) {
+    const v = { p: x.p != null ? esc(name(x.p)) : '', t: x.t || '', o: x.o || '', r: num(x.r), b: num(x.b), w: num(x.w), a: num(x.a) };
+    if (x.k === 'inj') { v.n = x.n === 1 ? t('games1') : t('gamesN', { n: num(x.n) }); v.kind = t('inj_' + x.kind); }
+    if (x.k === 'qual') v.n = ordinal(x.n);
+    if (x.k === 'thriller' || x.k === 'thrash') v.m = x.so ? t('mSO') : t('mBy', { n: num(x.n), u: t(x.by === 'r' ? (x.n === 1 ? 'uRun' : 'uRuns') : (x.n === 1 ? 'uWkt' : 'uWkts')) });
+    return t('nw_' + x.k, v);
+  }
+  const newsMine = (x) => x.t === S().user || x.o === S().user;
 
   // ---------- open / navigation ----------
   function open() {
@@ -76,7 +92,13 @@
     const s = S(); const L = s.league; const u = s.user;
     const next = Lg.nextFixture(s);
     ui().save();
-    $('hubKicker').textContent = `${t('seasonTitle', { y: num(SEASON) })} · ${next ? stageName(next) : t('final')}`;
+    $('hubKicker').textContent = `${t('seasonTitle', { y: num(yearNow()) })} · ${next ? stageName(next) : t('final')}`;
+    W.ensureLeague(L);
+    const strip = $('hubNews');
+    const latest = L.news.slice(0, 2);
+    strip.hidden = !latest.length;
+    strip.innerHTML = latest.length ? `<span class="ns-k">${t('latest')}</span>${latest.map((x) => `<p class="${newsMine(x) ? 'me' : ''}">${newsText(x)}</p>`).join('')}` : '';
+    $('hubNextMain').textContent = t('nextSeason', { y: num(yearNow() + 1) });
     $('hubH').textContent = teamById[u].name;
     const tbl = Lg.table(s);
     const me = tbl.find((r) => r.t === u);
@@ -92,7 +114,7 @@
       const mine = isMine(next);
       const row = (id) => { const r = tbl.find((x) => x.t === id); return `<div class="fx-team">${pill(id)}<span>${esc(teamById[id].name)}</span><small>${num(r.w)}-${num(r.l)} ${r.form.map((f) => `<i class="fm ${f}">${f}</i>`).join('')}</small></div>`; };
       fxEl.className = `fixture${mine ? ' mine' : ''}`;
-      fxEl.innerHTML = `<p class="fx-k">${stageName(next)}${mine ? ` · <b>${t('yourMatch')}</b>` : ''}</p>${row(next.a)}<p class="fx-v">${t('vs')}</p>${row(next.b)}<p class="fx-venue">${esc(venueName(next.venue))}</p>`;
+      fxEl.innerHTML = `<p class="fx-k">${stageName(next)}${mine ? ` · <b>${t('yourMatch')}</b>` : ''}</p>${row(next.a)}<p class="fx-v">${t('vs')}</p>${row(next.b)}<p class="fx-venue">${esc(venueName(next.venue))} · ${pitchLine(next)}</p>`;
       const upcomingMine = L.fixtures.slice(L.next).some(isMine) || (!L.champion && next.stage !== 'final');
       btns.innerHTML = mine
         ? `<button type="button" class="big-btn gold" data-act="play"><span class="bb-main">${t('playMatch')}</span><span class="bb-sub">${t('playMatchSub')}</span></button><button type="button" class="ghost-btn" data-act="simMine">${t('simMine')}</button>`
@@ -126,6 +148,8 @@
 
   document.querySelectorAll('#hubTabs [data-tab]').forEach((b) => b.addEventListener('click', () => { A.tap(); tab = b.dataset.tab; renderHub(); }));
   $('hubShare').addEventListener('click', () => ui().doShare());
+  $('hubNext').addEventListener('click', () => ui().nextSeason());
+  $('hubNews').addEventListener('click', () => { A.tap(); tab = 'news'; renderHub(); });
   $('hubAgain').addEventListener('click', () => { if (confirm(t('confirmNew'))) ui().newAuction(); });
 
   // ---------- tabs ----------
@@ -153,6 +177,11 @@
       h += `</tbody></table></div><h3 class="sub-h cap purple">${t('purpleCap')}</h3><div class="table-wrap"><table class="stat"><thead><tr><th></th><th>${t('mShort')}</th><th>${t('wkts')}</th><th>${t('avg')}</th><th>${t('econ')}</th><th>${t('best')}</th></tr></thead><tbody>`;
       st.purple.slice(0, 10).forEach((x, i) => { h += `<tr class="${x.t === u ? 'me' : ''}${i === 0 ? ' lead' : ''}"><td>${playerCell(x.pid, x.t)}</td><td>${num(x.m)}</td><td><b>${num(x.w)}</b></td><td>${x.avg != null ? dec(x.avg, 1) : '-'}</td><td>${dec(x.econ)}</td><td>${num(x.best[0])}/${num(x.best[1])}</td></tr>`; });
       h += '</tbody></table></div>';
+      if (L.champion) {
+        const aw = W.awards(s);
+        const box = (k, x) => (x ? `<div class="hl"><span>${t(k)}</span><b>${esc(name(x.pid))}</b><small>${t('ptsN', { n: num(x.v) })}</small></div>` : '');
+        h = `<h3 class="sub-h">${t('awards')}</h3><div class="hl-row">${box('mvp', aw.mvp)}${box('emerging', aw.emerging)}</div>` + h;
+      }
       body.innerHTML = Object.keys(L.results).length ? h : `<p class="empty">${t('noStats')}</p>`;
     } else if (tab === 'stats') {
       const st = Lg.stats(s);
@@ -166,15 +195,29 @@
         list(t('bestFigs'), st.best, (x) => `${num(x.w)}/${num(x.r)} <small>(${ovs(x.balls)})</small>`),
         list(t('bestSR'), st.sr, (x) => dec(x.sr, 1)),
         list(t('bestEcon'), st.econ, (x) => dec(x.econ)),
+        (() => { const aw = W.awards(s); return list(t('youngTalents'), aw.young, (x) => `${t('ptsN', { n: num(x.v) })} <small>(${num(P[x.pid].age)})</small>`) + list(t('bargains'), aw.bargains, (x) => `${t('ptsN', { n: num(x.v) })} <small>${IPLA.i18n.money(x.price)}</small>`); })(),
       ].join('') : `<p class="empty">${t('noStats')}</p>`;
     } else if (tab === 'results') {
       const done = L.fixtures.filter((f) => L.results[f.id]).reverse();
       body.innerHTML = done.length ? `<ul class="games">${done.map((f) => { const r = L.results[f.id]; return `<li class="${isMine(f) ? 'me' : ''} tap" data-fx="${f.id}"><span class="k-stage">${stageName(f)}</span>${pill(r.inns[0].t)} ${num(r.inns[0].runs)}/${num(r.inns[0].wkts)} · ${pill(r.inns[1].t)} ${num(r.inns[1].runs)}/${num(r.inns[1].wkts)}<span class="k-hero">${resultText(r)} · ${t('potmShort')}: ${esc(name(r.res.potm))}</span></li>`; }).join('')}</ul>` : `<p class="empty">${t('noStats')}</p>`;
+    } else if (tab === 'news') {
+      const items = L.news.slice(0, 100);
+      let h = ''; let last = null;
+      for (const x of items) {
+        if (x.id !== last) { const fx = L.fixtures.find((f) => f.id === x.id); if (fx) h += `${last != null ? '</ul>' : ''}<p class="news-h">${stageName(fx)} · ${pill(fx.a)} ${t('vs')} ${pill(fx.b)}</p><ul class="news">`; else if (last == null) h += '<ul class="news">'; last = x.id; }
+        h += `<li class="${newsMine(x) ? 'me' : ''} nk-${x.k}">${newsText(x)}</li>`;
+      }
+      body.innerHTML = items.length ? h + '</ul>' : `<p class="empty">${t('noStats')}</p>`;
     } else if (tab === 'mine') {
       const my = L.fixtures.filter(isMine);
       const st = Lg.stats(s);
       const topR = st.orange.find((x) => x.t === u); const topW = st.purple.find((x) => x.t === u);
       let h = `<div class="hl-row">${topR ? `<div class="hl"><span>${t('topRuns')}</span><b>${esc(name(topR.pid))}</b><small>${num(topR.r)}</small></div>` : ''}${topW ? `<div class="hl"><span>${t('topWkts')}</span><b>${esc(name(topW.pid))}</b><small>${num(topW.w)}</small></div>` : ''}</div>`;
+      h += captainHtml(s, u, s.teams[u].squad.map((e) => e.pid), 'capMine');
+      h += squadStatsHtml(s, u, st);
+      if (s.w.hist.length) {
+        h += `<h3 class="sub-h">${t('yourSeasons')}</h3><p class="note">${t('titlesN', { n: num(s.w.titles || 0) })}</p><ul class="games">${[...s.w.hist].reverse().map((x) => `<li class="${x.champ === x.team ? 'won' : ''}"><span class="k-stage">${t('seasonTitle', { y: num(x.y) })} · ${pill(x.team)}</span>${esc(x.verdict || ordinal(x.pos))} · ${t('champions')}: ${pill(x.champ)}</li>`).join('')}</ul>`;
+      }
       h += `<button type="button" class="ghost-btn wide" id="mySquadBtn">${t('mySquad')}</button><h3 class="sub-h">${t('myMatches')}</h3><ul class="games">`;
       for (const f of my) {
         const r = L.results[f.id]; const opp = f.a === u ? f.b : f.a;
@@ -182,14 +225,81 @@
       }
       body.innerHTML = h + '</ul>';
       $('mySquadBtn').addEventListener('click', () => ui().openSquad(u));
+      wireCaptain('capMine', () => renderHub());
+      body.querySelectorAll('[data-pl]').forEach((el) => el.addEventListener('click', () => openPlayer(+el.dataset.pl)));
     }
     body.querySelectorAll('[data-fx]').forEach((el) => el.addEventListener('click', () => { if (S().league.results[el.dataset.fx]) openCard(+el.dataset.fx, 'hub'); }));
+  }
+
+  // ---------- captain ----------
+  // pool: players to choose from. Your pick is saved for the season (and next ones).
+  function captainHtml(s, u, pool, id) {
+    const lead = pool.includes(W.captainOf(s, u)) ? W.captainOf(s, u) : W.leaderIn(s, u, pool);
+    const opts = [...pool].sort((a, b) => W.capSkill(P[b]) - W.capSkill(P[a])).map((pid) => `<option value="${pid}" ${pid === lead ? 'selected' : ''}>${esc(name(pid))} · ${t('capRating', { n: num(W.capSkill(P[pid])) })}</option>`).join('');
+    const stand = lead !== W.captainOf(s, u) ? ` <small>(${t('standIn')})</small>` : '';
+    return `<div class="cap-card"><label><span class="ctl-k">🧢 ${t('captain')}${stand}</span><select id="${id}">${opts}</select></label><p class="cap-note">${t('capNote')}</p></div>`;
+  }
+  function wireCaptain(id, after) {
+    const sel = $(id); if (!sel) return;
+    sel.addEventListener('change', () => { A.tap(); S().w.cap[S().user] = +sel.value; ui().save(); after(); });
+  }
+
+  // ---------- your squad in numbers ----------
+  function last5(s, pid) {
+    const p = P[pid];
+    return W.playerLog(s, pid).slice(0, 5).map((g) => {
+      const bat = g.bat ? `${num(g.bat.r)}${g.bat.no ? '*' : ''}` : '';
+      const bowl = g.bowl && g.bowl.balls ? `${num(g.bowl.w)}/${num(g.bowl.r)}` : '';
+      const txt = p.role === 'PACE' || p.role === 'SPIN' ? bowl || bat || '–' : p.role === 'AR' ? [bat, bowl].filter(Boolean).join(' ') || '–' : bat || '–';
+      return `<i class="l5 ${g.won ? 'w' : 'l'}">${txt}</i>`;
+    }).join('');
+  }
+  function squadStatsHtml(s, u, st) {
+    const order = { WK: 0, BAT: 1, AR: 2, PACE: 3, SPIN: 4 };
+    const rows = s.teams[u].squad.map((e) => e.pid).sort((a, b) => order[P[a].role] - order[P[b].role] || P[b].r - P[a].r);
+    const cap = W.captainOf(s, u);
+    let h = `<h3 class="sub-h">${t('squadStats')}</h3><div class="table-wrap"><table class="stat squad"><thead><tr><th>${t('thPlayer')}</th><th>${t('mShort')}</th><th>${t('thR')}</th><th>${t('avg')}</th><th>${t('sr')}</th><th>${t('thW')}</th><th>${t('econ')}</th><th>${t('last5')}</th></tr></thead><tbody>`;
+    for (const pid of rows) {
+      const p = P[pid]; const b = st.bat[pid]; const w = st.bowl[pid];
+      const m = Math.max(b ? b.m.size : 0, w ? w.m.size : 0, W.playerLog(s, pid).length);
+      const inj = W.injury(s, pid);
+      const avg = b ? (b.inn - b.no ? b.r / (b.inn - b.no) : b.r) : null;
+      h += `<tr class="tap" data-pl="${pid}"><td><b>${esc(short(pid))}${pid === cap ? ' (c)' : ''}</b> ${formBadge(pid)}${ui().scoutIcons(p)}<small>${t(`role_${p.role}`)} · ${num(p.age)} · ${num(p.r)}${inj ? ` · <span class="inj">🩹 ${injText(inj)}</span>` : ''}</small></td>
+        <td>${num(m)}</td><td><b>${b ? num(b.r) : '–'}</b></td><td>${avg != null && b.inn ? dec(avg, 1) : '–'}</td><td>${b && b.b ? dec((b.r / b.b) * 100, 0) : '–'}</td><td><b>${w ? num(w.w) : '–'}</b></td><td>${w && w.balls ? dec(w.r / (w.balls / 6), 1) : '–'}</td><td class="l5s">${last5(s, pid)}</td></tr>`;
+    }
+    return h + '</tbody></table></div>';
+  }
+
+  // One player: tags, this season's numbers, every game, and the career so far.
+  function openPlayer(pid) {
+    A.tap();
+    const s = S(); const p = P[pid]; const st = Lg.stats(s);
+    const b = st.bat[pid]; const w = st.bowl[pid];
+    const own = W.owners(s)[pid];
+    const entry = own ? s.teams[own].squad.find((e) => e.pid === pid) : null;
+    const fk = W.formKey(W.form(s, pid));
+    const inj = W.injury(s, pid);
+    let h = `<div class="pl-tags"><span class="tag">${t(`role_${p.role}`)}</span><span class="tag">${ui().cname(p.country)}</span><span class="tag">${t('ageY', { n: num(p.age) })}</span><span class="tag">${t('ratingL')} ${num(p.r)}</span><span class="tag fb ${fk}">${W.FORM_ICON[fk]} ${t('form_' + fk)}</span>${inj ? `<span class="tag inj">🩹 ${t('inj_' + inj.k)} · ${injText(inj)}</span>` : `<span class="tag unc">${t('fitTag')}</span>`}${ui().scoutTags(p)}<span class="tag">🧢 ${t('capRating', { n: num(W.capSkill(p)) })}</span></div>`;
+    if (entry) h += `<p class="note">${t('paid')}: <b>${IPLA.i18n.money(entry.price)}</b></p>`;
+    h += `<h3 class="sub-h">${t('seasonStats')}</h3>`;
+    if (!b && !w) h += `<p class="empty">${t('noGames')}</p>`;
+    if (b) h += `<div class="pl-line"><span>${t('runs')} <b>${num(b.r)}</b></span><span>${t('hs')} <b>${num(b.hs)}${b.hsNo ? '*' : ''}</b></span><span>${t('avg')} <b>${b.inn - b.no ? dec(b.r / (b.inn - b.no), 1) : num(b.r)}</b></span><span>${t('sr')} <b>${b.b ? dec((b.r / b.b) * 100, 1) : '–'}</b></span><span>50/100 <b>${num(b.f50)}/${num(b.f100)}</b></span><span>4s/6s <b>${num(b.f4)}/${num(b.f6)}</b></span></div>`;
+    if (w && w.balls) h += `<div class="pl-line"><span>${t('wkts')} <b>${num(w.w)}</b></span><span>${t('econ')} <b>${dec(w.r / (w.balls / 6))}</b></span><span>${t('avg')} <b>${w.w ? dec(w.r / w.w, 1) : '–'}</b></span><span>${t('best')} <b>${num(w.best[0])}/${num(w.best[1])}</b></span><span>${t('ovShort')} <b>${ovs(w.balls)}</b></span></div>`;
+    const log = W.playerLog(s, pid);
+    if (log.length) {
+      h += `<ul class="games pl-log">${log.map((g) => `<li class="${g.won ? 'won' : 'lost'}"><span class="k-stage">${stageName(g.fx)} · ${t('vs')} ${pill(g.opp)}</span>${g.bat ? `${num(g.bat.r)}${g.bat.no ? '*' : ''} (${num(g.bat.b)})` : ''}${g.bat && g.bowl ? ' · ' : ''}${g.bowl ? `${num(g.bowl.w)}/${num(g.bowl.r)} (${ovs(g.bowl.balls)})` : ''}${!g.bat && !g.bowl ? '–' : ''}</li>`).join('')}</ul>`;
+    }
+    const c = s.w.tot[pid];
+    if (c && c.s) {
+      h += `<h3 class="sub-h">${t('careerStats', { n: num(c.s) })}</h3><div class="pl-line"><span>${t('mShort')} <b>${num(c.m)}</b></span><span>${t('runs')} <b>${num(c.r)}</b></span><span>${t('hs')} <b>${num(c.hs)}</b></span><span>${t('avg')} <b>${c.inn - c.no ? dec(c.r / (c.inn - c.no), 1) : num(c.r)}</b></span><span>${t('sr')} <b>${c.b ? dec((c.r / c.b) * 100, 1) : '–'}</b></span><span>${t('wkts')} <b>${num(c.w)}</b></span><span>${t('econ')} <b>${c.balls ? dec(c.rc / (c.balls / 6)) : '–'}</b></span></div>`;
+    }
+    ui().openSheet(p.name, h, own || null);
   }
 
   // ---------- pre-match ----------
   function openPre(fx) {
     const s = S();
-    pre = { fx, xi: Lg.teamXI(s, s.user), toss: null, called: null };
+    pre = { fx, xi: Lg.teamXI(s, s.user, fx), toss: null, called: null };
     ui().show('prematch');
     renderPre();
   }
@@ -204,7 +314,9 @@
     const s = S(); const { fx } = pre; const u = s.user; const opp = fx.a === u ? fx.b : fx.a;
     $('preKicker').textContent = stageName(fx);
     $('preH').innerHTML = `${pill(fx.a)} ${t('vs')} ${pill(fx.b)}`;
-    $('preVenue').textContent = venueName(fx.venue) + (VENUES[fx.venue] ? ` · ${VENUES[fx.venue].runs >= 1.05 ? t('pitchFlat') : VENUES[fx.venue].spin >= 3 ? t('pitchSpin') : t('pitchEven')}` : '');
+    $('preVenue').textContent = venueName(fx.venue);
+    const pi = W.pitchFor(fx);
+    $('pitchRep').innerHTML = `<p class="ctl-k">${t('pitchReport')}</p><p class="pr-pitch pk-${pi.k}"><b>${t('pitch_' + pi.k)}</b> ${t('pitchD_' + pi.k)}</p><p class="pr-dew">${pi.dew ? '💧 ' + t('dewYes') : t('dewNo')} · ${t('parScore', { n: num(W.par(fx)) })}</p>`;
     // toss
     const tossEl = $('toss');
     if (!pre.toss && !pre.called) {
@@ -213,7 +325,7 @@
         A.unlock(); A.tap();
         const coin = Math.random() < 0.5 ? 'h' : 't';
         pre.called = { call: b.dataset.call, coin, won: b.dataset.call === coin };
-        if (!pre.called.won) pre.toss = { w: opp, d: Lg.aiToss(opp) };
+        if (!pre.called.won) pre.toss = { w: opp, d: Lg.aiToss(opp, fx) };
         renderPre();
       }));
     } else if (pre.called && pre.called.won && !pre.toss) {
@@ -233,10 +345,14 @@
     const ul = $('xiPick'); ul.innerHTML = '';
     for (const p of squad) {
       const on = pre.xi.includes(p.id);
+      const inj = W.injury(s, p.id);
       const li = document.createElement('li'); const b = document.createElement('button');
       b.type = 'button'; b.className = 'prow'; b.setAttribute('aria-pressed', String(on));
+      b.disabled = !!inj && !on;
       ui().teamVars(b, u);
-      b.innerHTML = `<span class="avatar">${ui().initials(p.name)}</span><span><span class="pr-name">${esc(p.name)}${p.os ? ' ✈' : ''}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${ui().cname(p.country)}</span></span><span class="pr-r">${num(p.r)}</span>`;
+      const pf = W.pitchFit(p, fx);
+      const fitTag = pf >= 2 ? `<span class="pf up">▲ ${t('fitPlus')}</span>` : pf <= -1.5 ? `<span class="pf down">▼ ${t('fitMinus')}</span>` : '';
+      b.innerHTML = `<span class="avatar">${ui().initials(p.name)}</span><span><span class="pr-name">${esc(p.name)}${p.os ? ' ✈' : ''} ${formBadge(p.id)}${ui().scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${num(p.age)} · ${inj ? `<span class="inj">🩹 ${t('inj_' + inj.k)} · ${injText(inj)}</span>` : `${t('form_' + W.formKey(W.form(s, p.id)))}`} ${fitTag}</span></span><span class="pr-r">${num(p.r)}</span>`;
       b.addEventListener('click', () => {
         A.tap();
         pre.xi = on ? pre.xi.filter((x) => x !== p.id) : [...pre.xi, p.id];
@@ -244,6 +360,8 @@
       });
       li.append(b); ul.append(li);
     }
+    $('capBox').innerHTML = pre.xi.length ? captainHtml(s, u, pre.xi, 'capPre') : '';
+    wireCaptain('capPre', renderPre);
     $('startMatch').disabled = !pre.toss || !!prob;
   }
 
@@ -255,6 +373,10 @@
     ui().save();
     const m = Lg.startMatch(s, pre.fx, pre.toss);
     startLive(pre.fx, m);
+    const pi = W.pitchFor(pre.fx);
+    live.feed.unshift({ k: 'over', txt: `🧢 ${Object.entries(m.leaders).map(([tm, pid]) => `${tm}: ${esc(short(pid))}`).join(' · ')}` });
+    live.feed.unshift({ k: 'over', txt: `${t('pitchReport')}: <b>${t('pitch_' + pi.k)}</b>${pi.dew ? ` · 💧 ${t('dewL')}` : ''} · ${t('parScore', { n: num(W.par(pre.fx)) })}` });
+    renderLive();
   });
 
   // ---------- live match ----------
@@ -514,13 +636,14 @@
     $('cardH').innerHTML = `${pill(r.inns[0].t)} ${t('vs')} ${pill(r.inns[1].t)}`;
     $('cardRes').textContent = resultText(r);
     const subs = Object.entries(r.subs || {}).map(([tm, x]) => `<br>${t('impactAI', { t: tm, in: esc(name(x.in)), out: esc(name(x.out)) })}`).join('');
-    $('cardPotm').innerHTML = `${t('potm')}: <b>${esc(name(r.res.potm))}</b> · ${t('tossLine', { t: r.toss.w, d: t(r.toss.d) })}${subs}`;
+    $('cardPotm').innerHTML = `${t('potm')}: <b>${esc(name(r.res.potm))}</b> · ${t('tossLine', { t: r.toss.w, d: t(r.toss.d) })}${fx.pitch ? ` · ${t('pitchL')}: ${pitchLine(fx)}` : ''}${subs}`;
+    const capOf = r.cap || {};
     $('cardTabs').innerHTML = r.inns.map((I, i) => `<button type="button" role="tab" aria-selected="${i === cardView.inn}" data-i="${i}">${I.t} ${num(I.runs)}/${num(I.wkts)}</button>`).join('');
     $('cardTabs').querySelectorAll('[data-i]').forEach((b) => b.addEventListener('click', () => { A.tap(); cardView.inn = +b.dataset.i; renderCard(); }));
     const I = r.inns[cardView.inn];
     let h = `<div class="table-wrap"><table class="sc"><thead><tr><th>${t('batter')}</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th></tr></thead><tbody>`;
     for (const [pid, runs, balls, f4, f6, out] of I.bat) {
-      h += `<tr class="${runs >= 50 ? 'big' : ''}"><td><b>${esc(name(pid))}</b><small>${esc(howOut(out))}</small></td><td><b>${num(runs)}</b></td><td>${num(balls)}</td><td>${num(f4)}</td><td>${num(f6)}</td><td>${dec(balls ? (runs / balls) * 100 : 0, 1)}</td></tr>`;
+      h += `<tr class="${runs >= 50 ? 'big' : ''}"><td><b>${esc(name(pid))}${capOf[I.t] === pid ? ' (c)' : ''}</b><small>${esc(howOut(out))}</small></td><td><b>${num(runs)}</b></td><td>${num(balls)}</td><td>${num(f4)}</td><td>${num(f6)}</td><td>${dec(balls ? (runs / balls) * 100 : 0, 1)}</td></tr>`;
     }
     const e = I.ext; const extras = e.wd + e.nb + e.b + e.lb;
     h += `<tr class="sub"><td>${t('extras')} <small>(lb ${num(e.lb)}, w ${num(e.wd)}, nb ${num(e.nb)})</small></td><td colspan="5">${num(extras)}</td></tr>`;

@@ -32,6 +32,20 @@ Plain HTML, CSS and JavaScript. No framework, no build step, no backend. Works o
    - **Hub tabs:** a points table with real NRR, form and the playoff bracket; Orange and Purple Caps; stats leaders (sixes, fours, highest scores, best figures, best SR, best economy); every result with a full scorecard; and your own fixtures and top performers.
    - **Scorecards:** batting with dismissals, extras, total and run rate, did not bat, fall of wickets, bowling figures, a runs-per-over chart and the player of the match.
 8. **Share:** a 1080×1920 story image with your XI, grade, season result and the cap holders.
+9. **Next season (career):** after the Final, *Next season* rolls the game into the following year:
+   - **Season review:** awards (Orange and Purple Caps, Most Valuable Player, Emerging Player), every rating change in your squad, rising stars, Indian players who got capped, retirements, and the new youngsters entering the auction.
+   - **Who stays:** keep any of your players at the price you paid, or release them. The purse is ₹120 Cr plus ₹5 Cr for every year after 2027, minus the salaries you keep (max 25 kept, 8 overseas, and enough left to reach 18 players). Computer teams keep their stars and the players worth their price, and release the rest.
+   - **Mini auction:** released players, last year's unsold names and the new youngsters go under the hammer (no RTM). Then the new season starts. Career totals, titles and your season-by-season record carry on.
+
+## Season life: form, injuries, pitches, captains, news
+
+- **Form:** every player has a form level from ❄ cold to 🔥 red hot. It moves after each match with what he did (runs and strike rate, wickets and economy) and is worth up to ±4 rating points in a match. Players who sit out drift back to normal.
+- **Injuries:** players can get hurt in a match (fast bowlers and players over 34 more often), usually for 1–5 matches, sometimes for most of the season. Injured players can't be picked. Computer teams and your saved XI swap in the best fit player (same role first). About 12–20 injuries a season.
+- **Pitch conditions:** every match gets a pitch (good, flat road, green top, dry turner, slow and low) and maybe dew, weighted by the ground (Chepauk dry or slow, Chinnaswamy flat). The pitch changes pace and spin bowling, scoring, and how power hitters and anchors do. A dry pitch turns more in the second innings, and dew helps the chasing side. The pre-match screen shows a pitch report with the par score, and each player in the XI picker shows ▲ suits the pitch / ▼ pitch is against him. Computer captains read the pitch at the toss (dew: chase; dry or slow: bat first) and pick their XI on rating, form and pitch fit.
+- **Captaincy:** each franchise has a captain (known leaders such as Dhoni, Rohit Sharma or Shreyas Iyer rate highest). The captain's rating lifts or lowers the whole XI a little (more in the field than with the bat). A great captain leads from the front, and a weak one can feel the pressure. If the captain isn't playing, the best leader in the XI stands in. Pick yours in the Mine tab or before a match.
+- **News:** a News tab, plus the two latest headlines on the hub: hundreds, 4-wicket hauls, teenagers starring, 230+ totals, thrillers and thrashings, injuries and returns, players in red-hot form, cap changes, winning and losing streaks, playoff places, champions, and every result of your own team.
+- **Young talents and underrated players:** every player has an age. Young players have a hidden ceiling, and scouts show it as 🌱 ★ to ★★★. Young players grow toward that ceiling each season in career mode, and computer teams pay a little more for them. About 1 in 8 mid-rated players are underrated: they play 3–6 points better than their rating. Scouts spot about 70% of them (💎). Computer teams don't know, so they come cheap. The Stats tab lists the best young talents (23 or under) and the best bargains (bought for ₹2 Cr or less).
+- **Mine tab:** captain picker, then every player in your squad with role, age, rating, form, injury status, matches, runs, average, strike rate, wickets, economy and last five scores. Tap a player for his full sheet: every game this season, his price and his career totals.
 
 The game saves after every auction lot and every match, so a closed tab resumes where you left off. A live match in progress is not saved; you restart it.
 
@@ -53,7 +67,8 @@ The real 2027 event is a *mini* auction (no RTM; the purse is not announced yet)
 |---|---|
 | `js/data.js` | **Player pool + teams.** One line per player: name, 2026 team, country, role, rating, capped. Update this each season. |
 | `js/rules.js` | Purse, bid steps, base prices, retention costs |
-| `js/engine.js` | Auction state, sets, computer valuations, RTM decisions, fill |
+| `js/engine.js` | Auction state, sets, computer valuations, RTM decisions, fill, next year's mini auction |
+| `js/world.js` | Ages, potential, underrated players, form, injuries, pitches, captaincy, news, awards and the career rollover (ratings, retirements, new youngsters, which players computer teams keep) |
 | `js/season.js` | Best XI (max 4 overseas, a keeper, 5 bowling options), team strength, analyst grades |
 | `js/match.js` | Ball-by-ball T20 engine: outcome odds, bowler choice, dismissals, extras and free hits, results, player of the match, compact scorecards |
 | `js/league.js` | Fixtures, playoffs, points table with NRR, every stats leaderboard |
@@ -64,6 +79,9 @@ The real 2027 event is a *mini* auction (no RTM; the purse is not announced yet)
 | `js/share.js` | Story image |
 
 ## Data notes
+
+- Ages come from approximate birth years in `world.js` (our estimates). Potential and the underrated bonus are seeded per career, so each new game hides different gems.
+- In career mode, ratings move with age (youngsters grow, players over 30 slow down) and form. Each off-season the top end of each group (batters, bowlers, all-rounders) is nudged back toward the real pool's level, so scoring stays IPL-like year after year (first-innings average about 182–198 over five simulated seasons). New youngsters have made-up names.
 
 - Squads are the IPL 2026 squads (retentions, trades and the 16 Dec 2025 auction buys).
 - An extra 78 players are not in any 2026 IPL squad: international names (for example Harry Brook, Ben Stokes, Adam Zampa and Rahmanullah Gurbaz) and the best of the associate nations: Nepal (Sandeep Lamichhane, Dipendra Singh Airee, Rohit Paudel and seven more), USA, Netherlands, Scotland, Ireland, Zimbabwe, UAE, Namibia, Oman and Canada. Their card shows *New to IPL*, and they have no RTM. Pakistan players are left out because they do not play in the IPL.

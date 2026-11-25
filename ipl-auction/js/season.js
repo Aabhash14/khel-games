@@ -10,8 +10,9 @@
   const isBowler = (p) => p.role === 'PACE' || p.role === 'SPIN' || p.role === 'AR';
 
   // Max 4 overseas, at least one keeper, at least five bowling options.
-  function bestXI(squadPids) {
-    const pool = squadPids.map((id) => P[id]).sort((a, b) => b.r - a.r);
+  // val: how good a player is today (default: rating). Computer captains add form and pitch fit.
+  function bestXI(squadPids, val = (p) => p.r) {
+    const pool = squadPids.map((id) => P[id]).sort((a, b) => val(b) - val(a));
     const xi = [];
     let os = 0;
     const take = (p) => { xi.push(p); if (p.os) os++; };
@@ -47,7 +48,7 @@
 
   // Best steal: highest rating per crore among auction buys. Most expensive: the top price.
   function highlights(s, t) {
-    const buys = s.teams[t].squad.filter((e) => e.how !== 'ret');
+    const buys = s.teams[t].squad.filter((e) => e.how !== 'ret' && e.how !== 'kept');
     const dear = [...buys].sort((a, b) => b.price - a.price)[0] || null;
     const steal = [...buys].filter((e) => P[e.pid].r >= 70).sort((a, b) => P[b.pid].r / b.price - P[a.pid].r / a.price)[0] || null;
     return { dear, steal };

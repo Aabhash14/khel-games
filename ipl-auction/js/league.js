@@ -22,7 +22,7 @@
     const order = roundsOf(pairs, ids);
     s.league = {
       fixtures: order.map(([a, b], i) => ({ id: i + 1, a, b, venue: a, stage: 'league' })),
-      results: {}, next: 0, myXI: null, champion: null,
+      results: {}, next: 0, myXI: null, champion: null, inj: {}, news: [], hold: {},
     };
     return s.league;
   }
@@ -86,9 +86,31 @@
     if (ids.some((id) => !sq.has(id))) return false;
     return ids.filter((id) => P[id].os).length <= 4;
   }
-  function teamXI(s, t) {
-    if (t === s.user && validXI(s, s.league.myXI)) return s.league.myXI.slice();
-    return bestXI(s.teams[t].squad.map((e) => e.pid)).map((p) => p.id);
+  // Today's XI: computer captains pick on rating, form and the pitch; injured players sit out.
+  function teamXI(s, t, fx) {
+    const W = IPLA.world;
+    if (t === s.user && s.league.myXI) {
+      const xi = repairXI(s, s.league.myXI, fx);
+      if (validXI(s, xi)) return xi;
+    }
+    return bestXI(squadOf(s, t), W.matchValue(s, fx)).map((p) => p.id);
+  }
+  // Your saved XI with injured players swapped for the best fit player (same role first).
+  function repairXI(s, ids, fx) {
+    const W = IPLA.world;
+    const fit = squadOf(s, s.user);
+    const xi = ids.filter((id) => fit.includes(id));
+    const val = W.matchValue(s, fx);
+    const missing = ids.filter((id) => !xi.includes(id));
+    while (xi.length + missing.length < 11) missing.push(null);
+    for (const was of missing) {
+      if (xi.length >= 11) break;
+      const os = xi.filter((id) => P[id].os).length;
+      const same = (id) => (was != null && P[id].role === P[was].role ? 1 : 0);
+      const c = fit.filter((id) => !xi.includes(id) && (!P[id].os || os < 4)).sort((a, b) => same(b) - same(a) || val(P[b]) - val(P[a]))[0];
+      if (c != null) xi.push(c);
+    }
+    return xi;
   }
 
   // Seasons saved before balanced rounds: reorder the unplayed league games once so the
@@ -128,20 +150,30 @@
     return null;
   }
 
-  function aiToss(team) { return Math.random() < 0.68 ? 'bowl' : 'bat'; }
+  // Captains read the pitch: dew means chase, a dry or slow surface means bat first.
+  function aiToss(team, fx) {
+    const pi = fx ? IPLA.world.pitchFor(fx) : null;
+    const bowl = !pi ? 0.68 : pi.dew ? 0.88 : pi.k === 'dry' || pi.k === 'slow' ? 0.38 : pi.k === 'green' ? 0.78 : 0.66;
+    return Math.random() < bowl ? 'bowl' : 'bat';
+  }
 
   function startMatch(s, fx, toss) {
-    return M.createMatch({ a: fx.a, b: fx.b, xiA: teamXI(s, fx.a), xiB: teamXI(s, fx.b), venueKey: fx.venue, toss });
+    const W = IPLA.world;
+    const xiA = teamXI(s, fx.a, fx); const xiB = teamXI(s, fx.b, fx);
+    const { adj, leaders } = W.matchAdj(s, fx, [fx.a, fx.b], { [fx.a]: xiA, [fx.b]: xiB });
+    return M.createMatch({ a: fx.a, b: fx.b, xiA, xiB, venueKey: fx.venue, toss, cond: W.conditions(fx), adj, leaders });
   }
 
   function record(s, fx, m) {
     const L = s.league;
     L.results[fx.id] = M.summarize(m);
+    IPLA.world.afterMatch(s, fx, m, L.results[fx.id]);
     L.next = Math.max(L.next, L.fixtures.indexOf(fx) + 1);
     if (fx.stage === 'final') L.champion = m.result.w;
   }
 
-  const squadOf = (s, t) => s.teams[t].squad.map((e) => e.pid);
+  // Players fit to play (not injured, not retired).
+  const squadOf = (s, t) => IPLA.world.fit(s, s.teams[t].squad.map((e) => e.pid));
   // Computer captains (and "sim my match") use their Impact Player at the innings break.
   function aiImpact(s, m, teams) {
     const done = [];
@@ -154,7 +186,7 @@
 
   function simFixture(s, fx) {
     const tw = Math.random() < 0.5 ? fx.a : fx.b;
-    const m = startMatch(s, fx, { w: tw, d: aiToss(tw) });
+    const m = startMatch(s, fx, { w: tw, d: aiToss(tw, fx) });
     let guard = 0;
     while (!m.done && m.i === 0 && guard++ < 400) M.step(m);
     aiImpact(s, m, [m.a, m.b]);
@@ -223,5 +255,5 @@
     };
   }
 
-  IPLA.league = { aiImpact, squadOf, newLeague, nextFixture, startMatch, record, simFixture, table, stats, teamXI, validXI, aiToss, ownerOf };
+  IPLA.league = { repairXI, aiImpact, squadOf, newLeague, nextFixture, startMatch, record, simFixture, table, stats, teamXI, validXI, aiToss, ownerOf };
 })();

@@ -14,7 +14,17 @@
   function bowlSkill(p, venue) {
     let s = p.role === 'PACE' || p.role === 'SPIN' ? p.r : p.role === 'AR' ? p.r * 0.86 : 46;
     if (p.role === 'SPIN' && venue) s += venue.spin;
+    if (p.role === 'PACE' && venue && venue.pace) s += venue.pace;
     return s;
+  }
+  // Today's conditions for the innings being played (the second innings can bring wear and dew).
+  const ven = (m) => (m.i === 1 && m.v2 ? m.v2 : m.venue);
+  // Form, the hidden "underrated" bonus and captaincy: [batting, bowling] change for one player.
+  const adjB = (m, pid) => (m.adj && m.adj[pid] ? m.adj[pid][0] : 0);
+  const adjW = (m, pid) => (m.adj && m.adj[pid] ? m.adj[pid][1] : 0);
+  function styleFit(p, V) {
+    if (!V || V.P == null) return 0;
+    return p.bs === 'P' ? V.P : p.bs === 'A' ? V.A : 0;
   }
 
   // A real T20 order: specialist batters in the top four, then finishers and all-rounders, then the bowlers.
@@ -45,17 +55,19 @@
     const order = battingOrder(m.xi[bat]);
     const card = order.map((pid, i) => ({ pid, r: 0, b: 0, f4: 0, f6: 0, out: null, batted: i < 2 }));
     return {
-      bat, bowlT, card, bowl: {}, bowlers: bowlingOptions(m.xi[bowlT], m.venue),
+      bat, bowlT, card, bowl: {}, bowlers: bowlingOptions(m.xi[bowlT], ven(m)),
       striker: 0, non: 1, next: 2, runs: 0, wkts: 0, balls: 0,
       ext: { wd: 0, nb: 0, b: 0, lb: 0 }, fow: [], overs: [], cur: null, last: null, part: { r: 0, b: 0 },
     };
   }
 
   // toss: { w: team that won the toss, d: 'bat' | 'bowl' }
-  function createMatch({ a, b, xiA, xiB, venueKey, toss }) {
+  // cond: { c, c2 } from IPLA.world.conditions (pitch + ground); adj: per-player skill changes; leaders: captains.
+  function createMatch({ a, b, xiA, xiB, venueKey, toss, cond, adj, leaders }) {
     const batFirst = toss.d === 'bat' ? toss.w : toss.w === a ? b : a;
     const other = batFirst === a ? b : a;
-    const m = { a: batFirst, b: other, home: a, away: b, xi: { [a]: xiA, [b]: xiB }, venueKey, venue: VENUES[venueKey] || { runs: 1, spin: 0 }, toss, sub: {}, i: 0, target: null, done: false, result: null, freeHit: false };
+    const venue = cond ? cond.c : VENUES[venueKey] || { runs: 1, spin: 0 };
+    const m = { a: batFirst, b: other, home: a, away: b, xi: { [a]: xiA, [b]: xiB }, venueKey, venue, v2: cond ? cond.c2 : venue, adj: adj || {}, leaders: leaders || {}, toss, sub: {}, i: 0, target: null, done: false, result: null, freeHit: false };
     m.inns = [newInnings(m, batFirst, other)];
     return m;
   }
@@ -86,7 +98,7 @@
     let best = null; let bestScore = -1e9;
     for (const pid of elig) {
       const p = P[pid];
-      let sc = bowlSkill(p, m.venue) + quota(pid) * (over >= 12 ? 5 : 1.5);
+      let sc = bowlSkill(p, ven(m)) + adjW(m, pid) + quota(pid) * (over >= 12 ? 5 : 1.5);
       if (p.role === 'PACE') sc += over < 6 ? 6 : over >= 16 ? 9 : 0;
       if (p.ws === 'D') sc += over >= 16 ? 10 : over < 6 ? -4 : -2; // save the death bowler for the end
       if (p.ws === 'N') sc += over < 6 ? 8 : 0;
@@ -124,7 +136,8 @@
   function pickOutcome(bat, bowl, m, I, intent) {
     const over = Math.floor(I.balls / 6);
     const w = { ...BASE };
-    const s = clamp((batSkill(bat) - bowlSkill(bowl, m.venue)) / 10, -3, 2.5);
+    const V = ven(m);
+    const s = clamp((batSkill(bat) + adjB(m, bat.id) + styleFit(bat, V) - bowlSkill(bowl, V) - adjW(m, bowl.id)) / 10, -3, 2.5);
     w.four *= Math.exp(0.14 * s); w.six *= Math.exp(0.2 * s); w.out *= Math.exp(-0.13 * s); w.dot *= Math.exp(-0.07 * s);
     if (over < 6) { w.four *= 1.25; w.six *= 0.9; w.one *= 0.95; }
     else if (over < 16) { w.four *= 0.9; w.six *= 0.95; w.one *= 1.1; w.out *= 0.92; }
@@ -134,7 +147,7 @@
     const sc = I.card[I.striker];
     if (sc.b < 5) { w.four *= 0.8; w.six *= 0.7; w.out *= 1.15; } else if (sc.b > 25) { w.four *= 1.08; w.six *= 1.15; }
     if (sc.r >= 80) { w.six *= 1.25; w.out *= 3.8; } else if (sc.r >= 50) { w.six *= 1.15; w.out *= 1.9; } // past fifty they start taking more risks
-    const vr = m.venue.runs;
+    const vr = V.runs;
     w.four *= vr; w.six *= vr * vr; w.out /= Math.sqrt(vr);
     if (bowl.role === 'SPIN') { w.four *= 0.85; w.six *= 1.05; w.one *= 1.05; } else { w.four *= 1.05; }
     // Batting styles: power hitters score faster and get out more; anchors rotate and cash in once set.
@@ -327,7 +340,7 @@
     const bench = squad.filter((id) => !xi.includes(id));
     if (!bench.length) return null;
     const chasing = team === m.b;
-    const val = chasing ? (id) => batSkill(P[id]) : (id) => (canBow(id) ? bowlSkill(P[id], m.venue) : 30);
+    const val = chasing ? (id) => batSkill(P[id]) : (id) => (canBow(id) ? bowlSkill(P[id], ven(m)) : 30);
     const outPid = [...xi].sort((x, y) => val(x) - val(y))[0];
     const ins = bench.filter((id) => canSub(m, team, outPid, id)).sort((x, y) => val(y) - val(x));
     if (!ins.length || val(ins[0]) - val(outPid) < 8) return null;
@@ -369,9 +382,10 @@
         fow: I.fow, overs: I.overs.map((o) => o.runs),
       })),
       subs: m.sub,
+      cap: m.leaders,
       res: m.result,
     };
   }
 
-  IPLA.match = { winProb, createMatch, step, impactSub, suggestSub, canSub, runToEnd, summarize, eligibleBowlers, aiBowler, battingOrder, batSkill, bowlSkill, canBowl, autoIntent };
+  IPLA.match = { ven, winProb, createMatch, step, impactSub, suggestSub, canSub, runToEnd, summarize, eligibleBowlers, aiBowler, battingOrder, batSkill, bowlSkill, canBowl, autoIntent };
 })();

@@ -12,7 +12,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="preload" href="fonts/anton-400-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/mukta-800-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
   <div class="glow" aria-hidden="true"><b id="heat"><i></i></b></div>
@@ -195,6 +195,29 @@
         </div>
       </section>
 
+      <!-- CAREER: season review -->
+      <section class="screen" data-screen="review" aria-labelledby="revH">
+        <header class="scr-head">
+          <p class="kicker" data-t="awards">Season awards</p>
+          <h2 id="revH"></h2>
+          <p data-t="reviewSub"></p>
+        </header>
+        <div id="revBody"></div>
+        <div class="dock col"><button type="button" class="big-btn gold" id="revGo"><span class="bb-main" data-t="toRelease">Pick who stays</span></button></div>
+      </section>
+
+      <!-- CAREER: keep or release before the mini auction -->
+      <section class="screen" data-screen="release" aria-labelledby="relH">
+        <header class="scr-head team-head" id="relHead">
+          <h2 id="relH"></h2>
+          <p data-t="relSub"></p>
+        </header>
+        <div class="ret-meter" id="relMeter"></div>
+        <p class="rel-err" id="relErr"></p>
+        <ul class="ret-list" id="relList"></ul>
+        <div class="dock"><button type="button" class="big-btn gold" id="relGo"><span class="bb-main" data-t="relGo">Go to the mini auction</span></button></div>
+      </section>
+
       <!-- SEASON HUB -->
       <section class="screen" data-screen="hub" aria-labelledby="hubH">
         <header class="scr-head">
@@ -205,17 +228,22 @@
         <div class="champ" id="hubChamp" hidden></div>
         <article class="fixture" id="nextFx"></article>
         <div class="hub-btns" id="hubBtns"></div>
+        <div class="news-strip" id="hubNews" hidden></div>
         <div class="tabs" role="tablist" id="hubTabs">
           <button type="button" role="tab" data-tab="table" aria-selected="true" data-t="tabTable">Table</button>
           <button type="button" role="tab" data-tab="caps" aria-selected="false" data-t="tabCaps">Caps</button>
           <button type="button" role="tab" data-tab="stats" aria-selected="false" data-t="tabStats">Stats</button>
           <button type="button" role="tab" data-tab="results" aria-selected="false" data-t="tabResults">Results</button>
           <button type="button" role="tab" data-tab="mine" aria-selected="false" data-t="tabMine">Mine</button>
+          <button type="button" role="tab" data-tab="news" aria-selected="false" data-t="tabNews">News</button>
         </div>
         <div class="tab-body" id="hubBody" role="tabpanel"></div>
         <div class="dock col" id="hubEnd" hidden>
-          <button type="button" class="big-btn gold" id="hubShare"><span class="bb-main" data-t="share">Share</span></button>
-          <button type="button" class="ghost-btn" id="hubAgain" data-t="again">New auction</button>
+          <button type="button" class="big-btn gold" id="hubNext"><span class="bb-main" id="hubNextMain"></span><span class="bb-sub" data-t="nextSeasonSub"></span></button>
+          <div class="dock-row">
+            <button type="button" class="ghost-btn" id="hubShare" data-t="share">Share</button>
+            <button type="button" class="ghost-btn" id="hubAgain" data-t="again">New auction</button>
+          </div>
         </div>
       </section>
 
@@ -226,9 +254,11 @@
           <h2 id="preH"></h2>
           <p id="preVenue"></p>
         </header>
+        <div class="pitch-rep" id="pitchRep"></div>
         <div class="toss" id="toss"></div>
         <h3 class="sub-h"><span data-t="pickXI">Your XI</span> <small id="xiCount"></small></h3>
         <ul class="ret-list" id="xiPick"></ul>
+        <div class="cap-box" id="capBox"></div>
         <div class="dock col"><button type="button" class="big-btn gold" id="startMatch" disabled><span class="bb-main" data-t="startMatch">Start match</span></button></div>
       </section>
 
@@ -304,17 +334,18 @@
 
     <div class="toast" id="toast" role="status" hidden></div>
   </div>
-  <script src="js/data.js?v=14" defer></script>
-  <script src="js/rules.js?v=14" defer></script>
-  <script src="js/engine.js?v=14" defer></script>
-  <script src="js/season.js?v=14" defer></script>
-  <script src="js/i18n.js?v=14" defer></script>
-  <script src="js/audio.js?v=14" defer></script>
-  <script src="js/match.js?v=14" defer></script>
-  <script src="js/league.js?v=14" defer></script>
-  <script src="js/share.js?v=14" defer></script>
-  <script src="js/main.js?v=14" defer></script>
-  <script src="js/tour.js?v=14" defer></script>
+  <script src="js/data.js?v=15" defer></script>
+  <script src="js/rules.js?v=15" defer></script>
+  <script src="js/engine.js?v=15" defer></script>
+  <script src="js/world.js?v=15" defer></script>
+  <script src="js/season.js?v=15" defer></script>
+  <script src="js/i18n.js?v=15" defer></script>
+  <script src="js/audio.js?v=15" defer></script>
+  <script src="js/match.js?v=15" defer></script>
+  <script src="js/league.js?v=15" defer></script>
+  <script src="js/share.js?v=15" defer></script>
+  <script src="js/main.js?v=15" defer></script>
+  <script src="js/tour.js?v=15" defer></script>
   <script>
     if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   </script>

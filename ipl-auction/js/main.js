@@ -7,6 +7,7 @@
   const { bestXI, grades, highlights } = IPLA.season;
   const { t, money, setLang, getLang, applyStatic, setName, num, ordinal, crShort } = IPLA.i18n;
   const A = IPLA.audio;
+  const W = IPLA.world;
   const { shareImage } = IPLA.share;
 
   const $ = (id) => document.getElementById(id);
@@ -52,8 +53,18 @@
     let h = `<span class="tag">${t(`role_${p.role}`)}</span>`;
     h += p.os ? `<span class="tag os">✈ ${cname(p.country)}</span>` : `<span class="tag">${cname(p.country)}</span>`;
     if (!p.capped) h += `<span class="tag unc">${t('uncapped')}</span>`;
+    h += `<span class="tag">${t('ageY', { n: num(p.age) })}</span>`;
+    return h + scoutTags(p);
+  }
+  // Scout notes: young players with a high ceiling, and players who are better than their rating.
+  function scoutTags(p) {
+    let h = '';
+    const st = W.potStars(p);
+    if (st) h += `<span class="tag young" title="${t('potential')}">🌱 ${t('youngT')} ${'★'.repeat(st)}</span>`;
+    if (W.underrated(p)) h += `<span class="tag gem" title="${t('underratedD')}">💎 ${t('underratedT')}</span>`;
     return h;
   }
+  const scoutIcons = (p) => `${W.potStars(p) ? ` 🌱${'★'.repeat(W.potStars(p))}` : ''}${W.underrated(p) ? ' 💎' : ''}`;
   let toastT = null;
   function toast(msg, ms = 2200) {
     const el = $('toast'); el.textContent = msg; el.hidden = false;
@@ -71,6 +82,7 @@
 
   function show(name) {
     screen = name;
+    applyStatic(); // year-dependent labels (IPL 2028, last season's team) follow the career
     document.body.dataset.screen = name;
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('on', s.dataset.screen === name));
     window.scrollTo(0, 0);
@@ -90,13 +102,17 @@
     applyStatic();
     const saved = store.get(SAVE, null);
     const btn = $('goResume');
-    if (saved && saved.v === 1 && saved.phase !== 'done') {
+    const yr = saved && saved.w ? saved.w.year : SEASON;
+    if (saved && saved.phase === 'offseason') {
+      btn.hidden = false;
+      $('resumeSub').textContent = `${saved.user} · ${t('relTitle', { y: num(yr) })}`;
+    } else if (saved && saved.v === 1 && saved.phase !== 'done') {
       btn.hidden = false;
       $('resumeSub').textContent = t('contSub', { team: saved.user, n: saved.idx + 1, t: saved.lots.length });
     } else if (saved && saved.phase === 'done') {
       btn.hidden = false;
       const L = saved.league;
-      $('resumeSub').textContent = L ? `${saved.user} · ${t('seasonTitle', { y: num(SEASON) })} · ${t('matchN', { n: Math.min(L.next + 1, L.fixtures.length) })}` : `${saved.user} · ${t('doneTitle')}`;
+      $('resumeSub').textContent = L ? `${saved.user} · ${t('seasonTitle', { y: num(yr) })} · ${t('matchN', { n: Math.min(L.next + 1, L.fixtures.length) })}` : `${saved.user} · ${t('doneTitle')}`;
     } else btn.hidden = true;
   }
 
@@ -104,6 +120,7 @@
     A.unlock(); A.tap();
     const saved = store.get(SAVE, null);
     if (saved && (saved.phase !== 'done' || (saved.league && !saved.league.champion)) && !confirm(t('confirmNew'))) return;
+    W.apply(null);
     show('mode');
   });
   // Auction format: fresh (everyone starts empty, no RTM) or retain + RTM.
@@ -115,7 +132,8 @@
     A.unlock(); A.tap();
     const saved = store.get(SAVE, null);
     if (!saved) { toast(t('resumeLost')); return; }
-    S = saved; setUserColour();
+    S = saved; W.ensure(S); setUserColour();
+    if (S.phase === 'offseason') { openRelease(); return; }
     if (S.phase === 'done') { renderDone(); show('done'); if (S.league) IPLA.tour.open(); return; }
     if (S.phase === 'fill') { endMain(); return; }
     startAuction();
@@ -132,7 +150,7 @@
       b.innerHTML = `<span class="tt-code">${T.id}</span><span class="tt-name">${esc(T.name)}</span>`;
       b.addEventListener('click', () => {
         A.tap(); pickTeam = T.id; keepSel = []; setUserColour();
-        if (gameMode === 'fresh') { A.sting(); S = E.newGame(pickTeam, [], undefined, 'fresh'); save(); startAuction(); return; }
+        if (gameMode === 'fresh') { A.sting(); S = freshGame(pickTeam, [], 'fresh'); save(); startAuction(); return; }
         renderRetain(); show('retain');
       });
       li.append(b); ul.append(li);
@@ -179,10 +197,18 @@
 
   $('goAuction').addEventListener('click', () => {
     A.unlock(); A.sting();
-    S = E.newGame(pickTeam, keepSel, undefined, 'rtm');
+    S = freshGame(pickTeam, keepSel, 'rtm');
     save();
     startAuction();
   });
+  // A new mega auction starts a new career (ages, hidden traits and form all reset).
+  function freshGame(team, keep, mode) {
+    const seed = Math.floor(Math.random() * 1e9);
+    W.apply({ seed });
+    const s = E.newGame(team, keep, seed, mode);
+    W.init(s);
+    return s;
+  }
 
   // ---------- auction floor ----------
   function startAuction() {
@@ -737,7 +763,7 @@
       for (const e of rows) {
         const p = P[e.pid];
         const how = e.how === 'ret' ? ` · ${t('retained')}` : e.how === 'rtm' ? ' · RTM' : '';
-        h += `<li><span>${esc(p.name)}${p.os ? ' ✈' : ''} <span class="m-r">${num(p.r)}${how}</span></span><span class="m-p">${money(e.price)}</span></li>`;
+        h += `<li><span>${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)} <span class="m-r">${num(p.r)} · ${t('ageY', { n: num(p.age) })}${how}</span></span><span class="m-p">${money(e.price)}</span></li>`;
       }
       h += '</ul>';
     }
@@ -753,7 +779,7 @@
     for (let i = S.idx + 1; i < Math.min(S.lots.length, S.idx + 60); i++) {
       const L = S.lots[i]; const p = P[L.pid];
       if (L.set !== lastSet) { h += `<p class="up-set">${setName(S.sets[L.set])}</p>`; lastSet = L.set; }
-      h += `<button type="button" class="up-row" data-pid="${p.id}" aria-pressed="${S.star.includes(p.id)}"><span class="u-star">★</span><span class="u-main">${esc(p.name)}${p.os ? ' ✈' : ''}<small>${t(`role_${p.role}`)} · ${cname(p.country)} · ${lastTeam(p)} · ${money(R.basePrice(p))}${maxFor(p.id) ? ` · <b>${t('autoUpTo')} ${money(maxFor(p.id))}</b>` : ''}</small></span><span class="pr-r">${num(p.r)}</span></button>`;
+      h += `<button type="button" class="up-row" data-pid="${p.id}" aria-pressed="${S.star.includes(p.id)}"><span class="u-star">★</span><span class="u-main">${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)}<small>${t('ageY', { n: num(p.age) })} · ${t(`role_${p.role}`)} · ${cname(p.country)} · ${lastTeam(p)} · ${money(R.basePrice(p))}${maxFor(p.id) ? ` · <b>${t('autoUpTo')} ${money(maxFor(p.id))}</b>` : ''}</small></span><span class="pr-r">${num(p.r)}</span></button>`;
     }
     const body = openSheet(t('upcoming'), h);
     body.querySelectorAll('.up-row').forEach((b) => b.addEventListener('click', () => {
@@ -788,7 +814,7 @@
       b.type = 'button'; b.className = 'prow'; b.disabled = !!block;
       teamVars(b, p.team, p.country);
       b.innerHTML = `<span class="avatar">${initials(p.name)}</span>
-        <span><span class="pr-name">${esc(p.name)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${p.os ? '✈ ' + cname(p.country) : cname(p.country)}</span></span>
+        <span><span class="pr-name">${esc(p.name)}${scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${p.os ? '✈ ' + cname(p.country) : cname(p.country)} · ${t('ageY', { n: num(p.age) })}</span></span>
         <span class="pr-r">${num(p.r)}<small>${t('sign')} ${money(price)}</small></span>`;
       b.addEventListener('click', () => { A.paddle(true); E.assign(S, p.id, S.user, price, 'fill'); save(); renderFill(); });
       li.append(b); ul.append(li);
@@ -819,7 +845,7 @@
     const me = S.teams[S.user]; const n = E.counts(S, S.user);
     $('gradeRow').innerHTML = `<div class="grade-big" aria-label="${t('grade')}">${mine.grade}</div>
       <div class="grade-facts"><span>${t('grade')} · <b>#${num(mine.rank)}</b>/10</span>
-      <span>${t('spent')}: <b>${money(R.PURSE - me.purse)}</b> · ${t('left')}: <b>${money(me.purse)}</b></span>
+      <span>${t('spent')}: <b>${money(me.squad.reduce((x, e) => x + e.price, 0))}</b> · ${t('left')}: <b>${money(me.purse)}</b></span>
       <span><b>${num(n.n)}</b> ${t('players')} · ✈ <b>${num(n.os)}</b></span>${E.nemesis(S) ? `<span>⚔ ${t('rival')}: <b>${E.nemesis(S).team}</b> ×${num(E.nemesis(S).n)}</span>` : ''}</div>`;
     const hl = highlights(S, S.user);
     const hlBox = (k, e) => (e ? `<div class="hl"><span>${t(k)}</span><b>${esc(P[e.pid].name)}</b><small>${money(e.price)}</small></div>` : '');
@@ -828,7 +854,7 @@
     const xi = bestXI(me.squad.map((e) => e.pid));
     $('xiList').innerHTML = xi.map((p) => {
       const e = priceOf[p.id];
-      const how = e.how === 'ret' ? ` · ${t('retained')}` : e.how === 'rtm' ? ' · RTM' : '';
+      const how = e.how === 'ret' || e.how === 'kept' ? ` · ${t('retained')}` : e.how === 'rtm' ? ' · RTM' : '';
       return `<li><span>${esc(p.name)}${p.os ? ' ✈' : ''}<span class="x-sub">${t(`role_${p.role}`)} · ${num(p.r)}${how}</span></span><span class="x-p">${money(e.price)}</span></li>`;
     }).join('');
     const ul = $('gradesList'); ul.innerHTML = '';
@@ -845,6 +871,7 @@
   function newAuction() {
     A.tap();
     store.del(SAVE); S = null; lot = null;
+    W.apply(null);
     renderPick(); show('pick');
   }
   $('againDone').addEventListener('click', newAuction);
@@ -871,6 +898,91 @@
     return t('youFinished', { pos: ordinal(pos) });
   }
 
+  // ---------- career: season review, keep or release, then the mini auction ----------
+  function nextSeason() {
+    A.unlock(); A.sting();
+    W.endSeason(S);
+    S.phase = 'offseason';
+    saveNow();
+    renderReview(); show('review');
+  }
+  const pname = (pid) => esc(P[pid].name);
+  function renderReview() {
+    const R0 = S.w.review; if (!R0) { openRelease(); return; }
+    $('revH').textContent = t('reviewTitle', { y: num(R0.y) });
+    const delta = (c) => { const d = c.to - c.from; return `<b class="${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'} ${num(Math.abs(d))}</b>`; };
+    const row = (c) => `<li><span>${pname(c.pid)} <small>${t('ageY', { n: num(P[c.pid].age) })} · ${t(`role_${P[c.pid].role}`)}</small></span><span>${num(c.from)} → ${num(c.to)} ${delta(c)}</span></li>`;
+    const aw = R0.aw;
+    const awBox = (k, x, v) => (x ? `<div class="hl"><span>${t(k)}</span><b>${pname(x[0])}</b><small>${v(x[1])}</small></div>` : '');
+    let h = R0.champ ? `<div class="champ rev-champ" style="--c1:${teamById[R0.champ].c1};--c2:${teamById[R0.champ].c2};--ci:${teamById[R0.champ].ink}"><span>${t('champions')}</span><b>${esc(teamById[R0.champ].name)}</b></div>` : '';
+    h += `<div class="hl-row">${awBox('orangeCap', aw.orange, (n) => `${num(n)} ${t('runs')}`)}${awBox('purpleCap', aw.purple, (n) => `${num(n)} ${t('wkts')}`)}${awBox('mvp', aw.mvp, (n) => t('ptsN', { n: num(n) }))}${awBox('emerging', aw.emerging, (n) => t('ptsN', { n: num(n) }))}</div>`;
+    const mine = (R0.mine || []).filter((c) => !P[c.pid].gone);
+    if (mine.length) h += `<h3 class="sub-h">${t('yourChanges')}</h3><ul class="mini rev">${mine.map(row).join('')}</ul>`;
+    if (R0.risers.length) h += `<h3 class="sub-h">${t('risers')}</h3><ul class="mini rev">${R0.risers.map(row).join('')}</ul>`;
+    if (R0.capsNew.length) h += `<h3 class="sub-h">${t('capsNewT')}</h3><p class="rev-names">${R0.capsNew.map(pname).join(', ')}</p>`;
+    if (R0.retired.length) h += `<h3 class="sub-h">${t('retirements')}</h3><p class="rev-names">${R0.retired.map((pid) => `${pname(pid)} <small>(${num(P[pid].age)})</small>`).join(', ')}</p>`;
+    const born = (R0.bornIds || []).slice(0, 10);
+    if (born.length) h += `<h3 class="sub-h">${t('newFaces')}</h3><ul class="mini rev">${born.map((pid) => { const p = P[pid]; return `<li><span>${pname(pid)}${p.os ? ' ✈' : ''} <small>${t('ageY', { n: num(p.age) })} · ${t(`role_${p.role}`)} · ${cname(p.country)}</small></span><span>${num(p.r)} 🌱${'★'.repeat(W.potStars(p))}</span></li>`; }).join('')}</ul>`;
+    $('revBody').innerHTML = h;
+  }
+  $('revGo').addEventListener('click', () => { A.tap(); openRelease(); });
+
+  let relKeep = null;
+  function openRelease() {
+    setUserColour();
+    relKeep = new Set(S.teams[S.user].squad.filter((e) => !P[e.pid].gone).map((e) => e.pid));
+    renderRelease(); show('release');
+  }
+  function releaseState() {
+    const sq = S.teams[S.user].squad;
+    const kept = sq.filter((e) => relKeep.has(e.pid));
+    const purse = W.purseFor(S.w.year) - kept.reduce((x, e) => x + e.price, 0);
+    const os = kept.filter((e) => P[e.pid].os).length;
+    const need = Math.max(0, R.MIN_SQUAD - kept.length) * R.MIN_PRICE;
+    const err = kept.length > R.MAX_SQUAD ? 'relErrSquad' : os > R.MAX_OVERSEAS ? 'relErrOs' : purse < need ? 'relErrPurse' : null;
+    return { kept, purse, os, err };
+  }
+  function renderRelease() {
+    const T = teamById[S.user];
+    const head = $('relHead'); head.style.setProperty('--team', T.c1); head.style.setProperty('--team-ink', T.ink);
+    $('relH').textContent = t('relTitle', { y: num(S.w.year) });
+    $('barMid').textContent = T.name;
+    const st = releaseState();
+    $('relMeter').innerHTML = `
+      <div class="meter"><b>${money(Math.max(0, st.purse))}</b><span>${t('relPurse')}</span></div>
+      <div class="meter"><b>${num(st.kept.length)}/${num(R.MAX_SQUAD)}</b><span>${t('relKept')}</span></div>
+      <div class="meter"><b>✈ ${num(st.os)}/${num(R.MAX_OVERSEAS)}</b><span>${t('overseas')}</span></div>`;
+    $('relErr').textContent = st.err ? t(st.err) : '';
+    $('relGo').disabled = !!st.err;
+    const ch = {}; ((S.w.review && S.w.review.mine) || []).forEach((c) => { ch[c.pid] = c; });
+    const tot = S.w.tot;
+    const ul = $('relList'); ul.innerHTML = '';
+    const rows = [...S.teams[S.user].squad].sort((a, b) => P[b.pid].r - P[a.pid].r);
+    for (const e of rows) {
+      const p = P[e.pid]; const on = relKeep.has(e.pid);
+      const c = ch[e.pid]; const d = c ? c.to - c.from : 0;
+      const fk = W.formKey(W.form(S, p.id));
+      const li = document.createElement('li'); const b = document.createElement('button');
+      b.type = 'button'; b.className = 'prow'; b.setAttribute('aria-pressed', String(on)); b.disabled = p.gone;
+      teamVars(b, S.user);
+      const cs = tot[p.id];
+      b.innerHTML = `<span class="avatar">${initials(p.name)}</span>
+        <span><span class="pr-name">${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${t('ageY', { n: num(p.age) })} · ${W.FORM_ICON[fk]} ${t('form_' + fk)}${cs ? ` · ${num(cs.r)}r ${num(cs.w)}w` : ''}</span></span>
+        <span class="pr-r">${num(p.r)}${d ? `<i class="${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'}${num(Math.abs(d))}</i>` : ''}<small>${p.gone ? t('retiredTag') : `${money(e.price)} · ${on ? '✓ ' + t('relKeep') : t('relRelease')}`}</small></span>`;
+      b.addEventListener('click', () => { A.tap(); if (on) relKeep.delete(e.pid); else relKeep.add(e.pid); renderRelease(); });
+      li.append(b); ul.append(li);
+    }
+  }
+  $('relGo').addEventListener('click', () => {
+    if (releaseState().err) return;
+    A.unlock(); A.sting();
+    const prev = S;
+    S = E.newMini(prev, [...relKeep]);
+    W.apply(S);
+    saveNow();
+    startAuction();
+  });
+
   const pill = (id) => (teamById[id] ? `<span class="t-code" style="--c1:${teamById[id].c1};--c2:${teamById[id].c2};--ci:${teamById[id].ink}">${id}</span>` : '');
 
   // ---------- share ----------
@@ -893,8 +1005,8 @@
       champion: S.league && S.league.champion ? teamById[S.league.champion].name : null,
       steal: hl.steal ? { name: P[hl.steal.pid].name, price: money(hl.steal.price) } : null,
       dear: hl.dear ? { name: P[hl.dear.pid].name, price: money(hl.dear.price) } : null,
-      spent: money(R.PURSE - me.purse), caps,
-      L: { title: t('shareTitle'), xi: t('bestXI'), steal: t('steal'), dear: t('dear'), spent: t('spent'), grade: t('grade'), kept: t('retained'), season: t('seasonTitle', { y: num(SEASON) }), orange: t('orangeCap'), purple: t('purpleCap') },
+      spent: money(me.squad.reduce((x, e) => x + e.price, 0)), caps,
+      L: { title: t('shareTitle'), xi: t('bestXI'), steal: t('steal'), dear: t('dear'), spent: t('spent'), grade: t('grade'), kept: t('retained'), season: t('seasonTitle', { y: num(W.year(S)) }), orange: t('orangeCap'), purple: t('purpleCap') },
     });
     if (res === 'saved') toast(t('copied'));
   }
@@ -902,7 +1014,7 @@
 
   // Shared with tour.js.
   IPLA.ui = {
-    get S() { return S; }, show, save, toast, teamVars, esc, initials, pill, newAuction, doShare, verdict, modal, openSquad, cname,
+    get S() { return S; }, show, save, toast, teamVars, esc, initials, pill, newAuction, doShare, verdict, modal, openSquad, cname, openSheet, closeSheet, scoutTags, scoutIcons, nextSeason,
     screen: () => screen,
   };
 
@@ -914,6 +1026,8 @@
     if (screen === 'auction' && lot) { renderCard(); renderBid(); renderBoard(); renderMine(); renderTicker(); }
     if (screen === 'fill') renderFill();
     if (screen === 'done') renderDone();
+    if (screen === 'review') renderReview();
+    if (screen === 'release') renderRelease();
     if (IPLA.tour && IPLA.tour.owns(screen)) IPLA.tour.refresh();
   }));
   const muteBtn = $('mute');

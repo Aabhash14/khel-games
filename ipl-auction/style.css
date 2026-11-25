@@ -571,3 +571,67 @@ body { background: var(--bg); }
 .sheet { background: #0a1a4d; }
 .pts thead tr, .stat thead tr, .sc thead tr { background: linear-gradient(90deg, #13297a, #0c1d55); }
 .pts th, .stat th, .sc th { background: transparent; }
+
+/* ---------- form, injuries, pitch, captaincy, news, career ---------- */
+.tag.young { border-color: #7fd66b; color: #a6ef93; }
+.tag.gem { border-color: #6fd3ff; color: #9be3ff; }
+.tag.inj { border-color: var(--bad); color: var(--bad); }
+.fb { font-style: normal; font-size: 0.8em; }
+.fb.hot { color: #ff8a3d; } .fb.good { color: var(--good); } .fb.ok { color: var(--mute); } .fb.poor { color: #f0a35e; } .fb.cold { color: #7fc8ff; }
+.tag.fb { font-size: 0.75rem; }
+.inj { color: var(--bad); font-weight: 700; }
+.pf { font-size: 0.72rem; font-weight: 800; white-space: nowrap; }
+.pf.up { color: var(--good); } .pf.down { color: var(--bad); }
+.up { color: var(--good); } .down { color: var(--bad); }
+.pr-r i { display: block; font-style: normal; font-size: 0.72rem; font-weight: 800; }
+
+.news-strip { margin-top: 10px; padding: 8px 12px; border-left: 4px solid var(--orange, #ff7a1a); background: linear-gradient(90deg, rgba(255, 122, 26, 0.14), transparent); cursor: pointer; }
+.news-strip .ns-k { display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+.news-strip p { margin: 3px 0 0; font-size: 0.86rem; line-height: 1.3; }
+.news-strip p.me, .news li.me { color: var(--gold); }
+.news-h { margin: 14px 0 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); }
+.news { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.news li { background: var(--bg2); border: 1px solid var(--line); padding: 8px 10px; font-size: 0.9rem; line-height: 1.35; }
+.news li.nk-inj { border-left: 3px solid var(--bad); }
+.news li.nk-champ, .news li.nk-ton, .news li.nk-haul { border-left: 3px solid var(--gold); }
+.news li.nk-young, .news li.nk-youngB { border-left: 3px solid #7fd66b; }
+.news li.nk-gem { border-left: 3px solid #6fd3ff; }
+
+.pitch-rep { margin-top: 10px; padding: 12px 14px; border: 1px solid rgba(120, 160, 255, 0.28); background: linear-gradient(135deg, #14307f, #0a1a4d); clip-path: var(--cutbox); }
+.pr-pitch { margin: 0; font-size: 0.92rem; line-height: 1.35; }
+.pr-pitch b { display: inline-block; margin-right: 6px; padding: 1px 8px; color: #10131f; background: #d9c38f; transform: skewX(-12deg); }
+.pr-pitch.pk-flat b { background: #ffd37a; } .pr-pitch.pk-green b { background: #7fd66b; } .pr-pitch.pk-dry b { background: #d59a5b; } .pr-pitch.pk-slow b { background: #b9a5d6; }
+.pr-dew { margin: 6px 0 0; font-size: 0.82rem; color: var(--mute); }
+
+.cap-box:empty { display: none; }
+.cap-card { margin-top: 12px; padding: 12px 14px; border: 1px solid rgba(120, 160, 255, 0.28); background: var(--bg2); }
+.cap-card label { display: grid; gap: 6px; }
+.cap-card select { min-height: 44px; width: 100%; border-radius: 8px; border: 1px solid var(--line); background: var(--bg3); color: var(--ink); font: inherit; font-weight: 600; padding: 0 8px; }
+.cap-note { margin: 8px 0 0; font-size: 0.78rem; color: var(--mute); line-height: 1.35; }
+
+.stat.squad td { vertical-align: top; }
+.stat.squad td:first-child { min-width: 150px; }
+.stat.squad td small { display: block; font-size: 0.72rem; color: var(--mute); font-weight: 500; }
+.stat.squad tr.tap { cursor: pointer; }
+.stat.squad tr.tap:active td { background: rgba(255, 255, 255, 0.05); }
+.l5s { white-space: nowrap; }
+.l5 { display: inline-block; min-width: 24px; margin-left: 2px; padding: 1px 3px; font-style: normal; font-size: 0.72rem; font-weight: 800; text-align: center; border-radius: 3px; }
+.l5.w { background: rgba(60, 207, 145, 0.18); color: var(--good); }
+.l5.l { background: rgba(255, 107, 107, 0.14); color: #ff9b9b; }
+
+.pl-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.pl-line { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 12px; margin-bottom: 8px; background: var(--bg2); border: 1px solid var(--line); font-size: 0.85rem; color: var(--mute); }
+.pl-line b { color: var(--ink); font-size: 0.98rem; }
+.pl-log { margin-top: 6px; }
+
+.mini.rev li small { color: var(--mute); }
+.mini.rev li b { margin-left: 4px; }
+.rev-names { margin: 0; line-height: 1.6; font-size: 0.92rem; }
+.rev-names small { color: var(--mute); }
+.rev-champ { margin-bottom: 10px; }
+.rel-err { min-height: 1.2em; margin: 0 0 6px; color: var(--bad); font-weight: 700; font-size: 0.86rem; }
+/* Six hub tabs: two rows of three on phones so News is never hidden off-screen. */
+@media (max-width: 560px) {
+  #hubTabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; overflow: visible; }
+  #hubTabs button { padding: 6px 4px; }
+}
