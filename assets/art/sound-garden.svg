@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches sound-garden (night sky, glowing singing plants, note rings, low notes left and high notes right). -->
+  <defs>
+    <radialGradient id="sg-glow"><stop offset="0" stop-color="#ffc978" stop-opacity=".6"/><stop offset="1" stop-color="#ffc978" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g fill="#f1ecff" opacity=".7"><circle cx="96" cy="80" r="2.4"/><circle cx="200" cy="54" r="1.8"/><circle cx="330" cy="72" r="2.2"/><circle cx="430" cy="110" r="1.6"/><circle cx="60" cy="170" r="1.6"/></g>
+  <path d="M40 420c80-26 150-30 216-22s140 12 216-10v124H40z" fill="#1a2a3a"/>
+  <path d="M40 444c90-18 170-18 236-10s130 6 196-6v84H40z" fill="#22364a"/>
+  <g fill="none" stroke="#6fae7c" stroke-width="7" stroke-linecap="round">
+    <path d="M118 424q-8-90 4-170"/><path d="M118 340q-26-14-40-4"/>
+    <path d="M232 412q6-120-6-230"/><path d="M230 300q30-18 44-6"/>
+    <path d="M344 418q-4-70 6-118"/>
+    <path d="M430 420q6-46-2-80"/>
+  </g>
+  <circle cx="122" cy="250" r="64" fill="url(#sg-glow)"/><circle cx="122" cy="250" r="26" fill="#ffc978"/>
+  <circle cx="226" cy="176" r="70" fill="url(#sg-glow)"/><circle cx="226" cy="176" r="22" fill="#ff9fb2"/>
+  <circle cx="350" cy="296" r="52" fill="url(#sg-glow)"/><circle cx="350" cy="296" r="18" fill="#9fd8ff"/>
+  <circle cx="428" cy="336" r="40" fill="url(#sg-glow)"/><circle cx="428" cy="336" r="13" fill="#c8b6ff"/>
+  <g fill="none" stroke="#f1ecff" stroke-linecap="round" opacity=".55">
+    <circle cx="226" cy="176" r="44" stroke-width="4"/>
+    <circle cx="226" cy="176" r="68" stroke-width="3" opacity=".6"/>
+    <circle cx="122" cy="250" r="44" stroke-width="3" opacity=".7"/>
+  </g>
+</svg>

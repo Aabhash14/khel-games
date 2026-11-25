@@ -22,6 +22,9 @@ Made by **Aabhash Shahi**.
 | Bagh-Chal (बाघ चाल) | Nepal's own board game on a carved wooden board: 4 tigers against 20 goats. Play the computer (3 levels), a friend on one phone, or the Daily Bagh | `nepali-games/bagh-chal` |
 | Momo Rush (मःम रश) | Run a Kathmandu momo stall for a week: buy stock, fold, steam and serve, and decide who gets udharo | `nepali-games/momo-rush` |
 | Tihar Diyo (तिहार दियो) | Turn the tiles so oil reaches every diyo without a drop spilling: 30 levels over the five nights of Tihar, plus a daily puzzle | `nepali-games/tihar-diyo` |
+| Chautari Quiz (चौतारी क्विज) | Fifteen questions, one crore rupees, under the pipal tree: four lifelines, two safe steps, walk away any time | `nepali-games/chautari-quiz` |
+| Umbra | 3D shadow puzzle: turn each plaster sculpture under the lamp until its shadow spells the hidden word, 12 sculptures | `shadow-puzzle` |
+| Sound Garden | Plant seeds that grow into singing plants and turn your garden into an ambient song; share it as a link | `sound-garden` |
 | Know Me | Open a pack, pull your personality card, dare friends to guess your answers | `know-me` |
 | Pro Scout | Guess the athlete from a pixelated photo, career path, nickname or flag | `pro-scout` |
 | Orbit Switch | One-button arcade: switch orbits, dodge blocks, grab stars | `orbit-switch` |
@@ -44,7 +47,8 @@ Then open <http://localhost:8765/>. Opening `index.html` straight from disk also
 index.html        landing page (the shelf of boxes)
 assets/           landing page CSS, JS, fonts and box art
 nepali-games/     games with a Nepali theme
-lakhey-run/  duo/  tuin-paar/  imposter/  know-me/  pro-scout/  orbit-switch/   other games
+lakhey-run/  duo/  tuin-paar/  imposter/  know-me/  pro-scout/  orbit-switch/
+shadow-puzzle/  sound-garden/                                                  other games
 DESIGN.md  PRODUCT.md                 design system and product notes
 ```
 

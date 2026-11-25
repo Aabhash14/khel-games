@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chautari Quiz</title>
+  <meta name="description" content="Fifteen questions, one crore rupees. A bilingual English and Nepali quiz under the pipal tree.">
+  <meta name="theme-color" content="#163f2f">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140'%3E%3Cpath d='M50 10C30 2 4 16 4 46c0 26 24 42 40 60 4 6 6 16 6 30 0-14 2-24 6-30 16-18 40-34 40-60C96 16 70 2 50 10z' fill='%23f2a12e'/%3E%3C/svg%3E">
+  <link rel="preload" href="fonts/yatra-lat.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/mukta-600-lat.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dhaka" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <p class="brand">
+      <svg class="leaf" viewBox="0 0 100 140" aria-hidden="true"><use href="#pipal"/></svg>
+      <span data-i18n="title"></span>
+    </p>
+    <div class="controls">
+      <div class="lang" role="group" aria-label="Language / भाषा">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="np" aria-pressed="false" lang="ne">ने</button>
+      </div>
+      <button type="button" class="icon-btn" id="sound" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9h4l5-4v14l-5-4H4z"/><path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="mute" d="M16 9l6 6m0-6-6 6"/></svg>
+        <span class="sr-only" data-i18n="sound"></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- START -->
+    <section class="screen start" id="screen-start" aria-labelledby="start-title">
+      <div class="start-inner">
+        <svg class="leaf leaf-hero" viewBox="0 0 100 140" aria-hidden="true"><use href="#pipal"/></svg>
+        <h1 id="start-title" data-i18n="title"></h1>
+        <p class="tagline" data-i18n="tagline"></p>
+        <ul class="how">
+          <li data-i18n="how1"></li>
+          <li data-i18n="how2"></li>
+          <li data-i18n="how3"></li>
+        </ul>
+        <button type="button" class="btn btn-primary btn-big" id="start" data-i18n="start"></button>
+        <p class="best" id="best"></p>
+        <p class="bank-info" id="bank-info"></p>
+      </div>
+    </section>
+
+    <!-- GAME -->
+    <section class="screen game" id="screen-game" hidden aria-label="Game">
+      <div class="stage">
+        <p class="stake" id="stake"></p>
+        <div class="board">
+        <h2 class="question" id="question" tabindex="-1"></h2>
+
+        <div class="answers" id="answers" role="group" aria-labelledby="question">
+          <button type="button" class="answer" data-i="0"><span class="key"></span><span class="txt"></span><span class="pct" aria-hidden="true"></span><span class="bar" aria-hidden="true"></span></button>
+          <button type="button" class="answer" data-i="1"><span class="key"></span><span class="txt"></span><span class="pct" aria-hidden="true"></span><span class="bar" aria-hidden="true"></span></button>
+          <button type="button" class="answer" data-i="2"><span class="key"></span><span class="txt"></span><span class="pct" aria-hidden="true"></span><span class="bar" aria-hidden="true"></span></button>
+          <button type="button" class="answer" data-i="3"><span class="key"></span><span class="txt"></span><span class="pct" aria-hidden="true"></span><span class="bar" aria-hidden="true"></span></button>
+        </div>
+        </div>
+
+        <div class="actions">
+          <p class="note" id="note"></p>
+          <button type="button" class="btn btn-quiet" id="walk"></button>
+        </div>
+
+        <div class="lifelines" role="group" id="lifelines">
+          <button type="button" class="life" data-life="cut">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" class="gone"/><rect x="14" y="14" width="7" height="7" rx="1.5" class="gone"/><path d="M2 22 22 12" class="slash"/></svg>
+            <span data-i18n="cut"></span>
+          </button>
+          <button type="button" class="life" data-life="poll">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="8" r="2.5"/><circle cx="12" cy="6.5" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M2 20c0-4 2-6 4-6s3 1 3.5 2M8.5 20c0-5 1.5-7.5 3.5-7.5s3.5 2.5 3.5 7.5M14.5 16c.5-1 1.5-2 3.5-2s4 2 4 6"/></svg>
+            <span data-i18n="poll"></span>
+          </button>
+          <button type="button" class="life" data-life="swap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14-4l2 2M20 3v4h-4M20 15a8 8 0 0 1-14 4l-2-2M4 21v-4h4"/></svg>
+            <span data-i18n="swap"></span>
+          </button>
+          <button type="button" class="life" data-life="double">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/><circle cx="8" cy="12" r="1.2" class="dot"/><circle cx="16" cy="12" r="1.2" class="dot"/></svg>
+            <span data-i18n="double"></span>
+          </button>
+        </div>
+      </div>
+
+      <aside class="ladder-wrap" aria-labelledby="ladder-title">
+        <h2 class="sr-only" id="ladder-title" data-i18n="ladder"></h2>
+        <ol class="ladder" id="ladder"></ol>
+      </aside>
+    </section>
+
+    <!-- END -->
+    <section class="screen end" id="screen-end" hidden aria-labelledby="end-title">
+      <div class="end-inner">
+        <svg class="leaf leaf-hero" viewBox="0 0 100 140" aria-hidden="true"><use href="#pipal"/></svg>
+        <h2 class="end-title" id="end-title" tabindex="-1"></h2>
+        <p class="end-amount" id="end-amount"></p>
+        <p class="end-detail" id="end-detail"></p>
+        <button type="button" class="btn btn-primary btn-big" id="again" data-i18n="again"></button>
+        <p class="best" id="best-end"></p>
+      </div>
+    </section>
+  </main>
+
+  <p class="sr-only" role="status" id="live"></p>
+
+  <!-- pipal leaf, drawn once and reused -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="pipal" viewBox="0 0 100 140">
+      <path fill="#8cc07a" d="M50 10C30 2 4 16 4 46c0 26 24 42 40 60 4 6 6 16 6 30 0-14 2-24 6-30 16-18 40-34 40-60C96 16 70 2 50 10z"/>
+      <path fill="none" stroke="#163f2f" stroke-width="2.5" stroke-linecap="round" d="M50 4v118M50 30 26 22M50 30l24-8M50 50 18 40M50 50l32-10M50 70 22 62M50 70l28-8M50 88 34 82M50 88l16-6"/>
+    </symbol>
+  </svg>
+
+  <script src="questions.js"></script>
+  <script src="questions-extra.js"></script>
+  <script src="bank.js"></script>
+  <script src="logic.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

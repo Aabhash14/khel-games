@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Umbra</title>
+  <meta name="description" content="A shadow puzzle. Every sculpture hides a word: turn it under the lamp until its shadow spells each letter.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2315120f'/%3E%3Ccircle cx='16' cy='16' r='11' fill='%23ece2cf'/%3E%3Cpath d='M12 9h3v14h-3zM17 9h3v14h-3zM12 15h8v2h-8z' fill='%2315120f'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="stage" role="img" aria-label="A plaster sculpture floating in front of a lit wall. Drag to rotate it; its shadow falls on the wall beside a red outline."></canvas>
+
+  <header class="brand">
+    <h1>Umbra</h1>
+    <p class="level-line"><span>Sculpture</span> <b id="levelNo">01</b> <span>of</span> <b id="levelCount">12</b></p>
+  </header>
+
+  <section class="word" aria-label="Hidden word">
+    <p class="word-label">Hidden word</p>
+    <ol class="slots" id="slots"></ol>
+  </section>
+
+  <section class="meter" aria-label="Shadow match">
+    <div class="meter-head">
+      <span>Shadow match</span>
+      <b id="matchNum">000</b>
+    </div>
+    <div class="meter-track"><div class="meter-fill" id="matchFill"></div></div>
+  </section>
+
+  <nav class="tools" aria-label="Game controls">
+    <button type="button" id="hintBtn" title="Nudge toward the answer (H)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/></svg>
+      <span>Hint</span>
+    </button>
+    <button type="button" id="shuffleBtn" title="Scramble the sculpture (R)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5"/></svg>
+      <span>Scramble</span>
+    </button>
+    <button type="button" id="levelsBtn" title="Choose a sculpture">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+      <span>Sculptures</span>
+    </button>
+    <button type="button" id="soundBtn" title="Sound on or off" aria-pressed="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+      <span>Sound</span>
+    </button>
+  </nav>
+
+  <p class="gesture" id="gesture">Drag to turn &middot; Shift-drag or two fingers to spin</p>
+  <p class="sr-only" id="live" aria-live="polite"></p>
+
+  <!-- Intro -->
+  <div class="overlay" id="intro" hidden>
+    <div class="card">
+      <h2>Every sculpture hides a word.</h2>
+      <p>The lamp behind you throws the sculpture's shadow onto the wall. Turn it until the shadow fills the red outline, and you've found a letter. Some sculptures hide a different letter on every side.</p>
+      <ul class="keys">
+        <li><kbd>Drag</kbd> turn</li>
+        <li><kbd>Shift</kbd>+<kbd>Drag</kbd> spin</li>
+        <li><kbd>H</kbd> hint</li>
+        <li><kbd>R</kbd> scramble</li>
+      </ul>
+      <button type="button" class="primary" id="startBtn">Light the lamp</button>
+    </div>
+  </div>
+
+  <!-- Level complete -->
+  <div class="overlay" id="win" hidden>
+    <div class="card win-card">
+      <p class="eyebrow" id="winEyebrow">Word found</p>
+      <div class="win-word" id="winWord"></div>
+      <p class="win-stats" id="winStats"></p>
+      <div class="row">
+        <button type="button" class="primary" id="nextBtn">Next sculpture</button>
+        <button type="button" class="ghost" id="winLevelsBtn">All sculptures</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level select -->
+  <div class="overlay" id="levels" hidden>
+    <div class="card levels-card">
+      <div class="levels-head">
+        <h2>Sculptures</h2>
+        <button type="button" class="close" id="closeLevels" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <ol class="level-grid" id="levelGrid"></ol>
+      <p class="levels-foot">Solve a sculpture to unlock the next. Progress stays in this browser.</p>
+    </div>
+  </div>
+
+  <div class="overlay" id="fail" hidden>
+    <div class="card">
+      <h2>The lamp won't light.</h2>
+      <p>Umbra needs an internet connection the first time to load its 3D engine, and a browser with WebGL. Check your connection and reload.</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

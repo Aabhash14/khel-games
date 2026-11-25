@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches shadow-puzzle (Umbra: plaster sculpture under a lamp, its shadow spelling a letter inside a red outline). -->
+  <defs>
+    <radialGradient id="sp-lamp" cx=".7" cy=".35" r=".7"><stop offset="0" stop-color="#ece2cf" stop-opacity=".22"/><stop offset="1" stop-color="#ece2cf" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect x="48" y="60" width="300" height="392" rx="6" fill="#221d18"/>
+  <rect x="48" y="60" width="300" height="392" rx="6" fill="url(#sp-lamp)"/>
+  <path d="M120 140h44v94h68v-94h44v232h-44v-96h-68v96h-44z" fill="#0b0907"/>
+  <path d="M120 140h44v94h68v-94h44v232h-44v-96h-68v96h-44z" fill="none" stroke="#e0502e" stroke-width="6" stroke-dasharray="14 10" transform="translate(10 -8)"/>
+  <g transform="translate(364 246)">
+    <path d="M-44 -70l40-22 50 22v96l-50 26-40-22z" fill="#b9ad98"/>
+    <path d="M-44 -70l40 22v104l-40-22z" fill="#ece2cf"/>
+    <path d="M-4 -48l50-22v96l-50 26z" fill="#8a7f6d"/>
+    <path d="M-30 -40l14 8v60l-14-8zM14 -40l18-8v60l-18 8z" fill="#221d18" opacity=".35"/>
+  </g>
+  <circle cx="452" cy="96" r="22" fill="#ece2cf"/>
+  <circle cx="452" cy="96" r="40" fill="#ece2cf" opacity=".15"/>
+</svg>
