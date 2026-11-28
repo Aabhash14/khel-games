@@ -76,7 +76,12 @@ For testing, add `?all` to the address (`.../himal-climb/?all`) to open every mo
 |---|---|
 | `index.html` | Page, menu with mountain picker, game-over card |
 | `style.css` | Card/menu styling (shared look with the other Nepali games) and the picker |
-| `game.js` | The whole game: mountain and route data, levels, wall generation, climbing, hazards, oxygen, scenery, sound, language |
+| `js/util.js` | Small shared helpers: saved settings, random numbers, maths, colour mixing, vibration |
+| `js/mountains.js` | Mountain and route data (`MOUNTAINS`), countries, the death-zone height and ground types (`TERRAIN`) |
+| `js/i18n.js` | English and Nepali text, Devanagari digits |
+| `js/draw.js` | The game canvas and small drawing helpers (rounded boxes, lines, outlined text, the flag of Nepal) |
+| `js/audio.js` | Sound generated in code: wind, singing bowl, bansuri, effects |
+| `js/main.js` | Levels, wall generation, climbing, hazards, oxygen, scenery, screens, input and the main loop |
 | `sw.js` | Offline support (network first: players always get the newest version when online) |
 | `manifest.webmanifest`, `icon.svg` | Install-to-home-screen support |
 
@@ -84,7 +89,7 @@ Saved in the browser: `hc_prog` (unlocked levels and per-mountain records), `hc_
 
 ## Tuning
 
-All mountain data is in `MOUNTAINS` at the top of `game.js`. Per mountain: `start` (starting height), `camps`, `sections` (from height, ground, hazard rate, crevasse rate, names), `marks` (extra ledges, Everest only) and the difficulty knobs:
+All mountain data is in `MOUNTAINS` in `js/mountains.js`. Per mountain: `start` (starting height), `camps`, `sections` (from height, ground, hazard rate, crevasse rate, names), `marks` (extra ledges, Everest only) and the difficulty knobs:
 
 - `rows`: taps from start to summit (200 on Annapurna up to 770 on Everest)
 - `dmax`: how sparse and crumbly the holds get by the top
@@ -100,7 +105,7 @@ Tested with simulated players (summit rate):
 | Good | 100% | ~98% | ~97% | ~90% | ~65% | ~20% | ~3% | 0% |
 | Expert | 100% | 100% | 100% | ~100% | ~90% | ~85% | ~45% | ~45% |
 
-Other numbers in `game.js`:
+Other numbers in `js/main.js`:
 
 - `update()`: drain `1.6 + 6 × altitude share` per second × the mountain's `drain`; ×0.5 on oxygen, ×1.1 without above the oxygen camp; a bottle lasts about 45 s
 - `step()`: +0.6 strength per step below 8,000 m; tea +30; oxygen bottle +60 O₂ and +15 strength

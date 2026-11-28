@@ -1,7 +1,7 @@
 // Offline support, network first: online players always get the newest version,
 // and the last saved copy is used only when there is no connection.
-const CACHE = 'mol-molai-v5';
-const ASSETS = ['./', './index.html', './style.css', './game.js', './icon.svg', './manifest.webmanifest', './fonts/mukta-500-devanagari.woff2', './fonts/mukta-500-latin.woff2', './fonts/mukta-700-devanagari.woff2', './fonts/mukta-700-latin.woff2', './fonts/mukta-800-devanagari.woff2', './fonts/mukta-800-latin.woff2'];
+const CACHE = 'mol-molai-v6';
+const ASSETS = ['./', './index.html', './style.css', './js/util.js', './js/i18n.js', './js/data.js', './js/lines.js', './js/map.js', './js/world.js', './js/audio.js', './js/art.js', './js/main.js', './icon.svg', './manifest.webmanifest', './fonts/mukta-500-devanagari.woff2', './fonts/mukta-500-latin.woff2', './fonts/mukta-700-devanagari.woff2', './fonts/mukta-700-latin.woff2', './fonts/mukta-800-devanagari.woff2', './fonts/mukta-800-latin.woff2'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' })))));

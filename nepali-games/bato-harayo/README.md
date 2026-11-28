@@ -85,10 +85,19 @@ python -m http.server 8000
 |---|---|
 | `index.html` | HUD, story panel, memory list, menu and ending cards |
 | `style.css` | Collection card styling plus the night theme |
-| `game.js` | Story content (both languages), map generation, choices, night scenes, sound |
+| `js/util.js` | Shared helpers: saved settings, random numbers, colour mixing, the dawn time |
+| `js/i18n.js` | Language switch, interface text in both languages (`TEXT`), clock formatting |
+| `js/story.js` | Story content in both languages: places, paths, people, events, thoughts, lines, road decisions, endings, voice profiles |
+| `js/world.js` | Random map generation for each night |
+| `js/audio.js` | Generated sound: night ambience, footsteps, animals, bells, ending tunes |
+| `js/voice.js` | Character voices through the browser's speech engine |
+| `js/art.js` | Night scenes drawn on the canvas: sky, places, people, road decisions, torch beam |
+| `js/main.js` | Game state, choices and story flow, story panel, badges, endings, input and the main loop |
 | `sw.js` | Offline support (network first: players always get the newest version when online) |
 | `manifest.webmanifest`, `icon.svg` | Install-to-home-screen support |
 
 ## Writing more story
 
-All text lives near the top of `game.js` in `SCENES`, `PEOPLE`, `EVENTS`, `THOUGHTS`, `LINES` and `ENDINGS`, each with `ne` and `en`. To add a new person, add an entry to `PEOPLE` (pick a `kind`: honest, riddle, joker, drunk, liar, dog or sadhu), list the `scenes` they appear in, and add a cap in `PEOPLE_CAPS`. Their drawing goes in `drawPerson()`.
+Story text lives in `js/story.js` in `SCENES`, `PEOPLE`, `EVENTS`, `THOUGHTS`, `LINES`, `EXTRA`, `DILEMMAS`, `PLAYER` and `ENDINGS`, each with `ne` and `en`. Interface labels are in `TEXT` in `js/i18n.js`, and badge names are in `BADGES` in `js/main.js`. To add a new person, add an entry to `PEOPLE` (pick a `kind`: honest, riddle, joker, drunk, liar, dog or sadhu), list the `scenes` they appear in, and add a cap in `PEOPLE_CAPS` (all in `js/story.js`). Give them a voice in `VOICE` in the same file. Their drawing goes in `drawPerson()` in `js/art.js`.
+
+The scripts are plain files (no modules, so the game also works when opened straight from disk). Each one adds its part to `window.BH`, and `index.html` loads them in order: util, i18n, story, world, audio, voice, art, main. If you add a file, also add it to `ASSETS` in `sw.js` and bump `CACHE`.

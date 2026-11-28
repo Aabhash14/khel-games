@@ -1,7 +1,8 @@
 // Offline support, network first: online players always get the newest version,
 // and the last saved copy is used only when there is no connection.
-const CACHE = 'changa-chet-v2';
-const ASSETS = ['./', './index.html', './style.css', './game.js', './icon.svg', './manifest.webmanifest'];
+const CACHE = 'changa-chet-v3';
+const ASSETS = ['./', './index.html', './style.css', './icon.svg', './manifest.webmanifest',
+  ...['util', 'i18n', 'audio', 'draw', 'scenery', 'main'].map((f) => './js/' + f + '.js')];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' })))));

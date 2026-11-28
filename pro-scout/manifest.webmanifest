@@ -1,7 +1,7 @@
 {
   "name": "Pro Scout · Guess the Athlete",
   "short_name": "Pro Scout",
-  "description": "Guess the athlete from a pixelated photo, a career path, a nickname or a flag.",
+  "description": "Guess the athlete from their eyes, a career path, a nickname or a flag.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

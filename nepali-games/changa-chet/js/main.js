@@ -1,10 +1,16 @@
 /* Changa Chet (चङ्गा चेट) — a Dashain kite fight. No dependencies. */
+// Game state, screens, input, physics, rivals, rendering and the main loop.
+// Reads the helpers that util.js, i18n.js, audio.js, draw.js and scenery.js put on window.CC.
 (() => {
   'use strict';
+  const CC = window.CC;
+  const { TAU, FONT, reduceMotion, FLAG, PLAYER_PAL, RIVAL_PALS, store, rand, clamp, lerp, pick, mix, vibrate } = CC.Util;
+  const { canvas, ctx, rr, drawKite, strokePts, line, dot, drawText } = CC.Draw;
+  const I18n = CC.I18n;
+  const { t, num, fmtTime } = I18n;
+  const audio = CC.Audio;
 
   // ---------- Setup ----------
-  const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
   const $ = (id) => document.getElementById(id);
   const ui = {
     menu: $('menu'), over: $('over'), play: $('play'), retry: $('retry'), share: $('share'),
@@ -12,89 +18,9 @@
     finalCuts: $('finalCuts'), finalTime: $('finalTime'), newBest: $('newBest'),
   };
 
-  const TAU = Math.PI * 2;
-  const FONT = '"Nirmala UI", "Noto Sans Devanagari", "Kohinoor Devanagari", Mangal, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
-  const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-
-  const FLAG = ['#1f6fd1', '#f4f4f4', '#e23b3b', '#2e9e5b', '#f5c518']; // prayer flag order
-  const PLAYER_PAL = ['#dc143c', '#003893', '#ffffff'];                  // Nepal flag colours
-  const RIVAL_PALS = [
-    ['#1f6fd1', '#ffffff', '#f5c518'],
-    ['#2e9e5b', '#f5c518', '#e23b3b'],
-    ['#f5c518', '#2e9e5b', '#1f6fd1'],
-    ['#7b3fa0', '#ffffff', '#f5c518'],
-    ['#ff7a00', '#1f6fd1', '#ffffff'],
-    ['#00a6a6', '#f5c518', '#7b3fa0'],
-  ];
-  const BACK_HOUSES = ['#a8604a', '#c98f6a', '#b9a58a', '#9c5b4b', '#d7b98e', '#a77d6b'];
-  const FRONT_HOUSES = ['#9b3f2c', '#b5523b', '#d79a6a', '#e2c48f', '#c9cfa0', '#a24a36', '#e6d7c0', '#cf7b5a'];
-
-  const store = {
-    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* storage unavailable */ } },
-  };
-
-  const rand = (a, b) => a + Math.random() * (b - a);
-  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-  const lerp = (a, b, t) => a + (b - a) * t;
-  const pick = (arr) => arr[(Math.random() * arr.length) | 0];
-  function mulberry32(s) {
-    return () => { s |= 0; s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
-  }
-  const hex = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
-  const mix = (a, b, t) => { const x = hex(a), y = hex(b); return `rgb(${Math.round(lerp(x[0], y[0], t))},${Math.round(lerp(x[1], y[1], t))},${Math.round(lerp(x[2], y[2], t))})`; };
-  const vibrate = (p) => { if (navigator.vibrate) try { navigator.vibrate(p); } catch { /* ignore */ } };
-
-  function rr(c, x, y, w, h, r) {
-    r = Math.min(r, w / 2, h / 2);
-    c.beginPath();
-    c.moveTo(x + r, y);
-    c.arcTo(x + w, y, x + w, y + h, r);
-    c.arcTo(x + w, y + h, x, y + h, r);
-    c.arcTo(x, y + h, x, y, r);
-    c.arcTo(x, y, x + w, y, r);
-    c.closePath();
-  }
-
   // ---------- Language ----------
-  const TEXT = {
-    en: {
-      kicker: 'Dashain Kite Fight',
-      tag: 'Fly your kite over the Kathmandu rooftops and cut every rival string.',
-      how1: 'Drag your finger (or move the mouse) to steer your kite',
-      how2: 'Cross a rival’s string, then saw back and forth fast',
-      how3: 'Grab the gold manja spool for a sharper string',
-      play: 'Play', best: 'Best', lang: 'नेपाली',
-      cutYou: 'Your kite was cut!', cuts: 'Kites cut', time: 'Time flying',
-      newBest: 'New record!', again: 'Play again', share: 'Share', copied: 'Copied!',
-      hudCuts: 'CUT', hudBest: 'BEST', wind: 'WIND', manja: 'MANJA', string: 'STRING',
-      paused: 'PAUSED', resume: 'Tap to resume',
-      hint: 'Cross their string and saw to cut!',
-      shareText: (n) => `I cut ${n} kites in Changa Chet! Can you beat me?`,
-    },
-    ne: {
-      kicker: 'दशैंको चङ्गा युद्ध',
-      tag: 'काठमाडौंको छतबाट चङ्गा उडाउनुहोस् र सबैको धागो काट्नुहोस्।',
-      how1: 'चङ्गा चलाउन औंलाले तान्नुहोस् (वा माउस सार्नुहोस्)',
-      how2: 'अरूको धागोमा पेच पारेर छिटो-छिटो रगड्नुहोस्',
-      how3: 'धागो धारिलो बनाउन सुनौलो मान्जा टिप्नुहोस्',
-      play: 'खेल्नुहोस्', best: 'उत्कृष्ट', lang: 'English',
-      cutYou: 'तपाईंको चङ्गा काटियो!', cuts: 'काटेका चङ्गा', time: 'उडेको समय',
-      newBest: 'नयाँ रेकर्ड!', again: 'फेरि खेल्नुहोस्', share: 'सेयर', copied: 'कपी भयो!',
-      hudCuts: 'चेट', hudBest: 'उत्कृष्ट', wind: 'हावा', manja: 'मान्जा', string: 'धागो',
-      paused: 'रोकिएको छ', resume: 'जारी राख्न ट्याप गर्नुहोस्',
-      hint: 'पेच पारेर रगड्नुहोस्, धागो काटिन्छ!',
-      shareText: (n) => `मैले चङ्गा चेटमा ${n} वटा चङ्गा काटें! तपाईं सक्नुहुन्छ?`,
-    },
-  };
-  let lang = store.get('cc_lang', 'en') === 'ne' ? 'ne' : 'en';
-  const t = (k) => TEXT[lang][k];
-  const DEV_DIGITS = '०१२३४५६७८९';
-  const num = (n) => (lang === 'ne' ? String(n).replace(/\d/g, (d) => DEV_DIGITS[d]) : String(n));
-  const fmtTime = (s) => (lang === 'ne' ? `${num(s)} सेकेन्ड` : `${s}s`);
-
   function applyLang() {
-    document.documentElement.lang = lang;
+    document.documentElement.lang = I18n.lang;
     document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     ui.menuBest.textContent = num(best);
   }
@@ -132,8 +58,7 @@
     sky.x0 = K * 1.2; sky.x1 = W - K * 1.2;
     sky.y0 = Math.max(K * 1.6, H * 0.08);
     sky.y1 = roofY - K * 3;
-    buildLayers();
-    buildDecor();
+    ({ bgLayer, cityLayer, clouds, farKites, flagLines } = CC.Scenery.build(W, H, DPR, U, K, roofY, PX));
     sunGlow = null;
     if (player) {
       player.x = clamp(player.x, sky.x0, sky.x1); player.y = clamp(player.y, sky.y0, sky.y1);
@@ -141,256 +66,8 @@
     }
   }
 
-  // ---------- Static scenery (pre-rendered) ----------
-  function makeLayer() {
-    const c = document.createElement('canvas');
-    c.width = Math.round(W * DPR); c.height = Math.round(H * DPR);
-    const x = c.getContext('2d');
-    x.setTransform(DPR, 0, 0, DPR, 0, 0);
-    return { c, x };
-  }
-
-  function ridge(c, rnd, baseY, amp, stops) {
-    let ys = [baseY - rnd() * amp, baseY - rnd() * amp];
-    let disp = amp * 0.7;
-    for (let it = 0; it < 7; it++) {
-      const next = [];
-      for (let i = 0; i < ys.length - 1; i++) next.push(ys[i], (ys[i] + ys[i + 1]) / 2 + (rnd() - 0.5) * disp * 2);
-      next.push(ys[ys.length - 1]);
-      ys = next; disp *= 0.56;
-    }
-    c.beginPath(); c.moveTo(0, H);
-    ys.forEach((y, i) => c.lineTo((i / (ys.length - 1)) * W, y));
-    c.lineTo(W, H); c.closePath();
-    const top = Math.min(...ys);
-    const gr = c.createLinearGradient(0, top, 0, baseY + amp * 0.4);
-    stops.forEach(([o, col]) => gr.addColorStop(o, col));
-    c.fillStyle = gr; c.fill();
-  }
-
-  function drawHouse(c, rnd, x, top, w, color, tank, rail) {
-    c.fillStyle = color; c.fillRect(x, top, w, H - top + 2);
-    c.fillStyle = 'rgba(0,0,0,0.18)'; c.fillRect(x, top, w, U * 0.8);
-    const ww = U * 2.2, wh = U * 2.8, gx = U * 3.6, gy = U * 5;
-    const cols = Math.max(1, Math.floor((w - U * 2) / gx));
-    const ox = x + (w - (cols - 1) * gx - ww) / 2;
-    c.lineWidth = Math.max(1, U * 0.2);
-    for (let y = top + U * 2.5; y < H; y += gy) {
-      for (let i = 0; i < cols; i++) {
-        const wx = ox + i * gx;
-        c.fillStyle = '#3a2216'; c.fillRect(wx, y, ww, wh);
-        c.fillStyle = rnd() < 0.22 ? 'rgba(255,214,120,0.85)' : 'rgba(120,80,50,0.9)';
-        c.fillRect(wx + U * 0.35, y + U * 0.35, ww - U * 0.7, wh - U * 0.7);
-        c.strokeStyle = '#3a2216';
-        c.beginPath(); c.moveTo(wx + ww / 2, y); c.lineTo(wx + ww / 2, y + wh); c.moveTo(wx, y + wh / 2); c.lineTo(wx + ww, y + wh / 2); c.stroke();
-      }
-    }
-    if (tank) { // the classic black rooftop water tank
-      const tw = U * 2.6, th = U * 3, tx = x + w * (0.2 + rnd() * 0.5);
-      c.fillStyle = '#1d1d1f'; c.fillRect(tx, top - th, tw, th);
-      c.beginPath(); c.ellipse(tx + tw / 2, top - th, tw / 2, U * 0.6, 0, 0, TAU); c.fill();
-    }
-    if (rail) {
-      c.strokeStyle = 'rgba(40,25,20,0.7)'; c.lineWidth = Math.max(1, U * 0.25);
-      c.beginPath(); c.moveTo(x, top - U * 1.6); c.lineTo(x + w, top - U * 1.6);
-      for (let i = 0; i <= w; i += U * 2) { c.moveTo(x + i, top); c.lineTo(x + i, top - U * 1.6); }
-      c.stroke();
-    }
-  }
-
-  function drawPagoda(c, cx, baseY, s) {
-    c.fillStyle = '#9a6b4f';
-    for (let i = 0; i < 4; i++) { const w = s * (30 - i * 4), h = s * 1.6; c.fillRect(cx - w / 2, baseY - (i + 1) * h, w, h); }
-    let y = baseY - 4 * s * 1.6;
-    const tiers = [{ bw: 16, bh: 7, rw: 27, rh: 4 }, { bw: 12, bh: 5, rw: 21, rh: 3.5 }, { bw: 8, bh: 4, rw: 15, rh: 3 }];
-    for (const tr of tiers) {
-      c.fillStyle = '#8c3b26'; c.fillRect(cx - (tr.bw * s) / 2, y - tr.bh * s, tr.bw * s, tr.bh * s);
-      y -= tr.bh * s;
-      c.fillStyle = '#4a2a1a';
-      c.beginPath();
-      c.moveTo(cx - (tr.rw * s) / 2, y + s * 0.8);
-      c.quadraticCurveTo(cx - tr.rw * s * 0.3, y - s * 0.2, cx - tr.bw * s * 0.35, y - tr.rh * s);
-      c.lineTo(cx + tr.bw * s * 0.35, y - tr.rh * s);
-      c.quadraticCurveTo(cx + tr.rw * s * 0.3, y - s * 0.2, cx + (tr.rw * s) / 2, y + s * 0.8);
-      c.closePath(); c.fill();
-      y -= tr.rh * s;
-    }
-    c.fillStyle = '#e0b13a'; // gajur
-    c.beginPath(); c.moveTo(cx - s * 1.4, y); c.lineTo(cx + s * 1.4, y); c.lineTo(cx, y - s * 5); c.closePath(); c.fill();
-    c.beginPath(); c.arc(cx, y - s * 1.2, s * 1.1, 0, TAU); c.fill();
-  }
-
-  function drawStupa(c, cx, baseY, s) {
-    c.fillStyle = '#e9e4da';
-    for (let i = 0; i < 3; i++) { const w = s * (36 - i * 7), h = s * 2.2; c.fillRect(cx - w / 2, baseY - (i + 1) * h, w, h); }
-    const domeY = baseY - 3 * s * 2.2, r = s * 11, hy = domeY - r - s * 4.5, tipY = domeY - r - s * 15;
-    // prayer flags from the spire
-    for (const side of [-1, 1]) {
-      const ex = cx + side * s * 19, ey = baseY - s * 6.6;
-      c.strokeStyle = 'rgba(80,60,50,0.6)'; c.lineWidth = 1;
-      c.beginPath(); c.moveTo(cx, tipY); c.lineTo(ex, ey); c.stroke();
-      for (let i = 1; i < 12; i++) {
-        const k = i / 12, fx = lerp(cx, ex, k), fy = lerp(tipY, ey, k);
-        c.fillStyle = FLAG[i % 5]; c.fillRect(fx - s * 0.5, fy, s * 1, s * 1.4);
-      }
-    }
-    c.fillStyle = '#f7f4ee'; c.beginPath(); c.arc(cx, domeY, r, Math.PI, 0); c.fill();
-    c.fillStyle = '#e8c35a'; c.fillRect(cx - s * 3.2, hy, s * 6.4, s * 4.5);
-    c.fillStyle = '#2a1a14'; // the watchful eyes
-    for (const side of [-1, 1]) { c.beginPath(); c.ellipse(cx + side * s * 1.5, hy + s * 2.1, s * 0.9, s * 0.42, 0, 0, TAU); c.fill(); }
-    c.fillStyle = '#d9a521';
-    c.beginPath(); c.moveTo(cx - s * 2.8, hy); c.lineTo(cx + s * 2.8, hy); c.lineTo(cx, tipY); c.closePath(); c.fill();
-    c.strokeStyle = 'rgba(120,80,10,0.55)'; c.lineWidth = Math.max(1, s * 0.3);
-    for (let i = 1; i < 7; i++) { const yy = lerp(hy, tipY, i / 8), hw = lerp(s * 2.8, 0, i / 8); c.beginPath(); c.moveTo(cx - hw, yy); c.lineTo(cx + hw, yy); c.stroke(); }
-  }
-
-  function buildLayers() {
-    const rnd = mulberry32(7);
-    const bg = makeLayer();
-    const amp = Math.min(H * 0.2, W * 0.22);
-    ridge(bg.x, rnd, roofY - H * 0.22, amp, [[0, '#ffffff'], [0.3, '#e3edf7'], [0.55, '#a9bfd6'], [1, '#8099b5']]);
-    ridge(bg.x, rnd, roofY - H * 0.08, amp * 0.35, [[0, '#6f9a86'], [1, '#456b5c']]);
-    ridge(bg.x, rnd, roofY - U * 2, amp * 0.18, [[0, '#7d8f86'], [1, '#5d6e66']]);
-    bgLayer = bg.c;
-
-    const city = makeLayer(), c = city.x;
-    drawPagoda(c, W * 0.6, roofY + U * 1.5, U * 0.75);
-    drawStupa(c, W * 0.86, roofY + U * 0.5, U * 0.55);
-    let x = -U * 3;
-    while (x < W + U * 3) {
-      const w = U * (8 + rnd() * 8);
-      drawHouse(c, rnd, x, roofY - U * (1 + rnd() * 7), w, BACK_HOUSES[(rnd() * BACK_HOUSES.length) | 0], rnd() < 0.35, false);
-      x += w - U * 0.5;
-    }
-    c.save(); c.globalCompositeOperation = 'source-atop'; c.fillStyle = 'rgba(200,215,232,0.4)'; c.fillRect(0, 0, W, H); c.restore();
-    x = -U * 2;
-    while (x < W + U * 2) {
-      const w = U * (9 + rnd() * 9);
-      drawHouse(c, rnd, x, roofY + U * (1.5 + rnd() * 6), w, FRONT_HOUSES[(rnd() * FRONT_HOUSES.length) | 0], rnd() < 0.4, rnd() < 0.3);
-      x += w + U * rnd() * 1.5;
-    }
-    drawHouse(c, rnd, PX - U * 8, roofY, U * 16, '#b4533a', false, false); // your rooftop
-    cityLayer = city.c;
-  }
-
-  function buildDecor() {
-    clouds = Array.from({ length: 5 }, () => ({ x: rand(0, W), y: rand(H * 0.06, H * 0.35), s: rand(U * 5, U * 10), sp: rand(0.5, 1.3) }));
-    farKites = Array.from({ length: W > H ? 7 : 5 }, () => ({
-      x: rand(W * 0.05, W * 0.95), y: rand(H * 0.12, roofY - H * 0.25), s: K * rand(0.22, 0.34),
-      pal: pick(RIVAL_PALS), ph: rand(0, TAU), ax: rand(-W * 0.1, W * 1.1),
-    }));
-    const top = roofY - U * 10;
-    flagLines = [
-      { x1: PX - U * 7.5, y1: top, x2: PX - U * 32, y2: roofY + U * 2, n: 9 },
-      { x1: PX + U * 7.5, y1: top, x2: PX + U * 36, y2: roofY + U * 3, n: 10 },
-    ];
-  }
-
-  // ---------- Audio (all generated: madal, bansuri, effects) ----------
-  const audio = {
-    ac: null, master: null, music: null, noiseBuf: null, pechGain: null, timer: null, next: 0, step: 0,
-    muted: !!store.get('cc_muted', false),
-    init() {
-      if (!this.ac) {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
-        const ac = (this.ac = new AC());
-        this.master = ac.createGain(); this.master.gain.value = this.muted ? 0 : 0.9; this.master.connect(ac.destination);
-        this.music = ac.createGain(); this.music.gain.value = 0.55; this.music.connect(this.master);
-        const buf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate), d = buf.getChannelData(0);
-        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-        this.noiseBuf = buf;
-        const src = ac.createBufferSource(); src.buffer = buf; src.loop = true;
-        const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.9;
-        this.pechGain = ac.createGain(); this.pechGain.gain.value = 0;
-        src.connect(bp).connect(this.pechGain).connect(this.master); src.start();
-      }
-      if (this.ac.state === 'suspended') this.ac.resume();
-    },
-    setMuted(m) { this.muted = m; if (this.master) this.master.gain.setTargetAtTime(m ? 0 : 0.9, this.ac.currentTime, 0.02); },
-    setPech(v) { if (this.pechGain) this.pechGain.gain.setTargetAtTime(v * 0.07, this.ac.currentTime, 0.05); },
-    noise(tm, dur, type, freq, vol, q = 1, attack = 0) {
-      const ac = this.ac, s = ac.createBufferSource(); s.buffer = this.noiseBuf; s.loop = true;
-      const f = ac.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q;
-      const g = ac.createGain();
-      if (attack) { g.gain.setValueAtTime(0.0001, tm); g.gain.exponentialRampToValueAtTime(vol, tm + attack); } else g.gain.setValueAtTime(vol, tm);
-      g.gain.exponentialRampToValueAtTime(0.0001, tm + dur);
-      s.connect(f).connect(g).connect(this.master); s.start(tm, Math.random() * 0.5); s.stop(tm + dur + 0.02);
-    },
-    tone(tm, freq, dur, type, vol, toFreq, dest) {
-      const ac = this.ac, o = ac.createOscillator(), g = ac.createGain();
-      o.type = type; o.frequency.setValueAtTime(freq, tm);
-      if (toFreq) o.frequency.exponentialRampToValueAtTime(toFreq, tm + dur);
-      g.gain.setValueAtTime(0.0001, tm); g.gain.exponentialRampToValueAtTime(vol, tm + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, tm + dur);
-      o.connect(g).connect(dest || this.master); o.start(tm); o.stop(tm + dur + 0.02);
-    },
-    flute(tm, freq, dur, vol = 0.07, dest) { // bansuri-like: sine with gentle vibrato
-      const ac = this.ac, o = ac.createOscillator(), lfo = ac.createOscillator(), lg = ac.createGain(), g = ac.createGain();
-      o.type = 'sine'; o.frequency.setValueAtTime(freq, tm);
-      lfo.frequency.value = 5.2; lg.gain.value = freq * 0.012; lfo.connect(lg).connect(o.frequency);
-      g.gain.setValueAtTime(0.0001, tm); g.gain.exponentialRampToValueAtTime(vol, tm + 0.04);
-      g.gain.setValueAtTime(vol, tm + Math.max(0.05, dur - 0.08)); g.gain.exponentialRampToValueAtTime(0.0001, tm + dur);
-      o.connect(g).connect(dest || this.master);
-      o.start(tm); lfo.start(tm); o.stop(tm + dur + 0.02); lfo.stop(tm + dur + 0.02);
-    },
-    dhin(tm, v) { this.tone(tm, 150, 0.3, 'sine', 0.3 * v, 55, this.music); },
-    ta(tm, v) {
-      const ac = this.ac, s = ac.createBufferSource(); s.buffer = this.noiseBuf;
-      const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2200; f.Q.value = 2;
-      const g = ac.createGain(); g.gain.setValueAtTime(0.16 * v, tm); g.gain.exponentialRampToValueAtTime(0.0001, tm + 0.07);
-      s.connect(f).connect(g).connect(this.music); s.start(tm, Math.random() * 0.5); s.stop(tm + 0.09);
-      this.tone(tm, 520, 0.05, 'triangle', 0.06 * v, 0, this.music);
-    },
-    startMusic() {
-      if (!this.ac || this.timer) return;
-      this.next = this.ac.currentTime + 0.1; this.step = 0;
-      this.timer = setInterval(() => this.schedule(), 30);
-    },
-    schedule() {
-      const STEP = 0.165, now = this.ac.currentTime;
-      if (this.next < now - 0.1) this.next = now + 0.05; // skip ahead after the tab was asleep
-      while (this.next < now + 0.15) {
-        const s = this.step % 12, tm = this.next;
-        if (s === 0 || s === 3 || s === 6 || s === 9) this.dhin(tm, s === 0 ? 1 : 0.75);
-        if (s === 2 || s === 4 || s === 8 || s === 10 || s === 11) this.ta(tm, s === 4 || s === 10 ? 1 : 0.6);
-        if (this.step % 48 === 0 && state === 'play' && Math.random() < 0.6) this.phrase(tm, STEP);
-        this.next += STEP; this.step++;
-      }
-    },
-    phrase(tm, STEP) { // short original folk-style tune in D major pentatonic
-      const SC = [440, 493.88, 587.33, 659.25, 739.99, 880, 987.77, 1174.66];
-      let i = 2 + ((Math.random() * 3) | 0);
-      const n = 5 + ((Math.random() * 3) | 0);
-      for (let k = 0; k < n; k++) {
-        if (k === n - 1) i = Math.random() < 0.5 ? 2 : 5;
-        const d = (k === n - 1 ? 3 : Math.random() < 0.3 ? 2 : 1) * STEP;
-        this.flute(tm, SC[i], d * 0.95, 0.05, this.music);
-        tm += d;
-        i = clamp(i + [-2, -1, 1, 1, 2][(Math.random() * 5) | 0], 0, SC.length - 1);
-      }
-    },
-    chet() {
-      if (!this.ac) return; const tm = this.ac.currentTime;
-      this.noise(tm, 0.12, 'highpass', 1800, 0.35);
-      this.tone(tm, 1500, 0.18, 'sine', 0.12, 250);
-      this.noise(tm + 0.05, 1.1, 'lowpass', 900, 0.07, 1, 0.25); // crowd cheer
-      [880, 987.77, 1174.66].forEach((f, i) => this.flute(tm + 0.1 + i * 0.09, f, 0.12, 0.07));
-    },
-    lose() {
-      if (!this.ac) return; const tm = this.ac.currentTime;
-      this.noise(tm, 0.15, 'highpass', 1500, 0.35);
-      [1174.66, 987.77, 880, 739.99, 659.25, 587.33].forEach((f, i) => this.flute(tm + 0.2 + i * 0.16, f, 0.2, 0.07));
-    },
-    pech() { if (this.ac) this.noise(this.ac.currentTime, 0.18, 'bandpass', 3200, 0.15, 2); },
-    bird() {
-      if (!this.ac) return; const tm = this.ac.currentTime;
-      this.tone(tm, 900, 0.12, 'sawtooth', 0.05, 520); this.tone(tm + 0.15, 850, 0.12, 'sawtooth', 0.05, 480);
-    },
-    manja() {
-      if (!this.ac) return; const tm = this.ac.currentTime;
-      [587.33, 739.99, 880, 1174.66].forEach((f, i) => this.flute(tm + i * 0.07, f, 0.1, 0.07));
-    },
-  };
+  // ---------- Audio (audio.js) ----------
+  audio.isPlaying = () => state === 'play';
 
   function setMuteUI() { ui.mute.classList.toggle('muted', audio.muted); ui.mute.setAttribute('aria-pressed', String(audio.muted)); }
   function toggleMute() { audio.setMuted(!audio.muted); store.set('cc_muted', audio.muted); setMuteUI(); }
@@ -704,33 +381,9 @@
     if (state === 'play' && player.dead) { overT -= dt; if (overT <= 0) showOver(); }
   }
 
-  // ---------- Render ----------
-  function drawKite(x, y, s, rot, pal, glow, alpha = 1) {
-    ctx.save();
-    ctx.translate(x, y); ctx.rotate(rot); ctx.globalAlpha = alpha;
-    if (glow) { ctx.shadowColor = '#f5c518'; ctx.shadowBlur = 18; }
-    ctx.beginPath(); ctx.moveTo(0, -s); ctx.lineTo(s * 0.85, 0); ctx.lineTo(0, s * 1.05); ctx.lineTo(-s * 0.85, 0); ctx.closePath();
-    ctx.fillStyle = pal[0]; ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.save(); ctx.clip();
-    ctx.fillStyle = pal[1]; ctx.fillRect(-s, -s, s * 2, s * 0.95);
-    ctx.fillStyle = pal[2]; ctx.beginPath(); ctx.arc(0, s * 0.12, s * 0.28, 0, TAU); ctx.fill();
-    ctx.restore();
-    ctx.strokeStyle = 'rgba(40,25,15,0.85)'; ctx.lineWidth = Math.max(1, s * 0.06); ctx.lineJoin = 'round';
-    ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, -s); ctx.lineTo(0, s * 1.05); ctx.moveTo(-s * 0.85, 0); ctx.quadraticCurveTo(0, -s * 0.55, s * 0.85, 0); ctx.stroke();
-    ctx.fillStyle = pal[1]; // small tail tassel
-    ctx.beginPath(); ctx.moveTo(0, s * 1.0); ctx.lineTo(-s * 0.22, s * 1.42); ctx.lineTo(s * 0.22, s * 1.42); ctx.closePath(); ctx.fill();
-    ctx.restore();
-  }
-
+  // ---------- Render (primitives in draw.js) ----------
   const tilt = (o) => clamp((o.vx / VMAX) * 0.6, -0.55, 0.55) + Math.sin(time * 3 + o.seed) * 0.05;
   const snap = (v) => Math.round(v * DPR) / DPR; // whole device pixels: images are copied, not resampled
-
-  function strokePts(pts) {
-    ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
-    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  }
 
   // A full-screen gradient fill is very slow on phones that draw the canvas in software, so a
   // vertical gradient is painted into a 1px-wide column (again only when its colours or size
@@ -797,9 +450,6 @@
       }
     }
   }
-
-  function line(x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
-  function dot(x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
 
   function drawFigure() { // you, on the rooftop, with a dhaka topi and a lattai
     const f = FIG, x = PX, y = roofY;
@@ -885,13 +535,6 @@
       ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 1, y - h / 2 - 2, 2, h + 4);
       ctx.globalAlpha = 1;
     }
-  }
-
-  function drawText(text, x, y, size, color, weight = 800) {
-    ctx.font = `${weight} ${Math.round(size)}px ${FONT}`;
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = Math.max(3, size * 0.16); ctx.strokeStyle = 'rgba(30,15,10,0.75)'; ctx.strokeText(text, x, y);
-    ctx.fillStyle = color; ctx.fillText(text, x, y);
   }
 
   function drawHUD() {
@@ -1044,7 +687,7 @@
   ui.play.addEventListener('click', start);
   ui.retry.addEventListener('click', () => { if (performance.now() > retryLock) start(); });
   ui.mute.addEventListener('click', () => { audio.init(); toggleMute(); ui.mute.blur(); });
-  ui.lang.addEventListener('click', () => { lang = lang === 'en' ? 'ne' : 'en'; store.set('cc_lang', lang); applyLang(); });
+  ui.lang.addEventListener('click', () => { I18n.lang = I18n.lang === 'en' ? 'ne' : 'en'; store.set('cc_lang', I18n.lang); applyLang(); });
   ui.share.addEventListener('click', async () => {
     const text = t('shareText')(num(cuts)), url = location.href.split('#')[0];
     try {

@@ -68,6 +68,14 @@ python -m http.server 8000
 | `style.css` | Sticker-album look |
 | `data.js` | Players, sports, countries |
 | `faces.js` | Pinned photo per player + face landmark positions (generated) |
-| `game.js` | Question generators, clue ladder, face windows, scoring, final bet, album, daily/challenge, sound |
+| `js/core.js` | Shared helpers: player lookup, DOM/format helpers, storage, seeded randomness, icons |
+| `js/photos.js` | Photo loading: pinned photo, Wikipedia fallback, fetch queue |
+| `js/draw.js` | Face geometry, face windows and sticker cover (canvas), framed photos |
+| `js/sound.js` | Generated sound effects, mute buttons |
+| `js/questions.js` | Question generators and clue ladders, categories, round building |
+| `js/scoring.js` | Streak bonus, result grid, verdict |
+| `js/album.js` | Sticker album: saved cards, album screen |
+| `js/daily.js` | Daily seed and number, challenge links, sharing |
+| `js/main.js` | Screens, home, round flow, clue card, final bet, answers, results, keyboard, boot |
 | `sw.js` | Offline app shell (network first) |
 | `manifest.webmanifest`, `icon.svg` | Install to home screen |

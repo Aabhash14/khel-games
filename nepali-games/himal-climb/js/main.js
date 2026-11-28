@@ -1,10 +1,14 @@
-/* Himal Climb (हिमाल चढाइ) — climb the 10 highest mountains on Earth, lowest first. No dependencies. */
+/* Himal Climb (हिमाल चढाइ): levels, wall generation, climbing, hazards, oxygen, scenery, screens, input and the main loop. */
 (() => {
   'use strict';
+  const HC = window.HC;
+  const { store, rand, clamp, lerp, pick, easeOut, hash, mix, vibrate, mulberry32, TAU } = HC;
+  const { MOUNTAINS, WHERE, DEATH_ALT, TERRAIN } = HC;
+  const { TEXT, DEV } = HC;
+  const { canvas, ctx, FONT, FLAG, rr, line, dot, oval, drawText, drawNepalFlag } = HC;
+  const { audio } = HC;
 
   // ---------- Setup ----------
-  const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
   const $ = (id) => document.getElementById(id);
   const ui = {
     menu: $('menu'), over: $('over'), play: $('play'), retry: $('retry'), share: $('share'),
@@ -15,109 +19,9 @@
     finalCamp: $('finalCamp'), finalTime: $('finalTime'), newBest: $('newBest'),
   };
 
-  const TAU = Math.PI * 2;
-  const FONT = '"Nirmala UI", "Noto Sans Devanagari", "Kohinoor Devanagari", Mangal, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
   const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const FLAG = ['#1f6fd1', '#f4f4f4', '#e23b3b', '#2e9e5b', '#f5c518']; // prayer flag order
 
-  // ---------- The 10 highest mountains on Earth, played lowest first ----------
-  // Each level climbs the mountain's standard route. Camp heights are the usual real ones.
-  // sections: [from m, ground, hazard rate, crevasse rate, English, Nepali]
-  // rows: taps from start to summit (longer climbs as you go up the list);
-  // dmax: how sparse and crumbly the holds get; haz: overall falling ice/rock rate;
-  // drain: how fast strength drains (lower = gentler early levels).
-  const S = (m, terrain, haz, crev, en, ne) => ({ m, terrain, haz, crev, en, ne });
-  const KHUMBU = [
-    S(5000, 'moraine', 0.5, 0, 'Khumbu Glacier', 'खुम्बु हिमनदी'),
-    S(5364, 'ice', 1.2, 0.07, 'Khumbu Icefall', 'खुम्बु आइसफल'),
-    S(6065, 'snow', 0.45, 0.05, 'Western Cwm', 'वेस्टर्न कुम'),
-    S(6600, 'blueice', 1, 0, 'Lhotse Face', 'ल्होत्से फेस'),
-  ];
-  const MOUNTAINS = [
-    { id: 'annapurna', en: 'Annapurna I', ne: 'अन्नपूर्ण प्रथम', m: 8091, rank: 10, where: 'np', route: ['North Face', 'उत्तरी फेस'],
-      start: 3900, rows: 200, dmax: 0.35, haz: 0.6, drain: 0.7, camps: [4190, 5100, 5600, 6400, 7100], sections: [
-        S(3900, 'moraine', 0.5, 0, 'North Annapurna Glacier', 'उत्तरी अन्नपूर्ण हिमनदी'),
-        S(4300, 'ice', 0.9, 0.06, 'Crevasse Field', 'क्रेभास क्षेत्र'),
-        S(5100, 'dark', 1, 0, 'Dutch Rib', 'डच रिब'),
-        S(5600, 'blueice', 1.35, 0, 'Under the Sickle', 'सिकलमुनि'),
-        S(6400, 'snow', 0.8, 0, 'North Face', 'उत्तरी फेस'),
-        S(7700, 'dark', 0.6, 0, 'Summit Ridge', 'शिखर धार')] },
-    { id: 'nangaparbat', en: 'Nanga Parbat', ne: 'नाङ्गा पर्वत', m: 8126, rank: 9, where: 'pk', route: ['Kinshofer Route', 'किन्सहोफर रुट'],
-      start: 3900, rows: 240, dmax: 0.42, haz: 0.65, drain: 0.78, camps: [4200, 5100, 6000, 6800, 7200], sections: [
-        S(3900, 'moraine', 0.5, 0, 'Diamir Glacier', 'दियामीर हिमनदी'),
-        S(4300, 'snow', 0.8, 0.04, 'Diamir Face', 'दियामीर फेस'),
-        S(5500, 'dark', 1.3, 0, 'Kinshofer Wall', 'किन्सहोफर भित्ता'),
-        S(6000, 'blueice', 1, 0, 'Upper Diamir Face', 'माथिल्लो दियामीर फेस'),
-        S(7200, 'snow', 0.7, 0, 'Bazhin Basin', 'बाजिन बेसिन'),
-        S(7800, 'dark', 0.7, 0, 'Summit Pyramid', 'शिखर पिरामिड')] },
-    { id: 'manaslu', en: 'Manaslu', ne: 'मनास्लु', m: 8163, rank: 8, where: 'np', route: ['Northeast Face', 'उत्तरपूर्वी फेस'],
-      start: 4500, rows: 280, dmax: 0.5, haz: 0.7, drain: 0.84, camps: [4800, 5700, 6400, 6800, 7400], sections: [
-        S(4500, 'moraine', 0.5, 0, 'Manaslu Glacier', 'मनास्लु हिमनदी'),
-        S(4800, 'snow', 0.5, 0.03, 'Lower Slopes', 'तल्लो ढलान'),
-        S(5700, 'ice', 1.1, 0.07, 'Manaslu Icefall', 'मनास्लु आइसफल'),
-        S(6400, 'snow', 0.9, 0, 'Snow Slopes', 'हिउँ ढलान'),
-        S(7400, 'ridge', 0.6, 0, 'Summit Plateau', 'शिखर पठार'),
-        S(8050, 'ridge', 0.4, 0, 'Summit Pinnacle', 'शिखर चुचुरो')] },
-    { id: 'dhaulagiri', en: 'Dhaulagiri I', ne: 'धौलागिरि प्रथम', m: 8167, rank: 7, where: 'np', route: ['Northeast Ridge', 'उत्तरपूर्वी धार'],
-      start: 4400, rows: 300, dmax: 0.55, haz: 0.65, drain: 0.8, camps: [4700, 5800, 6450, 7250], sections: [
-        S(4400, 'moraine', 0.5, 0, 'Chhonbardan Glacier', 'छोनबार्दान हिमनदी'),
-        S(4900, 'ice', 1.1, 0.06, 'Dhaulagiri Icefall', 'धौलागिरि आइसफल'),
-        S(5700, 'snow', 0.7, 0, 'Northeast Col', 'उत्तरपूर्वी कोल'),
-        S(6000, 'blueice', 0.9, 0, 'Northeast Ridge', 'उत्तरपूर्वी धार'),
-        S(7250, 'snow', 0.7, 0, 'Upper Ridge', 'माथिल्लो धार'),
-        S(7900, 'dark', 0.7, 0, 'Summit Couloir', 'शिखर गल्छी')] },
-    { id: 'chooyu', en: 'Cho Oyu', ne: 'चो ओयु', m: 8188, rank: 6, where: 'npcn', route: ['Northwest Ridge', 'उत्तरपश्चिमी धार'], abc: true,
-      start: 5400, rows: 380, dmax: 0.74, haz: 1, drain: 1, camps: [5700, 6400, 7100, 7450], sections: [
-        S(5400, 'moraine', 0.4, 0, 'Gyabrag Glacier', 'ग्याब्राग हिमनदी'),
-        S(5800, 'moraine', 0.6, 0, 'Scree Slope', 'गेग्रान ढलान'),
-        S(6300, 'snow', 0.6, 0, 'Northwest Ridge', 'उत्तरपश्चिमी धार'),
-        S(6550, 'blueice', 1.2, 0, 'Ice Cliff', 'हिउँको भीर'),
-        S(6700, 'snow', 0.6, 0, 'Northwest Ridge', 'उत्तरपश्चिमी धार'),
-        S(7600, 'yellow', 1, 0, 'Yellow Band', 'येलो ब्यान्ड'),
-        S(7750, 'ridge', 0.4, 0, 'Summit Plateau', 'शिखर पठार')] },
-    { id: 'makalu', en: 'Makalu', ne: 'मकालु', m: 8485, rank: 5, where: 'npcn', route: ['Northwest Ridge', 'उत्तरपश्चिमी धार'], abc: true,
-      start: 5400, rows: 420, dmax: 0.72, haz: 0.85, drain: 0.93, camps: [5700, 6400, 6800, 7400, 7700], sections: [
-        S(5400, 'moraine', 0.5, 0, 'Barun Glacier', 'बरुण हिमनदी'),
-        S(5900, 'snow', 0.6, 0.04, 'Crevasse Field', 'क्रेभास क्षेत्र'),
-        S(6800, 'blueice', 1.1, 0, 'Ice Headwall', 'बरफको ठाडो भित्ता'),
-        S(7400, 'ridge', 0.6, 0, 'Makalu La', 'मकालु ला'),
-        S(7900, 'dark', 1, 0, 'French Couloir', 'फ्रेन्च गल्छी'),
-        S(8300, 'ridge', 0.5, 0, 'Summit Ridge', 'शिखर धार')] },
-    { id: 'lhotse', en: 'Lhotse', ne: 'ल्होत्से', m: 8516, rank: 4, where: 'npcn', route: ['West Face', 'पश्चिमी फेस'],
-      start: 5000, rows: 480, dmax: 0.8, haz: 0.9, drain: 0.96, camps: [5364, 6065, 6400, 7162, 7800], sections: [
-        ...KHUMBU,
-        S(7800, 'dark', 1.2, 0, 'Lhotse Couloir', 'ल्होत्से गल्छी')] },
-    { id: 'kangchenjunga', en: 'Kangchenjunga', ne: 'कञ्चनजङ्घा', m: 8586, rank: 3, where: 'npin', route: ['Southwest Face', 'दक्षिणपश्चिमी फेस'], tradition: true,
-      start: 5200, rows: 560, dmax: 0.87, haz: 0.95, drain: 0.98, camps: [5500, 6200, 6500, 7200, 7700], sections: [
-        S(5200, 'moraine', 0.5, 0, 'Yalung Glacier', 'यालुङ हिमनदी'),
-        S(5600, 'ice', 1, 0.06, 'Lower Icefall', 'तल्लो आइसफल'),
-        S(6500, 'blueice', 1.1, 0.03, 'Upper Icefall', 'माथिल्लो आइसफल'),
-        S(7150, 'snow', 0.7, 0, 'Great Shelf', 'ग्रेट शेल्फ'),
-        S(7900, 'ridge', 0.7, 0, 'The Gangway', 'ग्याङवे'),
-        S(8350, 'dark', 0.6, 0, 'Summit Rocks', 'शिखर चट्टान')] },
-    { id: 'k2', en: 'K2', ne: 'के२', m: 8611, rank: 2, where: 'pkcn', route: ['Abruzzi Spur', 'अब्रुज्जी स्पर'],
-      start: 4700, rows: 640, dmax: 0.95, haz: 1.05, drain: 1, camps: [5000, 6050, 6700, 7200, 7800], sections: [
-        S(4700, 'moraine', 0.5, 0, 'Godwin-Austen Glacier', 'गडविन-अस्टिन हिमनदी'),
-        S(5300, 'snow', 0.8, 0, 'Abruzzi Spur', 'अब्रुज्जी स्पर'),
-        S(6550, 'dark', 1.3, 0, "House's Chimney", 'हाउस चिम्नी'),
-        S(6700, 'dark', 1.3, 0, 'Black Pyramid', 'ब्ल्याक पिरामिड'),
-        S(7350, 'ridge', 0.7, 0, 'The Shoulder', 'द सोल्डर'),
-        S(8200, 'blueice', 1.6, 0, 'The Bottleneck', 'बटलनेक'),
-        S(8350, 'blueice', 1.4, 0, 'The Traverse', 'ट्राभर्स'),
-        S(8450, 'ridge', 0.5, 0, 'Summit Slopes', 'शिखर ढलान')] },
-    { id: 'everest', en: 'Sagarmatha (Everest)', ne: 'सगरमाथा', m: 8849, rank: 1, where: 'npcn', route: ['South Col Route', 'साउथ कोल रुट'],
-      start: 5000, rows: 770, dmax: 1, haz: 1, drain: 1, camps: [5364, 6065, 6400, 7162, 7950], sections: [
-        ...KHUMBU,
-        S(7450, 'yellow', 1.15, 0, 'Yellow Band', 'येलो ब्यान्ड'),
-        S(7650, 'dark', 1.1, 0, 'Geneva Spur', 'जेनेभा स्पर'),
-        S(7950, 'ridge', 0.55, 0, 'Southeast Ridge', 'दक्षिणपूर्वी धार'),
-        S(8790, 'dark', 0.3, 0, 'Hillary Step', 'हिलारी स्टेप'),
-        S(8805, 'ridge', 0.3, 0, 'Summit Ridge', 'शिखर धार')],
-      // Ledges on summit day that are not camps.
-      marks: [{ m: 8400, en: 'The Balcony', ne: 'बाल्कोनी', note: 'swap' }, { m: 8749, en: 'South Summit', ne: 'दक्षिणी शिखर', note: 'close' }] },
-  ];
-  const WHERE = { np: ['Nepal', 'नेपाल'], pk: ['Pakistan', 'पाकिस्तान'], npcn: ['Nepal–China', 'नेपाल–चीन'], npin: ['Nepal–India', 'नेपाल–भारत'], pkcn: ['Pakistan–China', 'पाकिस्तान–चीन'] };
-  const DEATH_ALT = 8000;
+  // ---------- Level ----------
   // The current level. Everything below reads these, and loadLevel() sets them.
   let LV = 0, MT = null, START_ALT = 5000, STEP_M = 5, CAMPS = [], CAMP_AT = new Map(), SUMMIT = 0, SUMMIT_ROW = 0;
   let MARKS = [], MARK_AT = new Map(), SECTIONS = [], O2_ALT = 7000, DEATH_ROW = 0, ROPE_ROW = 0, SKY = [];
@@ -158,91 +62,10 @@
   const sectionAt = (alt) => { let s = SECTIONS[0]; for (const x of SECTIONS) if (alt >= x.m) s = x; return s; };
   const terrainOf = (row) => sectionAt(rowAlt(row)).terrain;
   const altOf = (row) => (CAMP_AT.has(row) ? CAMPS[CAMP_AT.get(row)].m : MARK_AT.has(row) ? MARKS[MARK_AT.get(row)].m : rowAlt(row));
-  // Wall colours per ground type; ice: true means kicked steps instead of rock holds.
-  const TERRAIN = {
-    moraine: { wall: ['#4f4842', '#7a7068'], crack: 'rgba(30,24,20,0.45)', ice: false },
-    ice: { wall: ['#86b2d0', '#d6ebf7'], crack: 'rgba(30,100,150,0.55)', ice: true },
-    snow: { wall: ['#b3c6da', '#eef4fa'], crack: 'rgba(90,120,160,0.4)', ice: true },
-    blueice: { wall: ['#4f88b5', '#9cc7e5'], crack: 'rgba(15,55,100,0.55)', ice: true },
-    yellow: { wall: ['#86703f', '#b99e66'], crack: 'rgba(60,45,20,0.5)', ice: false },
-    dark: { wall: ['#2f2e36', '#56555f'], crack: 'rgba(10,10,15,0.55)', ice: false },
-    ridge: { wall: ['#bccbdc', '#f4f8fc'], crack: 'rgba(90,120,160,0.4)', ice: true },
-  };
-
-  const store = {
-    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* storage unavailable */ } },
-  };
-  const rand = (a, b) => a + Math.random() * (b - a);
-  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-  const lerp = (a, b, t) => a + (b - a) * t;
-  const pick = (arr) => arr[(Math.random() * arr.length) | 0];
-  const easeOut = (k) => 1 - (1 - k) * (1 - k);
-  const hash = (i, k = 0) => { const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return x - Math.floor(x); };
-  const hexRgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
-  const mix = (a, b, t) => { const x = hexRgb(a), y = hexRgb(b); return `rgb(${Math.round(lerp(x[0], y[0], t))},${Math.round(lerp(x[1], y[1], t))},${Math.round(lerp(x[2], y[2], t))})`; };
-  const vibrate = (p) => { if (navigator.vibrate) try { navigator.vibrate(p); } catch { /* ignore */ } };
-  function mulberry32(s) {
-    return () => { s |= 0; s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
-  }
-  function rr(c, x, y, w, h, r) {
-    r = Math.min(r, w / 2, h / 2);
-    c.beginPath(); c.moveTo(x + r, y);
-    c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
-    c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
-  }
-  function line(x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
-  function dot(x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
-  function oval(x, y, rx, ry) { ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, TAU); ctx.fill(); }
 
   // ---------- Language ----------
-  const TEXT = {
-    en: {
-      kicker: 'Himalayan Climb',
-      tag: 'Climb the 10 highest mountains on Earth on their real routes, from Annapurna I all the way up to Sagarmatha.',
-      how1: 'Tap the column with a solid hold or a kicked step (or ← ↑ → keys)',
-      how2: 'Bare ice, bare rock and cracked holds make you slip. Watch for falling ice and rock!',
-      how3: 'Camps and nun chiya give you strength. Above 7,000 m, oxygen bottles keep the thin air from wearing you down',
-      play: 'Climb', best: 'Best', lang: 'नेपाली',
-      fell: 'Too exhausted to go on. Your Sherpa helps you back down.', summitSub: 'You stood on top of the world!',
-      alt: 'Highest point', camp: 'Highest camp', time: 'Time', none: 'None',
-      newBest: 'New record!', again: 'Climb again', share: 'Share', copied: 'Copied!',
-      energy: 'STRENGTH', o2: 'O₂', to: 'to', m: 'm', paused: 'PAUSED', resume: 'Tap to resume',
-      hint: 'Tap the column with a solid hold!', slip: 'Slip!', refill: 'strength back',
-      o2on: 'oxygen on', night: 'summit push at night', swap: 'fresh oxygen bottle', close: '100 m to go',
-      death: 'Death zone', deathSub: 'Your body can no longer recover',
-      noO2: 'Out of oxygen!',
-      shareText: (m, mt) => `I reached ${m} m on ${mt} in Himal Climb! Can you make the summit?`,
-      shareSummit: (mt, h, tm) => `I summited ${mt} (${h} m) in ${tm} in Himal Climb! Can you beat my time?`,
-      level: 'Level', next: 'Next', mountains: 'All mountains', locked: (mt) => `Summit ${mt} to unlock`,
-      rankTxt: (n) => (n === 1 ? 'Highest on Earth' : `${n}${n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'} highest on Earth`),
-      allDone: 'You climbed all 10 highest mountains on Earth!', tradition: 'stop just below the top, by tradition',
-    },
-    ne: {
-      kicker: 'हिमाली आरोहण',
-      tag: 'संसारका १० सबैभन्दा अग्ला हिमाल तिनकै साँचो बाटोबाट चढ्नुहोस्, अन्नपूर्णदेखि सगरमाथासम्म।',
-      how1: 'बलियो ढुङ्गा वा हिउँमा बनेको पाइला भएको लाइनमा ट्याप गर्नुहोस् (वा ← ↑ → कुञ्जी)',
-      how2: 'खाली बरफ, खाली चट्टान र चर्केको ढुङ्गाले चिप्लाउँछ। खस्ने बरफ र ढुङ्गाबाट बच्नुहोस्!',
-      how3: 'शिविर र नुन चियाले बल दिन्छ। ७,००० मिटरमाथि अक्सिजन सिलिन्डरले पातलो हावामा थाक्नबाट जोगाउँछ',
-      play: 'चढ्नुहोस्', best: 'उत्कृष्ट', lang: 'English',
-      fell: 'अब चढ्ने बल बाँकी छैन। शेर्पाले तपाईंलाई तल झार्नुभयो।', summitSub: 'तपाईं संसारको शिखरमा पुग्नुभयो!',
-      alt: 'सबैभन्दा माथि', camp: 'पुगेको शिविर', time: 'समय', none: 'छैन',
-      newBest: 'नयाँ रेकर्ड!', again: 'फेरि चढ्नुहोस्', share: 'सेयर', copied: 'कपी भयो!',
-      energy: 'बल', o2: 'O₂', to: 'सम्म', m: 'मि.', paused: 'रोकिएको छ', resume: 'जारी राख्न ट्याप गर्नुहोस्',
-      hint: 'बलियो समात्ने ठाउँ भएको लाइनमा ट्याप गर्नुहोस्!', slip: 'चिप्लियो!', refill: 'बल फर्कियो',
-      o2on: 'अक्सिजन सुरु', night: 'राति शिखरतिर', swap: 'नयाँ अक्सिजन सिलिन्डर', close: '१०० मिटर बाँकी',
-      death: 'मृत्यु क्षेत्र', deathSub: 'अब शरीरले आफैं बल फर्काउन सक्दैन',
-      noO2: 'अक्सिजन सकियो!',
-      shareText: (m, mt) => `मैले हिमाल चढाइमा ${mt} मा ${m} मिटर चढें! तपाईं शिखर पुग्न सक्नुहुन्छ?`,
-      shareSummit: (mt, h, tm) => `मैले हिमाल चढाइमा ${tm} मा ${mt} (${h} मि.) चढें! तपाईं योभन्दा छिटो पुग्न सक्नुहुन्छ?`,
-      level: 'तह', next: 'अर्को', mountains: 'सबै हिमाल', locked: (mt) => `${mt} चढेपछि खुल्छ`,
-      rankTxt: (n) => (n === 1 ? 'संसारकै सबैभन्दा अग्लो' : `संसारको ${['', '', 'दोस्रो', 'तेस्रो', 'चौथो', 'पाँचौं', 'छैटौं', 'सातौं', 'आठौं', 'नवौं', 'दशौं'][n]} अग्लो`),
-      allDone: 'तपाईंले संसारका १० सबैभन्दा अग्ला हिमाल चढ्नुभयो!', tradition: 'परम्पराअनुसार चुचुरोभन्दा अलि तल',
-    },
-  };
   let lang = store.get('hc_lang', 'en') === 'ne' ? 'ne' : 'en';
   const t = (k) => TEXT[lang][k];
-  const DEV = '०१२३४५६७८९';
   const digits = (s) => (lang === 'ne' ? String(s).replace(/\d/g, (d) => DEV[d]) : String(s));
   const fmtNum = (n) => digits(Math.round(n).toLocaleString('en-US'));
   const fmtAlt = (m) => `${fmtNum(m)} ${t('m')}`;
@@ -346,99 +169,6 @@
     return { top: mix(a[1], b[1], f), mid: mix(a[2], b[2], f), bot: mix(a[3], b[3], f), night: lerp(a[4], b[4], f), dawn: lerp(a[5], b[5], f) };
   }
 
-  // ---------- Audio (generated: wind, singing bowl, bansuri, effects) ----------
-  const audio = {
-    ac: null, master: null, noiseBuf: null, wind: null, windF: null,
-    muted: !!store.get('hc_muted', false),
-    init() {
-      if (!this.ac) {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
-        const ac = (this.ac = new AC());
-        this.master = ac.createGain(); this.master.gain.value = this.muted ? 0 : 0.9; this.master.connect(ac.destination);
-        const buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), d = buf.getChannelData(0);
-        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-        this.noiseBuf = buf;
-        const src = ac.createBufferSource(); src.buffer = buf; src.loop = true;
-        this.windF = ac.createBiquadFilter(); this.windF.type = 'lowpass'; this.windF.frequency.value = 400;
-        this.wind = ac.createGain(); this.wind.gain.value = 0;
-        src.connect(this.windF).connect(this.wind).connect(this.master); src.start();
-      }
-      if (this.ac.state === 'suspended') this.ac.resume();
-    },
-    setMuted(m) { this.muted = m; if (this.master) this.master.gain.setTargetAtTime(m ? 0 : 0.9, this.ac.currentTime, 0.02); },
-    setWind(level) {
-      if (!this.ac) return;
-      const now = this.ac.currentTime;
-      this.wind.gain.setTargetAtTime(level, now, 0.6);
-      this.windF.frequency.setTargetAtTime(300 + 900 * level * 10 + Math.sin(time * 0.6) * 120, now, 0.6);
-    },
-    noise(tm, dur, type, f0, vol, f1 = 0, attack = 0) {
-      const ac = this.ac, s = ac.createBufferSource(); s.buffer = this.noiseBuf; s.loop = true;
-      const f = ac.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(f0, tm);
-      if (f1) f.frequency.exponentialRampToValueAtTime(f1, tm + dur);
-      const g = ac.createGain();
-      if (attack) { g.gain.setValueAtTime(0.0001, tm); g.gain.exponentialRampToValueAtTime(vol, tm + attack); } else g.gain.setValueAtTime(vol, tm);
-      g.gain.exponentialRampToValueAtTime(0.0001, tm + dur);
-      s.connect(f).connect(g).connect(this.master); s.start(tm, Math.random()); s.stop(tm + dur + 0.02);
-    },
-    tone(tm, freq, dur, type, vol, toFreq) {
-      const ac = this.ac, o = ac.createOscillator(), g = ac.createGain();
-      o.type = type; o.frequency.setValueAtTime(freq, tm);
-      if (toFreq) o.frequency.exponentialRampToValueAtTime(toFreq, tm + dur);
-      g.gain.setValueAtTime(0.0001, tm); g.gain.exponentialRampToValueAtTime(vol, tm + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, tm + dur);
-      o.connect(g).connect(this.master); o.start(tm); o.stop(tm + dur + 0.02);
-    },
-    flute(tm, freq, dur, vol = 0.06) {
-      const ac = this.ac, o = ac.createOscillator(), lfo = ac.createOscillator(), lg = ac.createGain(), g = ac.createGain();
-      o.type = 'sine'; o.frequency.setValueAtTime(freq, tm);
-      lfo.frequency.value = 5; lg.gain.value = freq * 0.012; lfo.connect(lg).connect(o.frequency);
-      g.gain.setValueAtTime(0.0001, tm); g.gain.exponentialRampToValueAtTime(vol, tm + 0.06);
-      g.gain.setValueAtTime(vol, tm + Math.max(0.07, dur - 0.1)); g.gain.exponentialRampToValueAtTime(0.0001, tm + dur);
-      o.connect(g).connect(this.master);
-      o.start(tm); lfo.start(tm); o.stop(tm + dur + 0.02); lfo.stop(tm + dur + 0.02);
-    },
-    bowl(tm, f = 196, vol = 0.12) { // singing bowl: inharmonic partials with slow beating
-      [[1, 1, 3.2], [2.76, 0.45, 2.2], [5.4, 0.2, 1.3]].forEach(([p, a, dec]) => {
-        for (const detune of [1, 1.004]) {
-          const o = this.ac.createOscillator(), g = this.ac.createGain();
-          o.type = 'sine'; o.frequency.value = f * p * detune;
-          g.gain.setValueAtTime(0.0001, tm); g.gain.exponentialRampToValueAtTime(vol * a * 0.5, tm + 0.02);
-          g.gain.exponentialRampToValueAtTime(0.0001, tm + dec);
-          o.connect(g).connect(this.master); o.start(tm); o.stop(tm + dec + 0.05);
-        }
-      });
-    },
-    phrase(tm, slow = 0.32, rising = false) { // original folk-style line, D major pentatonic
-      if (!this.ac) return;
-      const SC = [440, 493.88, 587.33, 659.25, 739.99, 880, 987.77, 1174.66];
-      let i = rising ? 2 : 3 + ((Math.random() * 2) | 0);
-      const n = rising ? 6 : 4 + ((Math.random() * 3) | 0);
-      for (let k = 0; k < n; k++) {
-        if (!rising && k === n - 1) i = Math.random() < 0.5 ? 2 : 5;
-        const d = (k === n - 1 ? 2.5 : Math.random() < 0.3 ? 1.5 : 1) * slow;
-        this.flute(tm, SC[i], d * 0.95, 0.045);
-        tm += d;
-        i = rising ? Math.min(SC.length - 1, i + 1) : clamp(i + [-2, -1, 1, 1, 2][(Math.random() * 5) | 0], 0, SC.length - 1);
-      }
-    },
-    now() { return this.ac ? this.ac.currentTime : 0; },
-    step(alt) { if (!this.ac) return; const tm = this.now(); this.noise(tm, 0.04, 'highpass', 2600, 0.16); this.tone(tm, alt ? 820 : 700, 0.045, 'triangle', 0.05); },
-    slip() { if (!this.ac) return; const tm = this.now(); this.noise(tm, 0.32, 'bandpass', 1400, 0.22, 300); this.tone(tm, 300, 0.25, 'sine', 0.06, 160); },
-    warn() { if (!this.ac) return; const tm = this.now(); this.noise(tm, 0.7, 'lowpass', 220, 0.3, 0, 0.12); this.tone(tm, 70, 0.6, 'sine', 0.1, 50); },
-    hit() { if (!this.ac) return; const tm = this.now(); this.tone(tm, 150, 0.35, 'sine', 0.3, 45); this.noise(tm, 0.3, 'lowpass', 800, 0.3); },
-    tea() { if (!this.ac) return; const tm = this.now(); this.flute(tm, 880, 0.12, 0.06); this.flute(tm + 0.09, 1174.66, 0.18, 0.06); },
-    o2() { if (!this.ac) return; const tm = this.now(); this.noise(tm, 0.5, 'highpass', 3500, 0.12, 0, 0.03); this.tone(tm, 660, 0.12, 'triangle', 0.05); this.tone(tm + 0.1, 990, 0.18, 'triangle', 0.05); },
-    breath(mask) { // slow inhale/exhale; through a mask it hisses
-      if (!this.ac) return; const tm = this.now();
-      this.noise(tm, 0.7, 'bandpass', 520, 0.07, 900, 0.3);
-      this.noise(tm + 0.75, 0.8, 'bandpass', 700, 0.06, 380, 0.15);
-      if (mask) this.noise(tm, 0.5, 'highpass', 4200, 0.025, 0, 0.2);
-    },
-    camp() { if (!this.ac) return; const tm = this.now(); this.bowl(tm, 196, 0.14); this.phrase(tm + 0.3, 0.2, true); },
-    summit() { if (!this.ac) return; const tm = this.now(); this.bowl(tm, 147, 0.16); this.bowl(tm + 0.8, 196, 0.12); this.phrase(tm + 0.2, 0.22, true); this.phrase(tm + 1.7, 0.3); },
-    fall() { if (!this.ac) return; const tm = this.now(); this.noise(tm, 1.2, 'bandpass', 1800, 0.2, 200); [880, 739.99, 587.33, 493.88, 440].forEach((f, i) => this.flute(tm + 0.3 + i * 0.2, f, 0.24, 0.05)); },
-  };
   function setMuteUI() { ui.mute.classList.toggle('muted', audio.muted); ui.mute.setAttribute('aria-pressed', String(audio.muted)); }
   function toggleMute() { audio.setMuted(!audio.muted); store.set('hc_muted', audio.muted); setMuteUI(); }
 
@@ -669,7 +399,7 @@
       if (f.x < -5) f.x = W + 5;
       if (f.x > W + 5) f.x = -5;
     }
-    audio.setWind(paused ? 0 : 0.012 + 0.05 * at + (camAlt() > DEATH_ALT ? 0.03 : 0));
+    audio.setWind(paused ? 0 : 0.012 + 0.05 * at + (camAlt() > DEATH_ALT ? 0.03 : 0), time);
     if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
     if (toast) { toast.t -= dt; if (toast.t <= 0) toast = null; }
     if (!toast && !banner && toasts.length && !isDemo) toast = { ...toasts.shift(), t: 2.2, max: 2.2 };
@@ -923,22 +653,6 @@
     }
   }
 
-  function drawNepalFlag(x, y, s) { // pole base at (x, y), the double-pennant flag of Nepal
-    ctx.strokeStyle = '#3a2a1a'; ctx.lineWidth = Math.max(2, s * 0.06);
-    line(x, y, x, y - s * 2.1);
-    const fx = x + 1, fy = y - s * 2.1;
-    const P = [[0, 0], [1.0, 0.82], [0.4, 0.82], [1.0, 1.72], [0, 1.72]];
-    ctx.beginPath(); P.forEach(([px, py], k) => (k ? ctx.lineTo : ctx.moveTo).call(ctx, fx + px * s, fy + py * s)); ctx.closePath();
-    ctx.fillStyle = '#dc143c'; ctx.fill();
-    ctx.strokeStyle = '#003893'; ctx.lineWidth = Math.max(1.5, s * 0.08); ctx.lineJoin = 'miter'; ctx.stroke();
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath(); ctx.arc(fx + s * 0.3, fy + s * 0.5, s * 0.13, 0, Math.PI); ctx.fill(); // moon
-    ctx.fillStyle = '#dc143c'; ctx.beginPath(); ctx.arc(fx + s * 0.3, fy + s * 0.46, s * 0.11, 0, Math.PI); ctx.fill();
-    ctx.fillStyle = '#ffffff'; dot(fx + s * 0.3, fy + s * 1.3, s * 0.11); // sun
-    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = Math.max(1, s * 0.04);
-    for (let k = 0; k < 8; k++) { const a = (k / 8) * TAU; line(fx + s * 0.3 + Math.cos(a) * s * 0.12, fy + s * 1.3 + Math.sin(a) * s * 0.12, fx + s * 0.3 + Math.cos(a) * s * 0.19, fy + s * 1.3 + Math.sin(a) * s * 0.19); }
-  }
-
   function drawPrayerFlags(x1, x2, y, sag) {
     ctx.strokeStyle = 'rgba(40,30,25,0.7)'; ctx.lineWidth = 1;
     const cx = (x1 + x2) / 2, cy = y + sag;
@@ -1104,13 +818,6 @@
         ctx.restore();
       }
     }
-  }
-
-  function drawText(text, x, y, size, color, weight = 800) {
-    ctx.font = `${weight} ${Math.round(size)}px ${FONT}`;
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = Math.max(3, size * 0.16); ctx.strokeStyle = 'rgba(20,15,30,0.75)'; ctx.strokeText(text, x, y);
-    ctx.fillStyle = color; ctx.fillText(text, x, y);
   }
 
   function drawHUD() {

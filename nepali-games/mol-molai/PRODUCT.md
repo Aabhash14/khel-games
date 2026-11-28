@@ -38,7 +38,7 @@ The core skill is reading people: shopkeepers have hidden lowest prices, patienc
 
 ## Evidence on Hand
 
-- Working game: `index.html`, `style.css`, `game.js`, `sw.js`, `manifest.webmanifest`, `icon.svg`, `README.md`.
+- Working game: `index.html`, `style.css`, `js/` (the scripts), `sw.js`, `manifest.webmanifest`, `icon.svg`, `README.md`.
 - Balance data from simulated players (README "Tuning" section).
 - No real player feedback, reviews or usage numbers yet; do not invent any.
 

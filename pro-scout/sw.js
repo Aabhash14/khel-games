@@ -1,8 +1,9 @@
 // Offline support, network first: online players always get the newest version,
 // and the last saved copy is used only when there is no connection.
 // Photos, flags and fonts come from other sites and are left to the browser cache.
-const CACHE = 'pro-scout-v3';
-const ASSETS = ['./', './index.html', './style.css', './data.js', './faces.js', './game.js', './icon.svg', './manifest.webmanifest'];
+const CACHE = 'pro-scout-v4';
+const ASSETS = ['./', './index.html', './style.css', './data.js', './faces.js', './icon.svg', './manifest.webmanifest',
+  ...['core', 'photos', 'draw', 'sound', 'questions', 'scoring', 'album', 'daily', 'main'].map((f) => './js/' + f + '.js')];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' })))));

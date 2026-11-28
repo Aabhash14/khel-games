@@ -48,13 +48,18 @@ Or double-click `index.html` (everything works except offline mode).
 |---|---|
 | `index.html` | Page, menu and game-over cards |
 | `style.css` | Card/menu styling (Nepal flag + prayer flag palette, dhaka band) |
-| `game.js` | The whole game: physics, rivals, scenery, sound, language |
+| `js/util.js` | Shared constants, palettes and small helpers (storage, maths, colour); loaded first |
+| `js/i18n.js` | English / Nepali text, the current language, Devanagari digits |
+| `js/audio.js` | Generated sound: madal beat, bansuri-style tune, effects |
+| `js/draw.js` | The canvas, its 2D context and drawing primitives (kite, string, outlined text) |
+| `js/scenery.js` | Pre-rendered skyline (Himalaya, houses, pagoda, stupa) and the clouds, far-off kites and prayer flags |
+| `js/main.js` | Game state, screens, input, physics, rivals, rendering and the main loop |
 | `sw.js` | Offline support (network first: players always get the newest version when online) |
 | `manifest.webmanifest`, `icon.svg` | Install-to-home-screen support |
 
 ## Tuning
 
-The main balance numbers are in `game.js`:
+The main balance numbers are in `js/main.js`:
 
 - `engage()`: your cut rate (`mine`), rival damage (`theirs`), string recovery (`fray - 0.1 * dt`)
 - `spawnRival()`: rival skill curve

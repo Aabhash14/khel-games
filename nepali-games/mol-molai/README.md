@@ -140,19 +140,29 @@ python -m http.server 8000
 | `index.html` | Patro band and stat strip, the bottom sheet, list sheet, level month sheet and result sheet |
 | `style.css` | The patro look: two inks, ruled day-cells, Mukta font faces |
 | `fonts/` | Mukta (self-hosted, works offline) and its SIL Open Font License |
-| `game.js` | Text in both languages, shopkeepers, the Asan map data and route finding, haggling rules, bazaar generation, drawing, sound |
+| `js/util.js` | Small helpers: storage, random numbers, price rounding |
+| `js/i18n.js` | Interface text in both languages, Devanagari numbers, prices, the clock; holds the current language |
+| `js/data.js` | Levels and what each teaches, goods, personalities, shopkeepers |
+| `js/lines.js` | Everything said in the bazaar: shopkeepers' lines, your lines, tells, thoughts, events, endings, badges |
+| `js/map.js` | The Asan map data, route finding and walking time |
+| `js/world.js` | Bazaar generation: prices, stock, shopping list and budget for one attempt |
+| `js/audio.js` | Spoken voices and generated sound |
+| `js/art.js` | Icons and the drawing that needs no game state: houses, temple, map paper, kites, pigeons, goats |
+| `js/main.js` | Game state, haggling rules, the panel, game flow, menus, the scene rendering, input and the main loop |
 | `sw.js` | Offline support (network first: players always get the newest version when online) |
 | `manifest.webmanifest`, `icon.svg` | Install-to-home-screen support |
 
 ## Tuning
 
-The haggling numbers live near the top of `game.js`:
+The haggling numbers live in `js/data.js` and `js/map.js`:
 
-- `KINDP`: each personality's first-price range (`open`), lowest-price range (`floor`), `patience`, `susp` (how likely they catch a lie) and `callback` chance, all as multiples of the item's fair price.
-- `KEEPERS`: the shopkeepers (tole, personality, what they sell, look, voice). `CAT`: what each kind of shop stocks.
-- `MAP`: the streets (from OpenStreetMap) and toles. `WALK_M_PER_MIN`: walking pace.
-- `KIND`: how often each personality accepts a fair offer (`acc`) and how fast they come down (`conc`).
-- `LEVELS`: each level's open toles, number of items, goat or big item, star thresholds (share of budget saved), bazaar hours, starting reputation and toughness. `LEVEL_TEXT`: names and the tip each level teaches.
+- `KINDP` (`js/data.js`): each personality's first-price range (`open`), lowest-price range (`floor`), `patience`, `susp` (how likely they catch a lie) and `callback` chance, all as multiples of the item's fair price.
+- `KEEPERS` (`js/data.js`): the shopkeepers (tole, personality, what they sell, look, voice). `CAT`: what each kind of shop stocks.
+- `MAP` (`js/map.js`): the streets (from OpenStreetMap) and toles. `WALK_M_PER_MIN`: walking pace.
+- `KIND` (`js/data.js`): how often each personality accepts a fair offer (`acc`) and how fast they come down (`conc`).
+- `LEVELS` (`js/data.js`): each level's open toles, number of items, goat or big item, star thresholds (share of budget saved), bazaar hours, starting reputation and toughness. `LEVEL_TEXT`: names and the tip each level teaches.
+
+The rules that use these numbers (`floorOf`, `coreOffer`, `coreBluff`, `coreWalk` and the rest) are in `js/main.js`.
 
 These were balanced with simulated players on the real map: paying first prices always runs out of money, simple "start at half and creep up" haggling at the nearest shop mostly earns ★, comparing every seller earns ★★ about half the time (but walks about 90 minutes a day), and only near-perfect reading of the shopkeepers reliably earns ★★★.
 
