@@ -609,10 +609,10 @@ body { background: var(--bg); }
 .cap-card select { min-height: 44px; width: 100%; border-radius: 8px; border: 1px solid var(--line); background: var(--bg3); color: var(--ink); font: inherit; font-weight: 600; padding: 0 8px; }
 .cap-note { margin: 8px 0 0; font-size: 0.78rem; color: var(--mute); line-height: 1.35; }
 
-.stat.squad td { vertical-align: top; }
+.stat.squad td, .stat.top10 td { vertical-align: top; }
 .stat.squad td:first-child { min-width: 150px; }
-.stat.squad td small { display: block; font-size: 0.72rem; color: var(--mute); font-weight: 500; }
-.stat.squad tr.tap { cursor: pointer; }
+.stat.squad td small, .stat.top10 td small { display: block; font-size: 0.72rem; color: var(--mute); font-weight: 500; }
+.stat.squad tr.tap, .stat.top10 tr.tap { cursor: pointer; }
 .stat.squad tr.tap:active td { background: rgba(255, 255, 255, 0.05); }
 .l5s { white-space: nowrap; }
 .l5 { display: inline-block; min-width: 24px; margin-left: 2px; padding: 1px 3px; font-style: normal; font-size: 0.72rem; font-weight: 800; text-align: center; border-radius: 3px; }
@@ -635,3 +635,7 @@ body { background: var(--bg); }
   #hubTabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; overflow: visible; }
   #hubTabs button { padding: 6px 4px; }
 }
+.stat.top10 td:first-child { width: 1.6em; color: var(--mute); font-weight: 800; }
+.stat.top10 td:nth-child(2) { text-align: left; min-width: 140px; }
+.stat.top10 th:nth-child(2) { text-align: left; }
+.stat.top10 { margin-bottom: 6px; }

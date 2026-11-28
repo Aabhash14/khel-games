@@ -195,7 +195,7 @@
         list(t('bestFigs'), st.best, (x) => `${num(x.w)}/${num(x.r)} <small>(${ovs(x.balls)})</small>`),
         list(t('bestSR'), st.sr, (x) => dec(x.sr, 1)),
         list(t('bestEcon'), st.econ, (x) => dec(x.econ)),
-        (() => { const aw = W.awards(s); return list(t('youngTalents'), aw.young, (x) => `${t('ptsN', { n: num(x.v) })} <small>(${num(P[x.pid].age)})</small>`) + list(t('bargains'), aw.bargains, (x) => `${t('ptsN', { n: num(x.v) })} <small>${IPLA.i18n.money(x.price)}</small>`); })(),
+        (() => { const aw = W.awards(s); return list(t('youngTalents'), aw.young, (x) => t('ptsN', { n: num(x.v) })) + list(t('bargains'), aw.bargains, (x) => `${t('ptsN', { n: num(x.v) })} <small>${IPLA.i18n.money(x.price)}</small>`); })(),
       ].join('') : `<p class="empty">${t('noStats')}</p>`;
     } else if (tab === 'results') {
       const done = L.fixtures.filter((f) => L.results[f.id]).reverse();
@@ -214,6 +214,7 @@
       const topR = st.orange.find((x) => x.t === u); const topW = st.purple.find((x) => x.t === u);
       let h = `<div class="hl-row">${topR ? `<div class="hl"><span>${t('topRuns')}</span><b>${esc(name(topR.pid))}</b><small>${num(topR.r)}</small></div>` : ''}${topW ? `<div class="hl"><span>${t('topWkts')}</span><b>${esc(name(topW.pid))}</b><small>${num(topW.w)}</small></div>` : ''}</div>`;
       h += captainHtml(s, u, s.teams[u].squad.map((e) => e.pid), 'capMine');
+      h += topTenHtml(s, u, st);
       h += squadStatsHtml(s, u, st);
       if (s.w.hist.length) {
         h += `<h3 class="sub-h">${t('yourSeasons')}</h3><p class="note">${t('titlesN', { n: num(s.w.titles || 0) })}</p><ul class="games">${[...s.w.hist].reverse().map((x) => `<li class="${x.champ === x.team ? 'won' : ''}"><span class="k-stage">${t('seasonTitle', { y: num(x.y) })} · ${pill(x.team)}</span>${esc(x.verdict || ordinal(x.pos))} · ${t('champions')}: ${pill(x.champ)}</li>`).join('')}</ul>`;
@@ -244,6 +245,29 @@
     sel.addEventListener('change', () => { A.tap(); S().w.cap[S().user] = +sel.value; ui().save(); after(); });
   }
 
+  // ---------- your top 10 batters and bowlers ----------
+  // Ranked on this season's runs and wickets. Players who haven't batted or bowled yet follow,
+  // best skill first, so the lists are full from day one.
+  function topTenHtml(s, u, st) {
+    const sq = s.teams[u].squad.map((e) => e.pid).filter((pid) => !P[pid].gone);
+    const cap = W.captainOf(s, u);
+    const nm = (pid, sk) => `<b>${esc(short(pid))}${pid === cap ? ' (c)' : ''}</b> ${formBadge(pid)}<small>${t(`role_${P[pid].role}`)} · ${sk}${W.injured(s, pid) ? ' · 🩹' : ''}</small>`;
+    const bats = sq.map((pid) => ({ pid, x: st.bat[pid] }))
+      .sort((a, b) => (b.x ? b.x.r : -1) - (a.x ? a.x.r : -1) || P[b.pid].bat - P[a.pid].bat).slice(0, 10);
+    const bowls = sq.filter((pid) => M.canBowl(P[pid]) || (st.bowl[pid] && st.bowl[pid].balls)).map((pid) => ({ pid, x: st.bowl[pid] && st.bowl[pid].balls ? st.bowl[pid] : null }))
+      .sort((a, b) => (b.x ? b.x.w : -1) - (a.x ? a.x.w : -1) || (a.x && b.x ? a.x.r / a.x.balls - b.x.r / b.x.balls : 0) || P[b.pid].bowl - P[a.pid].bowl).slice(0, 10);
+    let h = `<h3 class="sub-h">${t('top10Bat')}</h3><div class="table-wrap"><table class="stat top10"><thead><tr><th>#</th><th>${t('thPlayer')}</th><th>${t('mShort')}</th><th>${t('thR')}</th><th>${t('avg')}</th><th>${t('sr')}</th><th>${t('hs')}</th></tr></thead><tbody>`;
+    bats.forEach(({ pid, x }, i) => {
+      const avg = x ? (x.inn - x.no ? x.r / (x.inn - x.no) : x.r) : null;
+      h += `<tr class="tap" data-pl="${pid}"><td>${num(i + 1)}</td><td>${nm(pid, `${t('batS')} ${num(P[pid].bat)}`)}</td><td>${x ? num(x.m.size) : '–'}</td><td><b>${x ? num(x.r) : '–'}</b></td><td>${x && x.inn ? dec(avg, 1) : '–'}</td><td>${x && x.b ? dec((x.r / x.b) * 100, 0) : '–'}</td><td>${x ? `${num(x.hs)}${x.hsNo ? '*' : ''}` : '–'}</td></tr>`;
+    });
+    h += `</tbody></table></div><h3 class="sub-h">${t('top10Bowl')}</h3><div class="table-wrap"><table class="stat top10"><thead><tr><th>#</th><th>${t('thPlayer')}</th><th>${t('ovShort')}</th><th>${t('thW')}</th><th>${t('econ')}</th><th>${t('avg')}</th><th>${t('best')}</th></tr></thead><tbody>`;
+    bowls.forEach(({ pid, x }, i) => {
+      h += `<tr class="tap" data-pl="${pid}"><td>${num(i + 1)}</td><td>${nm(pid, `${t('bowlS')} ${num(P[pid].bowl)}`)}</td><td>${x ? ovs(x.balls) : '–'}</td><td><b>${x ? num(x.w) : '–'}</b></td><td>${x ? dec(x.r / (x.balls / 6)) : '–'}</td><td>${x && x.w ? dec(x.r / x.w, 1) : '–'}</td><td>${x ? `${num(x.best[0])}/${num(x.best[1])}` : '–'}</td></tr>`;
+    });
+    return h + '</tbody></table></div>';
+  }
+
   // ---------- your squad in numbers ----------
   function last5(s, pid) {
     const p = P[pid];
@@ -264,7 +288,7 @@
       const m = Math.max(b ? b.m.size : 0, w ? w.m.size : 0, W.playerLog(s, pid).length);
       const inj = W.injury(s, pid);
       const avg = b ? (b.inn - b.no ? b.r / (b.inn - b.no) : b.r) : null;
-      h += `<tr class="tap" data-pl="${pid}"><td><b>${esc(short(pid))}${pid === cap ? ' (c)' : ''}</b> ${formBadge(pid)}${ui().scoutIcons(p)}<small>${t(`role_${p.role}`)} · ${num(p.age)} · ${num(p.r)}${inj ? ` · <span class="inj">🩹 ${injText(inj)}</span>` : ''}</small></td>
+      h += `<tr class="tap" data-pl="${pid}"><td><b>${esc(short(pid))}${pid === cap ? ' (c)' : ''}</b> ${formBadge(pid)}${ui().scoutIcons(p)}<small>${t(`role_${p.role}`)} · ${num(p.r)}${inj ? ` · <span class="inj">🩹 ${injText(inj)}</span>` : ''}</small></td>
         <td>${num(m)}</td><td><b>${b ? num(b.r) : '–'}</b></td><td>${avg != null && b.inn ? dec(avg, 1) : '–'}</td><td>${b && b.b ? dec((b.r / b.b) * 100, 0) : '–'}</td><td><b>${w ? num(w.w) : '–'}</b></td><td>${w && w.balls ? dec(w.r / (w.balls / 6), 1) : '–'}</td><td class="l5s">${last5(s, pid)}</td></tr>`;
     }
     return h + '</tbody></table></div>';
@@ -279,7 +303,7 @@
     const entry = own ? s.teams[own].squad.find((e) => e.pid === pid) : null;
     const fk = W.formKey(W.form(s, pid));
     const inj = W.injury(s, pid);
-    let h = `<div class="pl-tags"><span class="tag">${t(`role_${p.role}`)}</span><span class="tag">${ui().cname(p.country)}</span><span class="tag">${t('ageY', { n: num(p.age) })}</span><span class="tag">${t('ratingL')} ${num(p.r)}</span><span class="tag fb ${fk}">${W.FORM_ICON[fk]} ${t('form_' + fk)}</span>${inj ? `<span class="tag inj">🩹 ${t('inj_' + inj.k)} · ${injText(inj)}</span>` : `<span class="tag unc">${t('fitTag')}</span>`}${ui().scoutTags(p)}<span class="tag">🧢 ${t('capRating', { n: num(W.capSkill(p)) })}</span></div>`;
+    let h = `<div class="pl-tags"><span class="tag">${t(`role_${p.role}`)}</span><span class="tag">${ui().cname(p.country)}</span><span class="tag">${t('ratingL')} ${num(p.r)}</span><span class="tag sk">${ui().skillTxt(p)}</span><span class="tag fb ${fk}">${W.FORM_ICON[fk]} ${t('form_' + fk)}</span>${inj ? `<span class="tag inj">🩹 ${t('inj_' + inj.k)} · ${injText(inj)}</span>` : `<span class="tag unc">${t('fitTag')}</span>`}${ui().scoutTags(p)}<span class="tag">🧢 ${t('capRating', { n: num(W.capSkill(p)) })}</span></div>`;
     if (entry) h += `<p class="note">${t('paid')}: <b>${IPLA.i18n.money(entry.price)}</b></p>`;
     h += `<h3 class="sub-h">${t('seasonStats')}</h3>`;
     if (!b && !w) h += `<p class="empty">${t('noGames')}</p>`;
@@ -352,7 +376,7 @@
       ui().teamVars(b, u);
       const pf = W.pitchFit(p, fx);
       const fitTag = pf >= 2 ? `<span class="pf up">▲ ${t('fitPlus')}</span>` : pf <= -1.5 ? `<span class="pf down">▼ ${t('fitMinus')}</span>` : '';
-      b.innerHTML = `<span class="avatar">${ui().initials(p.name)}</span><span><span class="pr-name">${esc(p.name)}${p.os ? ' ✈' : ''} ${formBadge(p.id)}${ui().scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${num(p.age)} · ${inj ? `<span class="inj">🩹 ${t('inj_' + inj.k)} · ${injText(inj)}</span>` : `${t('form_' + W.formKey(W.form(s, p.id)))}`} ${fitTag}</span></span><span class="pr-r">${num(p.r)}</span>`;
+      b.innerHTML = `<span class="avatar">${ui().initials(p.name)}</span><span><span class="pr-name">${esc(p.name)}${p.os ? ' ✈' : ''} ${formBadge(p.id)}${ui().scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${ui().skillTxt(p)} · ${inj ? `<span class="inj">🩹 ${t('inj_' + inj.k)} · ${injText(inj)}</span>` : `${t('form_' + W.formKey(W.form(s, p.id)))}`} ${fitTag}</span></span><span class="pr-r">${num(p.r)}</span>`;
       b.addEventListener('click', () => {
         A.tap();
         pre.xi = on ? pre.xi.filter((x) => x !== p.id) : [...pre.xi, p.id];

@@ -1,6 +1,6 @@
 // The living world around the auction and the season: ages and potential, hidden "underrated" players,
 // form, injuries, pitch conditions, captaincy, the news feed, and the career that rolls one IPL season
-// into the next (ratings change, players retire, new youngsters arrive, mini auction).
+// into the next (ratings move with performance, mini auction). Players don't age or retire.
 // No DOM. Everything that changes is stored in the save (s.w for the career, s.league for one season).
 (() => {
   'use strict';
@@ -21,39 +21,27 @@
 
   // ---------- ages ----------
   // Approximate birth years (our estimates, two digits: 97 = 1997, 11 = 2011).
-  const BORN = `Ruturaj Gaikwad:97|Sanju Samson:94|Shivam Dube:93|Noor Ahmad:05|Khaleel Ahmed:97|MS Dhoni:81|Anshul Kamboj:00|Dewald Brevis:03|Gurjapneet Singh:98|Nathan Ellis:94|Jamie Overton:94|Mukesh Choudhary:96|Ramakrishna Ghosh:97|Shreyas Gopal:93|Ayush Mhatre:07|Urvil Patel:98|Sarfaraz Khan:97|Matt Henry:91|Rahul Chahar:99|Akeal Hosein:93|Prashant Veer:05|Kartik Sharma:06|Zak Foulkes:02|Matthew Short:95|Aman Khan:96|Axar Patel:94|KL Rahul:92|Kuldeep Yadav:94|Mitchell Starc:90|T Natarajan:91|Tristan Stubbs:00|Mukesh Kumar:93|Nitish Rana:93|Abhishek Porel:02|Ashutosh Sharma:98|Sameer Rizvi:03|Dushmantha Chameera:92|Karun Nair:91|Madhav Tiwari:03|Ajay Mandal:96|Tripurana Vijay:01|Vipraj Nigam:04|David Miller:89|Prithvi Shaw:99|Ben Duckett:94|Auqib Nabi:96|Pathum Nissanka:98|Kyle Jamieson:94|Lungi Ngidi:96|Sahil Parekh:06|Rashid Khan:98|Shubman Gill:99|Jos Buttler:90|Mohammed Siraj:94|Kagiso Rabada:95|Prasidh Krishna:96|Sai Sudharsan:01|Rahul Tewatia:93|Shahrukh Khan:95|Washington Sundar:99|Sai Kishore:96|Glenn Phillips:96|Arshad Khan:97|Gurnoor Brar:00|Ishant Sharma:88|Jayant Yadav:90|Kumar Kushagra:04|Anuj Rawat:99|Manav Suthar:02|Nishant Sindhu:04|Ashok Sharma:02|Jason Holder:91|Tom Banton:98|Prithvi Raj:98|Luke Wood:95|Rinku Singh:97|Sunil Narine:88|Varun Chakravarthy:91|Harshit Rana:01|Ramandeep Singh:97|Angkrish Raghuvanshi:05|Vaibhav Arora:97|Ajinkya Rahane:88|Rovman Powell:93|Manish Pandey:89|Umran Malik:99|Anukul Roy:98|Cameron Green:99|Rachin Ravindra:99|Finn Allen:99|Akash Deep:96|Matheesha Pathirana:02|Tejasvi Singh:02|Kartik Tyagi:00|Prashant Solanki:00|Rahul Tripathi:91|Tim Seifert:94|Mustafizur Rahman:95|Sarthak Ranjan:96|Daksh Kamra:04|Rishabh Pant:97|Nicholas Pooran:95|Mayank Yadav:02|Mohammed Shami:90|Avesh Khan:96|Abdul Samad:01|Ayush Badoni:99|Mohsin Khan:98|Mitchell Marsh:91|Shahbaz Ahmed:94|Aiden Markram:94|Manimaran Siddharth:98|Matthew Breetzke:98|Akash Singh:02|Arjun Tendulkar:99|Arshin Kulkarni:05|Himmat Singh:96|Digvesh Rathi:99|Prince Yadav:01|Wanindu Hasaranga:97|Anrich Nortje:93|Mukul Choudhary:04|Naman Tiwari:05|Josh Inglis:95|Akshat Raghuwanshi:03|Jasprit Bumrah:93|Hardik Pandya:93|Suryakumar Yadav:90|Rohit Sharma:87|Trent Boult:89|Deepak Chahar:92|Tilak Varma:02|Will Jacks:98|Naman Dhir:00|Allah Ghazanfar:06|Sherfane Rutherford:98|Shardul Thakur:91|Mitchell Santner:92|Ryan Rickelton:96|Corbin Bosch:94|Robin Minz:02|Raj Angad Bawa:02|Ashwani Kumar:01|Raghu Sharma:93|Mayank Markande:97|Quinton de Kock:92|Danish Malewar:03|Mayank Rawat:02|Mohammad Izhar:05|Atharva Ankolekar:00|Shreyas Iyer:94|Arshdeep Singh:99|Yuzvendra Chahal:90|Marcus Stoinis:89|Marco Jansen:00|Shashank Singh:91|Nehal Wadhera:00|Prabhsimran Singh:00|Priyansh Arya:01|Mitchell Owen:01|Azmatullah Omarzai:00|Lockie Ferguson:91|Vijaykumar Vyshak:97|Yash Thakur:98|Harpreet Brar:95|Vishnu Vinod:93|Xavier Bartlett:98|Pyla Avinash:04|Harnoor Pannu:03|Musheer Khan:05|Suryansh Shedge:03|Ben Dwarshuis:94|Praveen Dubey:93|Cooper Connolly:03|Vishal Nishad:04|Yashasvi Jaiswal:01|Riyan Parag:01|Ravindra Jadeja:88|Dhruv Jurel:01|Jofra Archer:95|Shimron Hetmyer:96|Tushar Deshpande:95|Sandeep Sharma:93|Nandre Burger:95|Sam Curran:98|Kwena Maphaka:06|Vaibhav Sooryavanshi:11|Donovan Ferreira:98|Shubham Dubey:94|Yudhvir Singh:97|Lhuan-dre Pretorius:06|Ravi Bishnoi:00|Sushant Mishra:00|Yash Raj Punja:05|Vignesh Puthur:01|Adam Milne:92|Kuldeep Sen:96|Aman Rao:04|Ravi Singh:02|Brijesh Sharma:03|Virat Kohli:88|Josh Hazlewood:91|Phil Salt:96|Rajat Patidar:93|Jitesh Sharma:93|Bhuvneshwar Kumar:90|Rasikh Salam:00|Krunal Pandya:91|Yash Dayal:97|Tim David:96|Suyash Sharma:03|Jacob Bethell:03|Devdutt Padikkal:00|Nuwan Thushara:94|Romario Shepherd:94|Swapnil Singh:91|Abhinandan Singh:97|Venkatesh Iyer:94|Jacob Duffy:94|Jordan Cox:00|Satvik Deswal:04|Vicky Ostwal:02|Mangesh Yadav:02|Vihaan Malhotra:07|Kanishk Chouhan:06|Heinrich Klaasen:91|Pat Cummins:93|Travis Head:93|Abhishek Sharma:00|Ishan Kishan:98|Harshal Patel:90|Nitish Kumar Reddy:03|Eshan Malinga:01|Brydon Carse:95|Jaydev Unadkat:91|Kamindu Mendis:98|Zeeshan Ansari:99|Smaran Ravichandran:03|Aniket Verma:02|Harsh Dubey:02|Liam Livingstone:93|Shivam Mavi:98|Shivang Kumar:02|Salil Arora:02|Sakib Hussain:04|Onkar Tarmale:01|Amit Kumar:03|Praful Hinge:01|Krains Fuletra:03|Jack Edwards:00|Harry Brook:99|Ben Stokes:91|Adil Rashid:88|Mark Wood:90|Gus Atkinson:98|Joe Root:90|Liam Dawson:89|Adam Zampa:92|Glenn Maxwell:88|Steve Smith:89|Jake Fraser-McGurk:02|Spencer Johnson:95|Aaron Hardie:99|Daryl Mitchell:91|Kane Williamson:90|Devon Conway:91|Ish Sodhi:92|Michael Bracewell:91|Gerald Coetzee:00|Tabraiz Shamsi:90|Keshav Maharaj:90|Reeza Hendricks:89|Ottniel Baartman:93|Shai Hope:93|Alzarri Joseph:96|Brandon King:94|Gudakesh Motie:95|Rahmanullah Gurbaz:01|Fazalhaq Farooqi:00|Mujeeb Ur Rahman:01|Naveen-ul-Haq:99|Mohammad Nabi:85|Ibrahim Zadran:01|Maheesh Theekshana:00|Kusal Mendis:95|Charith Asalanka:97|Dilshan Madushanka:00|Taskin Ahmed:95|Litton Das:94|Towhid Hridoy:00|Rishad Hossain:02|Sikandar Raza:86|Blessing Muzarabani:96|Josh Little:99|Paul Stirling:90|Lorcan Tucker:96|Sandeep Lamichhane:00|Dipendra Singh Airee:00|Rohit Paudel:02|Kushal Bhurtel:97|Kushal Malla:04|Aasif Sheikh:01|Gulsan Jha:06|Sompal Kami:96|Karan KC:91|Lalit Rajbanshi:99|Saurabh Netravalkar:91|Aaron Jones:94|Ali Khan:90|Andries Gous:93|Monank Patel:93|Harmeet Singh:92|Bas de Leede:99|Logan van Beek:90|Max ODowd:94|Scott Edwards:96|Paul van Meekeren:93|Roelof van der Merwe:84|Brandon McMullen:99|George Munsey:93|Mark Watt:96|Richie Berrington:87|Muhammad Waseem:94|Gerhard Erasmus:95|Ruben Trumpelmann:98|JJ Smit:95|Aqib Ilyas:92|Nicholas Kirton:98`;
+  const BORN = `Ruturaj Gaikwad:97|Sanju Samson:94|Shivam Dube:93|Noor Ahmad:05|Khaleel Ahmed:97|MS Dhoni:81|Anshul Kamboj:00|Dewald Brevis:03|Gurjapneet Singh:98|Nathan Ellis:94|Jamie Overton:94|Mukesh Choudhary:96|Ramakrishna Ghosh:97|Shreyas Gopal:93|Ayush Mhatre:07|Urvil Patel:98|Sarfaraz Khan:97|Matt Henry:91|Rahul Chahar:99|Akeal Hosein:93|Prashant Veer:05|Kartik Sharma:06|Zak Foulkes:02|Matthew Short:95|Aman Khan:96|Axar Patel:94|KL Rahul:92|Kuldeep Yadav:94|Mitchell Starc:90|T Natarajan:91|Tristan Stubbs:00|Mukesh Kumar:93|Nitish Rana:93|Abhishek Porel:02|Ashutosh Sharma:98|Sameer Rizvi:03|Dushmantha Chameera:92|Karun Nair:91|Madhav Tiwari:03|Ajay Mandal:96|Tripurana Vijay:01|Vipraj Nigam:04|David Miller:89|Prithvi Shaw:99|Ben Duckett:94|Auqib Nabi:96|Pathum Nissanka:98|Kyle Jamieson:94|Lungi Ngidi:96|Sahil Parekh:06|Rashid Khan:98|Shubman Gill:99|Jos Buttler:90|Mohammed Siraj:94|Kagiso Rabada:95|Prasidh Krishna:96|Sai Sudharsan:01|Rahul Tewatia:93|Shahrukh Khan:95|Washington Sundar:99|Sai Kishore:96|Glenn Phillips:96|Arshad Khan:97|Gurnoor Brar:00|Ishant Sharma:88|Jayant Yadav:90|Kumar Kushagra:04|Anuj Rawat:99|Manav Suthar:02|Nishant Sindhu:04|Ashok Sharma:02|Jason Holder:91|Tom Banton:98|Prithvi Raj:98|Luke Wood:95|Rinku Singh:97|Sunil Narine:88|Varun Chakravarthy:91|Harshit Rana:01|Ramandeep Singh:97|Angkrish Raghuvanshi:05|Vaibhav Arora:97|Ajinkya Rahane:88|Rovman Powell:93|Manish Pandey:89|Umran Malik:99|Anukul Roy:98|Cameron Green:99|Rachin Ravindra:99|Finn Allen:99|Akash Deep:96|Matheesha Pathirana:02|Tejasvi Singh:02|Kartik Tyagi:00|Prashant Solanki:00|Rahul Tripathi:91|Tim Seifert:94|Mustafizur Rahman:95|Sarthak Ranjan:96|Daksh Kamra:04|Rishabh Pant:97|Nicholas Pooran:95|Mayank Yadav:02|Mohammed Shami:90|Avesh Khan:96|Abdul Samad:01|Ayush Badoni:99|Mohsin Khan:98|Mitchell Marsh:91|Shahbaz Ahmed:94|Aiden Markram:94|Manimaran Siddharth:98|Matthew Breetzke:98|Akash Singh:02|Arjun Tendulkar:99|Arshin Kulkarni:05|Himmat Singh:96|Digvesh Rathi:99|Prince Yadav:01|Wanindu Hasaranga:97|Anrich Nortje:93|Mukul Choudhary:04|Naman Tiwari:05|Josh Inglis:95|Akshat Raghuwanshi:03|Jasprit Bumrah:93|Hardik Pandya:93|Suryakumar Yadav:90|Rohit Sharma:87|Trent Boult:89|Deepak Chahar:92|Tilak Varma:02|Will Jacks:98|Naman Dhir:00|Allah Ghazanfar:06|Sherfane Rutherford:98|Shardul Thakur:91|Mitchell Santner:92|Ryan Rickelton:96|Corbin Bosch:94|Robin Minz:02|Raj Angad Bawa:02|Ashwani Kumar:01|Raghu Sharma:93|Mayank Markande:97|Quinton de Kock:92|Danish Malewar:03|Mayank Rawat:02|Mohammad Izhar:05|Atharva Ankolekar:00|Shreyas Iyer:94|Arshdeep Singh:99|Yuzvendra Chahal:90|Marcus Stoinis:89|Marco Jansen:00|Shashank Singh:91|Nehal Wadhera:00|Prabhsimran Singh:00|Priyansh Arya:01|Mitchell Owen:01|Azmatullah Omarzai:00|Lockie Ferguson:91|Vijaykumar Vyshak:97|Yash Thakur:98|Harpreet Brar:95|Vishnu Vinod:93|Xavier Bartlett:98|Pyla Avinash:04|Harnoor Pannu:03|Musheer Khan:05|Suryansh Shedge:03|Ben Dwarshuis:94|Praveen Dubey:93|Cooper Connolly:03|Vishal Nishad:04|Yashasvi Jaiswal:01|Riyan Parag:01|Ravindra Jadeja:88|Dhruv Jurel:01|Jofra Archer:95|Shimron Hetmyer:96|Tushar Deshpande:95|Sandeep Sharma:93|Nandre Burger:95|Sam Curran:98|Kwena Maphaka:06|Vaibhav Sooryavanshi:11|Donovan Ferreira:98|Shubham Dubey:94|Yudhvir Singh:97|Lhuan-dre Pretorius:06|Ravi Bishnoi:00|Sushant Mishra:00|Yash Raj Punja:05|Vignesh Puthur:01|Adam Milne:92|Kuldeep Sen:96|Aman Rao:04|Ravi Singh:02|Brijesh Sharma:03|Virat Kohli:88|Josh Hazlewood:91|Phil Salt:96|Rajat Patidar:93|Jitesh Sharma:93|Bhuvneshwar Kumar:90|Rasikh Salam:00|Krunal Pandya:91|Yash Dayal:97|Tim David:96|Suyash Sharma:03|Jacob Bethell:03|Devdutt Padikkal:00|Nuwan Thushara:94|Romario Shepherd:94|Swapnil Singh:91|Abhinandan Singh:97|Venkatesh Iyer:94|Jacob Duffy:94|Jordan Cox:00|Satvik Deswal:04|Vicky Ostwal:02|Mangesh Yadav:02|Vihaan Malhotra:07|Kanishk Chouhan:06|Heinrich Klaasen:91|Pat Cummins:93|Travis Head:93|Abhishek Sharma:00|Ishan Kishan:98|Harshal Patel:90|Nitish Kumar Reddy:03|Eshan Malinga:01|Brydon Carse:95|Jaydev Unadkat:91|Kamindu Mendis:98|Zeeshan Ansari:99|Smaran Ravichandran:03|Aniket Verma:02|Harsh Dubey:02|Liam Livingstone:93|Shivam Mavi:98|Shivang Kumar:02|Salil Arora:02|Sakib Hussain:04|Onkar Tarmale:01|Amit Kumar:03|Praful Hinge:01|Krains Fuletra:03|Jack Edwards:00|Harry Brook:99|Ben Stokes:91|Adil Rashid:88|Mark Wood:90|Gus Atkinson:98|Joe Root:90|Liam Dawson:89|Adam Zampa:92|Glenn Maxwell:88|Steve Smith:89|Jake Fraser-McGurk:02|Spencer Johnson:95|Aaron Hardie:99|Daryl Mitchell:91|Kane Williamson:90|Devon Conway:91|Ish Sodhi:92|Michael Bracewell:91|Gerald Coetzee:00|Tabraiz Shamsi:90|Keshav Maharaj:90|Reeza Hendricks:89|Ottniel Baartman:93|Shai Hope:93|Alzarri Joseph:96|Brandon King:94|Gudakesh Motie:95|Rahmanullah Gurbaz:01|Fazalhaq Farooqi:00|Mujeeb Ur Rahman:01|Naveen-ul-Haq:99|Mohammad Nabi:85|Ibrahim Zadran:01|Maheesh Theekshana:00|Kusal Mendis:95|Charith Asalanka:97|Dilshan Madushanka:00|Taskin Ahmed:95|Litton Das:94|Towhid Hridoy:00|Rishad Hossain:02|Sikandar Raza:86|Blessing Muzarabani:96|Josh Little:99|Paul Stirling:90|Lorcan Tucker:96|Sandeep Lamichhane:00|Dipendra Singh Airee:00|Rohit Paudel:02|Kushal Bhurtel:97|Kushal Malla:04|Aasif Sheikh:01|Gulsan Jha:06|Sompal Kami:96|Karan KC:91|Lalit Rajbanshi:99|Saurabh Netravalkar:91|Aaron Jones:94|Ali Khan:90|Andries Gous:93|Monank Patel:93|Harmeet Singh:92|Bas de Leede:99|Logan van Beek:90|Max ODowd:94|Scott Edwards:96|Paul van Meekeren:93|Roelof van der Merwe:84|Brandon McMullen:99|George Munsey:93|Mark Watt:96|Richie Berrington:87|Muhammad Waseem:94|Gerhard Erasmus:95|Ruben Trumpelmann:98|JJ Smit:95|Aqib Ilyas:92|Nicholas Kirton:98|Mayank Agarwal:91|Deepak Hooda:95|Kumar Kartikeya:97|Akash Madhwal:93|Simarjeet Singh:98|Abhinav Manohar:94|Mahipal Lomror:99|Atharva Taide:00|Shams Mulani:97|Tanush Kotian:98|Anmolpreet Singh:98|Yash Dhull:02|Rajvardhan Hangargekar:02|Vidwath Kaverappa:99|Lalit Yadav:97|Darshan Nalkande:98|Swastik Chikara:05|Andre Siddarth:06|Vansh Bedi:02|Shaik Rasheed:04|Priyam Garg:00|Suyash Prabhudessai:97|Mayank Dagar:96|Vivrant Sharma:99|Sanvir Singh:96|Raj Limbani:05|Ishan Porel:98|Jamie Smith:00|Saqib Mahmood:97|Rehan Ahmed:04|Josh Tongue:97|Tanveer Sangha:01|Tony de Zorzi:97|Nqaba Peter:02|Will ORourke:01|Ben Sears:97|Mitchell Hay:00|Josh Clarkson:97|Shamar Joseph:99|Matthew Forde:02|Jayden Seales:01|Keacy Carty:96|Dunith Wellalage:03|Sediqullah Atal:01|Darwish Rasooli:99|Qais Ahmad:00|Nahid Rana:02|Tanzim Hasan Sakib:02|Parvez Hossain Emon:02|Jaker Ali:97|Brian Bennett:03|Sundeep Jora:01|Abinash Bohara:99|Kamal Singh Airee:98|Alishan Sharafu:02`;
   const BY = {};
   for (const x of BORN.split('|')) { const [n, y] = x.split(':'); BY[n] = +y < 30 ? 2000 + +y : 1900 + +y; }
 
   // Captaincy (0-100). Known leaders from their record; everyone else from experience and rating.
   const CAPT = { 'MS Dhoni': 96, 'Rohit Sharma': 92, 'Shreyas Iyer': 90, 'Pat Cummins': 89, 'Kane Williamson': 88, 'Ben Stokes': 88, 'Virat Kohli': 86, 'Suryakumar Yadav': 85, 'Steve Smith': 85, 'Hardik Pandya': 84, 'Aiden Markram': 84, 'Ajinkya Rahane': 83, 'Mitchell Marsh': 83, 'Sanju Samson': 82, 'KL Rahul': 82, 'Rajat Patidar': 82, 'Jos Buttler': 82, 'Mitchell Santner': 82, 'Rohit Paudel': 82, 'Axar Patel': 81, 'Shubman Gill': 80, 'Ruturaj Gaikwad': 80, 'Rishabh Pant': 80, 'Rashid Khan': 80, 'Nicholas Pooran': 80, 'Sikandar Raza': 80, 'Gerhard Erasmus': 80, 'Scott Edwards': 79, 'Travis Head': 78, 'Richie Berrington': 78, 'David Miller': 77, 'Paul Stirling': 77, 'Ravindra Jadeja': 76, 'Krunal Pandya': 76, 'Quinton de Kock': 76, 'Monank Patel': 76, 'Riyan Parag': 74, 'Glenn Maxwell': 74 };
 
-  // ---------- generated youngsters (career mode) ----------
-  const FIRST = 'Aarav|Vihaan|Arjun|Kabir|Reyansh|Ishaan|Shaurya|Atharv|Ayaan|Dhruv|Krish|Rudra|Yuvraj|Parth|Harsh|Om|Veer|Aditya|Tanmay|Sahil|Pranav|Anirudh|Karthik|Abhay|Nikhil|Manav|Jaiveer|Aryan|Laksh|Advait|Hridaan|Samarth|Tejas|Yash|Rehan|Daksh|Kiaan|Neel|Ritvik|Shivansh'.split('|');
-  const LAST = 'Rawat|Thakur|Kulkarni|Desai|Joshi|Pandey|Mishra|Bhat|Sandhu|Rathore|Menon|Pillai|Shetty|Naik|Gowda|Saini|Malik|Bisht|Dubey|Tiwari|Chauhan|Verma|Nair|Reddy|Iyer|Patil|Jadhav|Bhati|Sodhi|Grewal|Kamath|Hegde|Rana|Negi|Solanki|Parmar|Dhillon|Bansal|Mehra|Kaul'.split('|');
-  const OS_NAMES = {
-    AUS: [['Liam', 'Jack', 'Oliver', 'Harvey', 'Cody', 'Riley', 'Mason', 'Archie'], ['Cartwright', 'Whitfield', 'Dunstan', 'Hargreaves', 'Pemberton', 'Lockyer', 'Brassey', 'Kinsella']],
-    ENG: [['Freddie', 'Alfie', 'George', 'Rex', 'Theo', 'Hugo', 'Ollie', 'Toby'], ['Ashworth', 'Fairbairn', 'Haddon', 'Ingleby', 'Marlow', 'Pickering', 'Rowntree', 'Sedgwick']],
-    SA: [['Ruan', 'Kian', 'Thabo', 'Jandre', 'Liyema', 'Divan', 'Sipho', 'Wian'], ['Botha', 'Nkosi', 'Venter', 'Mokoena', 'Pienaar', 'Dlamini', 'Coetsee', 'Mabaso']],
-    NZ: [['Finn', 'Nico', 'Lachie', 'Te Rangi', 'Bodhi', 'Hamish'], ['Rewiti', 'McAllister', 'Tuhoe', 'Galloway', 'Blackwood', 'Paewai']],
-    WI: [['Jahmar', 'Kemar', 'Shamar', 'Andre', 'Tevin', 'Ackeem'], ['Baptiste', 'Charles', 'Thomas', 'Greaves', 'Mayers', 'Forde']],
-    AFG: [['Ihsan', 'Zubaid', 'Noorullah', 'Hamid', 'Sediq', 'Wafiullah'], ['Safi', 'Hotak', 'Mangal', 'Zazai', 'Kharoti', 'Stanikzai']],
-    NEP: [['Aarik', 'Bibek', 'Sushan', 'Pratik', 'Anil', 'Bipin', 'Sagar', 'Nandan'], ['Thapa', 'Gurung', 'Magar', 'Rai', 'Shrestha', 'Tamang', 'Bhandari', 'Khadka']],
-  };
-  const OS_KEYS = Object.keys(OS_NAMES);
-  const ROLES = ['BAT', 'BAT', 'WK', 'AR', 'AR', 'PACE', 'PACE', 'PACE', 'SPIN', 'SPIN'];
-
   // ---------- applying the world to the shared player list ----------
+  // Players don't age: the career moves the year on, but a player's stage of development is fixed at
+  // the start (it only sets how much room a young player has to grow). No retirements either.
   P.forEach((p) => {
-    p.r0 = p.r; p.team0 = p.team; p.capped0 = p.capped;
+    p.r0 = p.r; p.bat0 = p.bat; p.bowl0 = p.bowl; p.team0 = p.team; p.capped0 = p.capped;
     p.by = BY[p.name] || (p.capped ? 1994 + Math.floor(h01('by', p.name) * 5) : 2001 + Math.floor(h01('by', p.name) * 4));
   });
+  // How much the headline rating follows the bat (1) or the ball (0).
+  const batShare = (p) => (p.role === 'BAT' || p.role === 'WK' ? 1 : p.role === 'AR' ? clamp(0.5 + (p.bat - p.bowl) / 40, 0.25, 0.75) : 0);
 
-  // The top end of each group in the real pool: the level the career keeps the league at.
-  const GROUPS = [['bat', ['BAT', 'WK'], 60], ['bowl', ['PACE', 'SPIN'], 70], ['ar', ['AR'], 40]];
+  // The top end of batting and bowling skill in the real pool: the level the career keeps the league at.
   const BASE_TOP = {};
-  for (const [g, roles, n] of GROUPS) {
-    const top = P.filter((p) => roles.includes(p.role)).map((p) => p.r0).sort((a, b) => b - a).slice(0, n);
+  for (const [g, n, ok, sk] of [['bat', 60, (p) => p.role !== 'PACE' && p.role !== 'SPIN', 'bat0'], ['bowl', 70, (p) => p.role !== 'BAT' && p.role !== 'WK', 'bowl0']]) {
+    const top = P.filter(ok).map((p) => p[sk]).sort((a, b) => b - a).slice(0, n);
     BASE_TOP[g] = top.reduce((a, b) => a + b, 0) / top.length;
   }
 
@@ -77,12 +65,14 @@
   function apply(s) {
     cur = s;
     P.length = BASE_N;
-    for (const p of P) { p.r = p.r0; p.team = p.team0; p.capped = p.capped0; p.gone = false; delete p.pot0; }
+    for (const p of P) { p.r = p.r0; p.bat = p.bat0; p.bowl = p.bowl0; p.team = p.team0; p.capped = p.capped0; p.gone = false; delete p.pot0; }
     const W = s && s.w;
     const seed = W ? W.seed : s ? s.seed : 0;
     if (W) {
+      // Generated youngsters from older saves.
       for (const g of W.gen) {
-        P.push({ id: P.length, name: g.name, team: '-', country: g.country, role: g.role, r: g.r, r0: g.r, capped: false, capped0: false, os: g.country !== 'IND', bs: g.bs || '', ws: g.ws || '', by: g.by, pot0: g.pot, team0: '-' });
+        const sk = IPLA.data.skills(g.role, g.r, g.name);
+        P.push({ id: P.length, name: g.name, team: '-', country: g.country, role: g.role, r: g.r, r0: g.r, ...sk, bat0: sk.bat, bowl0: sk.bowl, capped: false, capped0: false, os: g.country !== 'IND', bs: g.bs || '', ws: g.ws || '', by: g.by, pot0: g.pot, team0: '-' });
       }
     }
     for (const p of P) traits(p, seed);
@@ -90,14 +80,15 @@
       for (const [pid, o] of Object.entries(W.pl)) {
         const p = P[pid]; if (!p) continue;
         if (o.r != null) p.r = o.r;
+        // Batting and bowling skill. Older saves only stored the rating: move the main skill with it.
+        if (o.b != null) p.bat = o.b; else if (o.r != null && batShare(p) > 0) p.bat = clamp(p.bat0 + (o.r - p.r0), 20, 99);
+        if (o.k != null) p.bowl = o.k; else if (o.r != null && batShare(p) < 1) p.bowl = clamp(p.bowl0 + (o.r - p.r0), 20, 99);
         if (o.t != null) p.team = o.t;
         if (o.c != null) p.capped = !!o.c;
         if (o.g) p.gone = true;
         if (o.u != null) p.ux = o.u;
       }
     }
-    const y = year(s);
-    for (const p of P) p.age = y - p.by;
   }
 
   // A new game (mega auction) starts a new career.
@@ -119,10 +110,10 @@
   }
 
   // ---------- labels the screens show ----------
-  const young = (p) => p.age <= 23;
-  // Potential shown as 0-3 stars (only for young players with room to grow).
+  // A prospect: a player who still has real room to grow.
+  const young = (p) => p.pot - p.r >= 3;
+  // Potential shown as 0-3 stars.
   function potStars(p) {
-    if (!young(p)) return 0;
     const g = p.pot - p.r;
     return g >= 12 ? 3 : g >= 7 ? 2 : g >= 3 ? 1 : 0;
   }
@@ -161,7 +152,7 @@
     let x = Math.random() * Object.values(w).reduce((a, b) => a + b, 0);
     let k = 'good';
     for (const [key, v] of Object.entries(w)) { x -= v; if (x <= 0) { k = key; break; } }
-    fx.pitch = { k, dew: Math.random() < 0.4 };
+    fx.pitch = { k, dew: Math.random() < 0.3 };
     return fx.pitch;
   }
   // The conditions a match is played in: home ground and today's pitch together.
@@ -170,7 +161,7 @@
     const pi = pitchFor(fx); const T = PITCHES[pi.k];
     const c = { name: V.name, k: pi.k, dew: pi.dew, runs: V.runs * T.runs, spin: V.spin + T.spin, pace: T.pace, P: T.P, A: T.A };
     // Second innings: the surface wears (more spin); dew makes the ball wet (harder to grip, easier to hit).
-    const c2 = { ...c, spin: c.spin + T.wear - (pi.dew ? 3 : 0), pace: c.pace - (pi.dew ? 1 : 0), runs: c.runs * (pi.dew ? 1.03 : 1) };
+    const c2 = { ...c, spin: c.spin + T.wear - (pi.dew ? 2 : 0), pace: c.pace - (pi.dew ? 0.5 : 0), runs: c.runs * (pi.dew ? 1.015 : 1) };
     return { c, c2 };
   }
   const par = (fx) => Math.round(182 * conditions(fx).c.runs / 5) * 5;
@@ -189,7 +180,7 @@
   // ---------- captaincy ----------
   function capSkill(p) {
     if (CAPT[p.name]) return CAPT[p.name];
-    const exp = clamp(p.age - 21, 0, 14);
+    const exp = p.capped ? 10 : 3; // international experience
     return Math.round(clamp(42 + exp * 1.6 + (p.r - 60) * 0.45 + (p.role === 'WK' || p.role === 'AR' ? 3 : 0), 35, 84));
   }
   // The franchise's captain: your pick, or the best leader in the squad.
@@ -282,11 +273,11 @@
       const opp = ii === 0 ? sum.b : sum.a;
       for (const [pid, r, b] of I.bat) {
         if (r >= 100) { addNews(L, { id: nid, k: 'ton', p: pid, t: I.t, o: opp, r, b }); big++; }
-        else if (r >= 50 && P[pid].age <= 21) { addNews(L, { id: nid, k: 'young', p: pid, t: I.t, o: opp, r, b, a: P[pid].age }); big++; }
+        else if (r >= 50 && !P[pid].capped) { addNews(L, { id: nid, k: 'young', p: pid, t: I.t, o: opp, r, b }); big++; }
       }
       for (const [pid, , , runs, w] of I.bowl) {
         if (w >= 4) { addNews(L, { id: nid, k: 'haul', p: pid, t: opp, o: I.t, w, r: runs }); big++; }
-        else if (w >= 3 && P[pid].age <= 21) { addNews(L, { id: nid, k: 'youngB', p: pid, t: opp, o: I.t, w, r: runs, a: P[pid].age }); big++; }
+        else if (w >= 3 && !P[pid].capped) { addNews(L, { id: nid, k: 'youngB', p: pid, t: opp, o: I.t, w, r: runs }); big++; }
       }
       if (I.runs >= 230) { addNews(L, { id: nid, k: 'big', t: I.t, o: opp, r: I.runs }); big++; }
     });
@@ -302,8 +293,7 @@
     for (const pid of played) {
       if (L.inj[pid] || P[pid].gone) continue;
       const p = P[pid];
-      let chance = p.role === 'PACE' ? 0.016 : 0.0095;
-      if (p.age >= 34) chance += 0.006;
+      const chance = p.role === 'PACE' ? 0.017 : 0.0095;
       if (Math.random() >= chance) continue;
       const x = Math.random();
       const n = x < 0.35 ? 1 : x < 0.6 ? 2 : x < 0.78 ? 3 : x < 0.93 ? 4 + Math.floor(Math.random() * 2) : 7 + Math.floor(Math.random() * 4);
@@ -353,8 +343,9 @@
     return {
       orange: st.orange[0] || null, purple: st.purple[0] || null,
       mvp: rows[0] || null,
-      emerging: rows.find((r) => P[r.pid].age <= 23) || null,
-      young: rows.filter((r) => P[r.pid].age <= 23).slice(0, 8).map((r) => ({ ...r, t: own[r.pid] })),
+      // Like the real Emerging Player award: the best uncapped player of the season.
+      emerging: rows.find((r) => !P[r.pid].capped) || null,
+      young: rows.filter((r) => !P[r.pid].capped).slice(0, 8).map((r) => ({ ...r, t: own[r.pid] })),
       bargains: rows.filter((r) => priceOf[r.pid] != null && priceOf[r.pid] <= 200).slice(0, 8).map((r) => ({ ...r, t: own[r.pid], price: priceOf[r.pid] })),
       pts,
     };
@@ -416,67 +407,73 @@
     }
     for (const [pid, n] of Object.entries(games)) { const c = (W.tot[pid] ||= { s: 0, m: 0, inn: 0, no: 0, r: 0, b: 0, f4: 0, f6: 0, hs: 0, f50: 0, f100: 0, w: 0, balls: 0, rc: 0 }); c.m += n; c.s += 1; }
 
-    // 2. Ratings move: youngsters grow toward their ceiling, veterans slow down, form counts.
+    // 2. Ratings move with what each player did this season (nobody ages, nobody retires).
+    // A batter who scored more, and faster, than batters of his skill usually do goes up; one who
+    // flopped goes down. Same for bowlers with wickets and economy. A full season counts more than
+    // three games. Prospects grow toward their ceiling, faster when they play. Steps stay small.
     const rnd = (a, b) => a + Math.random() * (b - a);
-    const changes = []; const retired = []; const capsNew = []; const newR = {};
+    const changes = []; const capsNew = [];
+    // How far a player's season was above or below what players of his skill did (in standard
+    // deviations): a straight line through every regular's season against his skill.
+    const vsSkill = (rows, perf, skill) => {
+      const out = {};
+      if (rows.length < 8) return out;
+      const xs = rows.map(skill); const ys = rows.map(perf); const n = rows.length;
+      const mx = xs.reduce((a, b) => a + b, 0) / n; const my = ys.reduce((a, b) => a + b, 0) / n;
+      let sxy = 0; let sxx = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; }
+      const b = sxx ? sxy / sxx : 0;
+      const res = ys.map((y, i) => y - (my + b * (xs[i] - mx)));
+      const sd = Math.sqrt(res.reduce((a, r) => a + r * r, 0) / n) || 1;
+      rows.forEach((x, i) => { out[x.pid] = res[i] / sd; });
+      return out;
+    };
+    const bats = st.orange.filter((x) => x.inn >= 4);
+    const batGap = vsSkill(bats, (x) => (x.r / x.inn) * Math.pow(Math.max(60, x.sr) / 140, 0.8), (x) => P[x.pid].bat);
+    const bowls = st.purple.filter((x) => x.balls >= 72);
+    const bowlGap = vsSkill(bowls, (x) => (x.w * 20 + (9 - x.econ) * (x.balls / 6)) / (x.balls / 6), (x) => P[x.pid].bowl);
+    const batN = Object.fromEntries(bats.map((x) => [x.pid, x.inn]));
+    const bowlOv = Object.fromEntries(bowls.map((x) => [x.pid, x.balls / 6]));
+    const nb = {}; const nw = {};
     for (const p of P) {
       if (p.gone) continue;
-      const age = p.age;
-      let d = 0;
-      if (age <= 21) d += (p.pot - p.r) * rnd(0.25, 0.45);
-      else if (age <= 24) d += (p.pot - p.r) * rnd(0.2, 0.4);
-      else if (age <= 29) d += rnd(-1, 1.2);
-      else if (age <= 32) d += rnd(-1.6, 0.6);
-      else if (age <= 34) d += rnd(-3, -0.5);
-      else d += rnd(-4.5, -1.5);
       const g = games[p.id] || 0;
-      if (g >= 3) d += form(s, p.id) * 2.5;
-      if (p.ux > 0 && g >= 3) { const gain = Math.ceil(p.ux * 0.6); d += gain; setPl(W, p, 'u', p.ux - gain); }
-      newR[p.id] = p.r + d;
-      const nextAge = age + 1;
-      // Veterans retire; a star still in form plays on longer.
-      const star = p.r + d >= 82 ? 0.35 : 1;
-      if (nextAge >= 42 || (nextAge >= 38 && Math.random() < 0.4 * star) || (nextAge >= 34 && p.r + d < 64 && Math.random() < 0.5)) { setPl(W, p, 'g', 1); retired.push(p.id); }
+      const sh = batShare(p);
+      let db = 0; let dw = 0;
+      if (batGap[p.id] != null) db += clamp(batGap[p.id] * 1.6, -3.5, 3.5) * Math.min(1, batN[p.id] / 10);
+      if (bowlGap[p.id] != null) dw += clamp(bowlGap[p.id] * 1.6, -3.5, 3.5) * Math.min(1, bowlOv[p.id] / 32);
+      // Room to grow: prospects get better every year, quicker with games under their belt.
+      if (p.pot > p.r) { const gr = (p.pot - p.r) * rnd(0.15, 0.3) * (g >= 4 ? 1.3 : 0.7); db += gr * (sh > 0 ? 1 : 0); dw += gr * (sh < 1 ? 1 : 0); }
+      // An underrated player who got games shows it: the rating catches up with how he plays.
+      if (p.ux > 0 && g >= 3) { const gain = Math.ceil(p.ux * 0.6); db += sh > 0 ? gain : 0; dw += sh < 1 ? gain : 0; setPl(W, p, 'u', p.ux - gain); }
+      // Out of the side all season: a little rust. Everyone: a little noise.
+      if (g < 3 && !(p.pot > p.r)) { db -= sh > 0 ? rnd(0, 0.8) : 0; dw -= sh < 1 ? rnd(0, 0.8) : 0; }
+      db += rnd(-0.6, 0.6); dw += rnd(-0.6, 0.6);
+      // Staying at the very top is hard.
+      if (p.bat > 90) db -= (p.bat - 90) * 0.12;
+      if (p.bowl > 90) dw -= (p.bowl - 90) * 0.12;
+      nb[p.id] = p.bat + db; nw[p.id] = p.bowl + dw;
       // Former team for the next auction: where he played this season.
       setPl(W, p, 't', own[p.id] || (p.team && p.team !== '-' ? p.team : '-'));
     }
-    // Keep the league's standard steady: if a whole group (say, bowlers) got weaker or stronger
-    // at the top end, shift that group back most of the way, so scores stay like a real IPL.
-    const out = new Set(retired);
-    for (const [g, roles, n] of GROUPS) {
-      const top = Object.keys(newR).filter((id) => !out.has(+id) && roles.includes(P[id].role)).map((id) => newR[id]).sort((a, b) => b - a).slice(0, n);
-      const mean = top.reduce((a, b) => a + b, 0) / Math.max(1, top.length);
-      const shift = (BASE_TOP[g] - mean) * 0.85;
-      for (const id of Object.keys(newR)) if (roles.includes(P[id].role)) newR[id] += shift;
+    // Keep the league's standard steady: if the best batting (or bowling) got stronger or weaker
+    // as a whole, shift it back most of the way, so scores stay like a real IPL.
+    for (const [key, n, sk, base] of [['bat', 60, nb, BASE_TOP.bat], ['bowl', 70, nw, BASE_TOP.bowl]]) {
+      const ids = Object.keys(sk).filter((id) => (key === 'bat' ? batShare(P[id]) > 0 : batShare(P[id]) < 1));
+      const top = ids.map((id) => sk[id]).sort((a, b) => b - a).slice(0, n);
+      const shift = (base - top.reduce((a, b) => a + b, 0) / Math.max(1, top.length)) * 0.85;
+      for (const id of ids) sk[id] += shift;
     }
-    for (const [id, v] of Object.entries(newR)) {
-      const p = P[id]; const nr = clamp(Math.round(v), 40, 97);
+    for (const id of Object.keys(nb)) {
+      const p = P[id]; const sh = batShare(p);
+      const b = clamp(Math.round(nb[id]), 20, 98); const k = clamp(Math.round(nw[id]), 20, 98);
+      const nr = clamp(Math.round(p.r + clamp(sh * (nb[id] - p.bat) + (1 - sh) * (nw[id] - p.bowl), -5, 5)), 40, 97);
+      if (b !== p.bat) setPl(W, p, 'b', b);
+      if (k !== p.bowl) setPl(W, p, 'k', k);
       if (nr !== p.r) { changes.push({ pid: p.id, from: p.r, to: nr }); setPl(W, p, 'r', nr); }
-      if (!p.capped && !p.os && nr >= 80 && !out.has(p.id)) { setPl(W, p, 'c', 1); capsNew.push(p.id); }
+      if (!p.capped && !p.os && nr >= 80) { setPl(W, p, 'c', 1); capsNew.push(p.id); }
     }
-    // 3. New youngsters enter the pool.
-    const born = [];
-    const nNew = retired.length + 8;
-    const names = new Set(P.map((p) => p.name));
-    for (let i = 0; i < nNew; i++) {
-      const os = Math.random() < 0.28;
-      let name; let country = 'IND';
-      for (let k = 0; k < 20; k++) {
-        if (os) { country = OS_KEYS[Math.floor(Math.random() * OS_KEYS.length)]; const [f, l] = OS_NAMES[country]; name = `${f[Math.floor(Math.random() * f.length)]} ${l[Math.floor(Math.random() * l.length)]}`; }
-        else name = `${FIRST[Math.floor(Math.random() * FIRST.length)]} ${LAST[Math.floor(Math.random() * LAST.length)]}`;
-        if (!names.has(name)) break;
-      }
-      names.add(name);
-      const role = ROLES[Math.floor(Math.random() * ROLES.length)];
-      const age = 17 + Math.floor(Math.random() * 4);
-      const r = Math.round(rnd(54, 70));
-      const pot = Math.min(95, Math.round(r + rnd(8, 24)));
-      const bs = role === 'PACE' || role === 'SPIN' ? '' : Math.random() < 0.35 ? 'P' : Math.random() < 0.2 ? 'A' : '';
-      const ws = role === 'PACE' && Math.random() < 0.3 ? (Math.random() < 0.5 ? 'D' : 'N') : '';
-      W.gen.push({ name, country, role, r, by: y + 1 - age, pot, bs, ws });
-      born.push(name);
-    }
-    // 4. Form cools over the break; the new year begins.
+    // 3. Form cools over the break; the new year begins.
     for (const k of Object.keys(W.form)) W.form[k] = Math.round(W.form[k] * 0.4 * 100) / 100;
     const mine = new Set(s.teams[s.user].squad.map((e) => e.pid));
     W.year = y + 1;
@@ -484,10 +481,10 @@
       y, champ: L.champion, aw: { orange: aw.orange && [aw.orange.pid, aw.orange.r], purple: aw.purple && [aw.purple.pid, aw.purple.w], mvp: aw.mvp && [aw.mvp.pid, aw.mvp.v], emerging: aw.emerging && [aw.emerging.pid, aw.emerging.v] },
       mine: changes.filter((c) => mine.has(c.pid)).sort((a, b) => (b.to - b.from) - (a.to - a.from)),
       risers: changes.filter((c) => !mine.has(c.pid)).sort((a, b) => (b.to - b.from) - (a.to - a.from)).slice(0, 6),
-      retired, capsNew, born,
+      fallers: changes.filter((c) => !mine.has(c.pid) && P[c.pid].r0 >= 75).sort((a, b) => (a.to - a.from) - (b.to - b.from)).slice(0, 6),
+      retired: [], capsNew, born: [],
     };
     apply(s);
-    W.review.bornIds = P.filter((p) => born.includes(p.name)).sort((a, b) => b.pot - a.pot).map((p) => p.id);
     return W.review;
   }
 
@@ -499,12 +496,11 @@
     const sq = s.teams[t].squad.filter((e) => !P[e.pid].gone).map((e) => {
       const p = P[e.pid];
       let val = worth(p.r + p.ux * 0.5);
-      if (p.age <= 23) val *= 1 + (p.pot - p.r) * 0.03;
-      if (p.age >= 34) val *= 0.7;
+      if (p.pot > p.r) val *= 1 + (p.pot - p.r) * 0.03;
       return { ...e, val, score: val / Math.max(30, e.price) };
     });
-    // Stars stay (unless they are getting old); everyone else has to be worth his price.
-    const star = (e) => P[e.pid].r >= 83 && P[e.pid].age < 34;
+    // Stars stay; everyone else has to be worth his price.
+    const star = (e) => P[e.pid].r >= 83;
     let keep = sq.filter((e) => star(e) || (e.score >= 0.5 && P[e.pid].r >= 58)).sort((a, b) => b.val - a.val).slice(0, 20);
     // A few fringe players go anyway: teams like fresh faces.
     keep = keep.filter((e, i) => i < 10 || Math.random() > 0.15);

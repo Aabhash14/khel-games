@@ -8,11 +8,12 @@
   const { P } = IPLA.engine;
 
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
-  // Specialist bowlers bat like tail-enders whatever their bowling rating (Bumrah is not a No. 3).
-  const batSkill = (p) => (p.role === 'BAT' || p.role === 'WK' ? p.r : p.role === 'AR' ? p.r * 0.9 : 30 + p.r * 0.2);
+  // Every player has his own batting and bowling skill (data.js): Bumrah bats like a No. 11,
+  // Narine bowls like a specialist, Abhishek Sharma bats like a specialist.
+  const batSkill = (p) => p.bat;
   const canBowl = (p) => p.role === 'PACE' || p.role === 'SPIN' || p.role === 'AR';
   function bowlSkill(p, venue) {
-    let s = p.role === 'PACE' || p.role === 'SPIN' ? p.r : p.role === 'AR' ? p.r * 0.86 : 46;
+    let s = p.bowl;
     if (p.role === 'SPIN' && venue) s += venue.spin;
     if (p.role === 'PACE' && venue && venue.pace) s += venue.pace;
     return s;
@@ -46,7 +47,7 @@
   // Bowling options: everyone who bowls, plus part-timers if there are fewer than six.
   function bowlingOptions(xi, venue) {
     const opts = xi.filter((id) => canBowl(P[id])).sort((a, b) => bowlSkill(P[b], venue) - bowlSkill(P[a], venue));
-    const parts = xi.filter((id) => !canBowl(P[id])).sort((a, b) => P[a].r - P[b].r);
+    const parts = xi.filter((id) => !canBowl(P[id])).sort((a, b) => P[b].bowl - P[a].bowl);
     while (opts.length < 6 && parts.length) opts.push(parts.shift());
     return opts;
   }
@@ -117,17 +118,19 @@
   }
 
   // ---------- one delivery ----------
-  const BASE = { dot: 0.325, one: 0.37, two: 0.072, three: 0.004, four: 0.133, six: 0.07, out: 0.0345 };
+  const BASE = { dot: 0.335, one: 0.37, two: 0.072, three: 0.004, four: 0.132, six: 0.069, out: 0.0363 };
 
   function autoIntent(m, I) {
     const over = Math.floor(I.balls / 6);
-    let a = over < 6 ? 0.3 : over >= 16 ? 0.9 : 0.05;
+    let a = over < 6 ? 0.35 : over >= 16 ? 0.9 : 0.15; // the impact-player era: sides bat first to post big totals
     if (I.wkts >= 6 && over < 17) a -= 0.45;
     else if (I.wkts >= 4 && over < 12) a -= 0.2;
     if (m.target != null) {
       const need = m.target - I.runs; const left = oversLeftBalls(I);
       const rrr = (need / Math.max(1, left)) * 6;
-      a = clamp((rrr - 8.5) / 3.5 + (over >= 16 ? 0.3 : 0), -0.8, 1.2);
+      // Chasers pace it to the asking rate, but like real sides they keep their usual gears too
+      // (nobody times a chase perfectly).
+      a = 0.6 * clamp((rrr - 8.5) / 3.5 + (over >= 16 ? 0.3 : 0), -0.5, 1.2) + 0.4 * a;
       if (I.wkts >= 7 && rrr < 12) a -= 0.3;
     }
     return clamp(a, -1, 1.2);
@@ -137,16 +140,22 @@
     const over = Math.floor(I.balls / 6);
     const w = { ...BASE };
     const V = ven(m);
-    const s = clamp((batSkill(bat) + adjB(m, bat.id) + styleFit(bat, V) - bowlSkill(bowl, V) - adjW(m, bowl.id)) / 10, -3, 2.5);
-    w.four *= Math.exp(0.14 * s); w.six *= Math.exp(0.2 * s); w.out *= Math.exp(-0.13 * s); w.dot *= Math.exp(-0.07 * s);
+    let s = clamp((batSkill(bat) + adjB(m, bat.id) + styleFit(bat, V) - bowlSkill(bowl, V) - adjW(m, bowl.id)) / 10, -3, 2.5);
+    if (s > 0) s *= 0.75; // a great batter still has to respect a decent ball; a great bowler can tie anyone down
+    w.four *= Math.exp(0.16 * s); w.six *= Math.exp(0.23 * s); w.out *= Math.exp(-0.15 * s); w.dot *= Math.exp(-0.08 * s);
     if (over < 6) { w.four *= 1.25; w.six *= 0.9; w.one *= 0.95; }
     else if (over < 16) { w.four *= 0.9; w.six *= 0.95; w.one *= 1.1; w.out *= 0.92; }
-    else { w.four *= 1.1; w.six *= 1.5; w.out *= 1.35; w.dot *= 0.85; }
+    else { w.four *= 1.1; w.six *= 1.5; w.out *= 1.25; w.dot *= 0.85; }
     const a = intent;
-    w.four *= 1 + 0.22 * a; w.six *= 1 + 0.4 * a; w.out *= a >= 0 ? 1 + 0.5 * a : 1 + 0.35 * a; w.dot *= 1 - 0.15 * a; w.one *= 1 - 0.04 * a;
+    w.four *= 1 + 0.22 * a; w.six *= 1 + 0.4 * a; w.out *= a >= 0 ? 1 + 0.42 * a : 1 + 0.22 * a; w.dot *= 1 - 0.15 * a; w.one *= 1 - 0.04 * a;
     const sc = I.card[I.striker];
     if (sc.b < 5) { w.four *= 0.8; w.six *= 0.7; w.out *= 1.15; } else if (sc.b > 25) { w.four *= 1.08; w.six *= 1.15; }
     if (sc.r >= 80) { w.six *= 1.25; w.out *= 3.8; } else if (sc.r >= 50) { w.six *= 1.15; w.out *= 1.9; } // past fifty they start taking more risks
+    // Scoreboard pressure: a steep chase brings rash shots.
+    if (m.target != null && m.i === 1) {
+      const rrr = ((m.target - I.runs) / Math.max(1, 120 - I.balls)) * 6;
+      if (rrr > 12) w.out *= 1 + Math.min(0.3, (rrr - 12) * 0.04);
+    }
     const vr = V.runs;
     w.four *= vr; w.six *= vr * vr; w.out /= Math.sqrt(vr);
     if (bowl.role === 'SPIN') { w.four *= 0.85; w.six *= 1.05; w.one *= 1.05; } else { w.four *= 1.05; }

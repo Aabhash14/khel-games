@@ -115,7 +115,7 @@
     const open = Object.values(teams).reduce((x, T) => x + Math.max(0, 22 - T.squad.length), 0);
     const n = Math.max(60, Math.min(150, Math.round(open * 1.5)));
     const pick = new Set(free.slice(0, n).map((p) => p.id));
-    free.filter((p) => p.age <= 21 && p.pot >= 74).forEach((p) => pick.add(p.id));
+    free.filter((p) => p.pot - p.r >= 6 && p.pot >= 74).forEach((p) => pick.add(p.id));
     const pool = free.filter((p) => pick.has(p.id));
     const { sets, lots } = buildSets(pool, 6);
     const seed = Math.floor(Math.random() * 1e9);
@@ -182,9 +182,8 @@
     if (!p.capped) v *= st.young || 1;
     if (p.capped && !p.os) v *= st.old || 1;
     if (p.team === t) v *= 1.1;
-    // Young players are bought for what they can become; veterans for what is left.
-    if (p.age != null && p.age <= 23 && p.pot > p.r) v *= 1 + (p.pot - p.r) * 0.012;
-    if (p.age != null && p.age >= 34) v *= p.age >= 36 ? 0.75 : 0.88;
+    // Prospects are bought for what they can become.
+    if (p.pot > p.r) v *= 1 + (p.pot - p.r) * 0.012;
     return v;
   }
 

@@ -53,8 +53,15 @@
     let h = `<span class="tag">${t(`role_${p.role}`)}</span>`;
     h += p.os ? `<span class="tag os">✈ ${cname(p.country)}</span>` : `<span class="tag">${cname(p.country)}</span>`;
     if (!p.capped) h += `<span class="tag unc">${t('uncapped')}</span>`;
-    h += `<span class="tag">${t('ageY', { n: num(p.age) })}</span>`;
+    h += `<span class="tag sk">${skillTxt(p)}</span>`;
     return h + scoutTags(p);
+  }
+  // Batting and bowling skill in words: the main one always, the other when it is worth a mention.
+  function skillTxt(p) {
+    const b = `${t('batS')} ${num(p.bat)}`; const w = `${t('bowlS')} ${num(p.bowl)}`;
+    if (p.role === 'AR') return `${b} · ${w}`;
+    if (p.role === 'PACE' || p.role === 'SPIN') return p.bat >= 50 ? `${w} · ${b}` : w;
+    return p.bowl >= 50 ? `${b} · ${w}` : b;
   }
   // Scout notes: young players with a high ceiling, and players who are better than their rating.
   function scoutTags(p) {
@@ -763,7 +770,7 @@
       for (const e of rows) {
         const p = P[e.pid];
         const how = e.how === 'ret' ? ` · ${t('retained')}` : e.how === 'rtm' ? ' · RTM' : '';
-        h += `<li><span>${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)} <span class="m-r">${num(p.r)} · ${t('ageY', { n: num(p.age) })}${how}</span></span><span class="m-p">${money(e.price)}</span></li>`;
+        h += `<li><span>${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)} <span class="m-r">${num(p.r)} · ${skillTxt(p)}${how}</span></span><span class="m-p">${money(e.price)}</span></li>`;
       }
       h += '</ul>';
     }
@@ -779,7 +786,7 @@
     for (let i = S.idx + 1; i < Math.min(S.lots.length, S.idx + 60); i++) {
       const L = S.lots[i]; const p = P[L.pid];
       if (L.set !== lastSet) { h += `<p class="up-set">${setName(S.sets[L.set])}</p>`; lastSet = L.set; }
-      h += `<button type="button" class="up-row" data-pid="${p.id}" aria-pressed="${S.star.includes(p.id)}"><span class="u-star">★</span><span class="u-main">${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)}<small>${t('ageY', { n: num(p.age) })} · ${t(`role_${p.role}`)} · ${cname(p.country)} · ${lastTeam(p)} · ${money(R.basePrice(p))}${maxFor(p.id) ? ` · <b>${t('autoUpTo')} ${money(maxFor(p.id))}</b>` : ''}</small></span><span class="pr-r">${num(p.r)}</span></button>`;
+      h += `<button type="button" class="up-row" data-pid="${p.id}" aria-pressed="${S.star.includes(p.id)}"><span class="u-star">★</span><span class="u-main">${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)}<small>${t(`role_${p.role}`)} · ${skillTxt(p)} · ${cname(p.country)} · ${lastTeam(p)} · ${money(R.basePrice(p))}${maxFor(p.id) ? ` · <b>${t('autoUpTo')} ${money(maxFor(p.id))}</b>` : ''}</small></span><span class="pr-r">${num(p.r)}</span></button>`;
     }
     const body = openSheet(t('upcoming'), h);
     body.querySelectorAll('.up-row').forEach((b) => b.addEventListener('click', () => {
@@ -814,7 +821,7 @@
       b.type = 'button'; b.className = 'prow'; b.disabled = !!block;
       teamVars(b, p.team, p.country);
       b.innerHTML = `<span class="avatar">${initials(p.name)}</span>
-        <span><span class="pr-name">${esc(p.name)}${scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${p.os ? '✈ ' + cname(p.country) : cname(p.country)} · ${t('ageY', { n: num(p.age) })}</span></span>
+        <span><span class="pr-name">${esc(p.name)}${scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${p.os ? '✈ ' + cname(p.country) : cname(p.country)} · ${skillTxt(p)}</span></span>
         <span class="pr-r">${num(p.r)}<small>${t('sign')} ${money(price)}</small></span>`;
       b.addEventListener('click', () => { A.paddle(true); E.assign(S, p.id, S.user, price, 'fill'); save(); renderFill(); });
       li.append(b); ul.append(li);
@@ -911,7 +918,7 @@
     const R0 = S.w.review; if (!R0) { openRelease(); return; }
     $('revH').textContent = t('reviewTitle', { y: num(R0.y) });
     const delta = (c) => { const d = c.to - c.from; return `<b class="${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'} ${num(Math.abs(d))}</b>`; };
-    const row = (c) => `<li><span>${pname(c.pid)} <small>${t('ageY', { n: num(P[c.pid].age) })} · ${t(`role_${P[c.pid].role}`)}</small></span><span>${num(c.from)} → ${num(c.to)} ${delta(c)}</span></li>`;
+    const row = (c) => `<li><span>${pname(c.pid)} <small>${t(`role_${P[c.pid].role}`)} · ${skillTxt(P[c.pid])}</small></span><span>${num(c.from)} → ${num(c.to)} ${delta(c)}</span></li>`;
     const aw = R0.aw;
     const awBox = (k, x, v) => (x ? `<div class="hl"><span>${t(k)}</span><b>${pname(x[0])}</b><small>${v(x[1])}</small></div>` : '');
     let h = R0.champ ? `<div class="champ rev-champ" style="--c1:${teamById[R0.champ].c1};--c2:${teamById[R0.champ].c2};--ci:${teamById[R0.champ].ink}"><span>${t('champions')}</span><b>${esc(teamById[R0.champ].name)}</b></div>` : '';
@@ -920,9 +927,10 @@
     if (mine.length) h += `<h3 class="sub-h">${t('yourChanges')}</h3><ul class="mini rev">${mine.map(row).join('')}</ul>`;
     if (R0.risers.length) h += `<h3 class="sub-h">${t('risers')}</h3><ul class="mini rev">${R0.risers.map(row).join('')}</ul>`;
     if (R0.capsNew.length) h += `<h3 class="sub-h">${t('capsNewT')}</h3><p class="rev-names">${R0.capsNew.map(pname).join(', ')}</p>`;
-    if (R0.retired.length) h += `<h3 class="sub-h">${t('retirements')}</h3><p class="rev-names">${R0.retired.map((pid) => `${pname(pid)} <small>(${num(P[pid].age)})</small>`).join(', ')}</p>`;
+    if (R0.fallers && R0.fallers.length) h += `<h3 class="sub-h">${t('fallers')}</h3><ul class="mini rev">${R0.fallers.map(row).join('')}</ul>`;
+    if (R0.retired.length) h += `<h3 class="sub-h">${t('retirements')}</h3><p class="rev-names">${R0.retired.map(pname).join(', ')}</p>`;
     const born = (R0.bornIds || []).slice(0, 10);
-    if (born.length) h += `<h3 class="sub-h">${t('newFaces')}</h3><ul class="mini rev">${born.map((pid) => { const p = P[pid]; return `<li><span>${pname(pid)}${p.os ? ' ✈' : ''} <small>${t('ageY', { n: num(p.age) })} · ${t(`role_${p.role}`)} · ${cname(p.country)}</small></span><span>${num(p.r)} 🌱${'★'.repeat(W.potStars(p))}</span></li>`; }).join('')}</ul>`;
+    if (born.length) h += `<h3 class="sub-h">${t('newFaces')}</h3><ul class="mini rev">${born.map((pid) => { const p = P[pid]; return `<li><span>${pname(pid)}${p.os ? ' ✈' : ''} <small>${t(`role_${p.role}`)} · ${cname(p.country)}</small></span><span>${num(p.r)} 🌱${'★'.repeat(W.potStars(p))}</span></li>`; }).join('')}</ul>`;
     $('revBody').innerHTML = h;
   }
   $('revGo').addEventListener('click', () => { A.tap(); openRelease(); });
@@ -967,7 +975,7 @@
       teamVars(b, S.user);
       const cs = tot[p.id];
       b.innerHTML = `<span class="avatar">${initials(p.name)}</span>
-        <span><span class="pr-name">${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${t('ageY', { n: num(p.age) })} · ${W.FORM_ICON[fk]} ${t('form_' + fk)}${cs ? ` · ${num(cs.r)}r ${num(cs.w)}w` : ''}</span></span>
+        <span><span class="pr-name">${esc(p.name)}${p.os ? ' ✈' : ''}${scoutIcons(p)}</span><span class="pr-sub">${t(`role_${p.role}`)} · ${skillTxt(p)} · ${W.FORM_ICON[fk]} ${t('form_' + fk)}${cs ? ` · ${num(cs.r)}r ${num(cs.w)}w` : ''}</span></span>
         <span class="pr-r">${num(p.r)}${d ? `<i class="${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'}${num(Math.abs(d))}</i>` : ''}<small>${p.gone ? t('retiredTag') : `${money(e.price)} · ${on ? '✓ ' + t('relKeep') : t('relRelease')}`}</small></span>`;
       b.addEventListener('click', () => { A.tap(); if (on) relKeep.delete(e.pid); else relKeep.add(e.pid); renderRelease(); });
       li.append(b); ul.append(li);
@@ -1014,7 +1022,7 @@
 
   // Shared with tour.js.
   IPLA.ui = {
-    get S() { return S; }, show, save, toast, teamVars, esc, initials, pill, newAuction, doShare, verdict, modal, openSquad, cname, openSheet, closeSheet, scoutTags, scoutIcons, nextSeason,
+    get S() { return S; }, show, save, toast, teamVars, esc, initials, pill, newAuction, doShare, verdict, modal, openSquad, cname, openSheet, closeSheet, scoutTags, scoutIcons, skillTxt, nextSeason,
     screen: () => screen,
   };
 

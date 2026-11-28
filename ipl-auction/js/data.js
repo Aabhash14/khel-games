@@ -357,20 +357,166 @@
   JJ Smit|-|NAM|AR|66|1
   Aqib Ilyas|-|OMA|AR|63|1
   Nicholas Kirton|-|CAN|BAT|64|1
+  -- More known names: Indian players without a 2026 IPL deal, and overseas T20 regulars --
+  Mayank Agarwal|-|IND|BAT|68|1
+  Deepak Hooda|-|IND|AR|66|1
+  Umesh Yadav|-|IND|PACE|66|1
+  Mohit Sharma|-|IND|PACE|68|1
+  Navdeep Saini|-|IND|PACE|64|1
+  Chetan Sakariya|-|IND|PACE|64|1
+  Vijay Shankar|-|IND|AR|64|1
+  KS Bharat|-|IND|WK|62|1
+  Mandeep Singh|-|IND|BAT|60|1
+  Sandeep Warrier|-|IND|PACE|60|1
+  Kumar Kartikeya|-|IND|SPIN|63|0
+  Akash Madhwal|-|IND|PACE|67|0
+  Simarjeet Singh|-|IND|PACE|61|0
+  Abhinav Manohar|-|IND|BAT|64|0
+  Mahipal Lomror|-|IND|BAT|65|0
+  Atharva Taide|-|IND|BAT|64|0
+  Shams Mulani|-|IND|AR|60|0
+  Tanush Kotian|-|IND|AR|62|0
+  Anmolpreet Singh|-|IND|BAT|63|0
+  Yash Dhull|-|IND|BAT|62|0
+  Rajvardhan Hangargekar|-|IND|AR|60|0
+  Vidwath Kaverappa|-|IND|PACE|62|0
+  Lalit Yadav|-|IND|AR|60|0
+  Darshan Nalkande|-|IND|PACE|58|0
+  Swastik Chikara|-|IND|BAT|60|0
+  Andre Siddarth|-|IND|BAT|58|0
+  Vansh Bedi|-|IND|WK|58|0
+  Shaik Rasheed|-|IND|BAT|60|0
+  Priyam Garg|-|IND|BAT|58|0
+  Suyash Prabhudessai|-|IND|BAT|58|0
+  Mayank Dagar|-|IND|SPIN|58|0
+  Vivrant Sharma|-|IND|AR|60|0
+  Sanvir Singh|-|IND|AR|57|0
+  Raj Limbani|-|IND|PACE|58|0
+  Ishan Porel|-|IND|PACE|58|0
+  Jonny Bairstow|-|ENG|WK|76|1
+  Moeen Ali|-|ENG|AR|72|1
+  Chris Woakes|-|ENG|PACE|72|1
+  Jamie Smith|-|ENG|WK|72|1
+  Saqib Mahmood|-|ENG|PACE|72|1
+  Reece Topley|-|ENG|PACE|70|1
+  Tymal Mills|-|ENG|PACE|70|1
+  James Vince|-|ENG|BAT|70|1
+  Rehan Ahmed|-|ENG|SPIN|68|1
+  Chris Jordan|-|ENG|PACE|68|1
+  Tom Curran|-|ENG|AR|66|1
+  Dan Lawrence|-|ENG|BAT|66|1
+  Sam Billings|-|ENG|WK|66|1
+  Josh Tongue|-|ENG|PACE|66|1
+  David Warner|-|AUS|BAT|74|1
+  Sean Abbott|-|AUS|PACE|72|1
+  Jason Behrendorff|-|AUS|PACE|70|1
+  Jhye Richardson|-|AUS|PACE|70|1
+  Tanveer Sangha|-|AUS|SPIN|70|1
+  Riley Meredith|-|AUS|PACE|68|1
+  Kane Richardson|-|AUS|PACE|68|1
+  Ben McDermott|-|AUS|BAT|68|1
+  Ashton Agar|-|AUS|AR|66|1
+  Josh Philippe|-|AUS|WK|66|1
+  Daniel Sams|-|AUS|AR|66|1
+  Beau Webster|-|AUS|AR|66|1
+  Rassie van der Dussen|-|SA|BAT|72|1
+  Rilee Rossouw|-|SA|BAT|72|1
+  Faf du Plessis|-|SA|BAT|72|1
+  Wiaan Mulder|-|SA|AR|68|1
+  George Linde|-|SA|AR|68|1
+  Bjorn Fortuin|-|SA|SPIN|68|1
+  Tony de Zorzi|-|SA|BAT|68|1
+  Lizaad Williams|-|SA|PACE|68|1
+  Nqaba Peter|-|SA|SPIN|64|1
+  Senuran Muthusamy|-|SA|SPIN|64|1
+  Mark Chapman|-|NZ|BAT|70|1
+  Will ORourke|-|NZ|PACE|70|1
+  Jimmy Neesham|-|NZ|AR|70|1
+  Ben Sears|-|NZ|PACE|68|1
+  Mitchell Hay|-|NZ|WK|64|1
+  Tim Robinson|-|NZ|BAT|64|1
+  Josh Clarkson|-|NZ|AR|62|1
+  Shamar Joseph|-|WI|PACE|72|1
+  Evin Lewis|-|WI|BAT|72|1
+  Kyle Mayers|-|WI|AR|70|1
+  Roston Chase|-|WI|AR|68|1
+  Obed McCoy|-|WI|PACE|68|1
+  Johnson Charles|-|WI|WK|68|1
+  Oshane Thomas|-|WI|PACE|66|1
+  Matthew Forde|-|WI|PACE|66|1
+  Fabian Allen|-|WI|AR|64|1
+  Jayden Seales|-|WI|PACE|64|1
+  Keacy Carty|-|WI|BAT|62|1
+  Kusal Perera|-|SL|WK|72|1
+  Dunith Wellalage|-|SL|AR|70|1
+  Dasun Shanaka|-|SL|AR|68|1
+  Bhanuka Rajapaksa|-|SL|BAT|68|1
+  Avishka Fernando|-|SL|BAT|68|1
+  Jeffrey Vandersay|-|SL|SPIN|68|1
+  Binura Fernando|-|SL|PACE|64|1
+  Sediqullah Atal|-|AFG|BAT|68|1
+  Gulbadin Naib|-|AFG|AR|66|1
+  Karim Janat|-|AFG|AR|66|1
+  Najibullah Zadran|-|AFG|BAT|66|1
+  Fareed Ahmad|-|AFG|PACE|66|1
+  Qais Ahmad|-|AFG|SPIN|66|1
+  Darwish Rasooli|-|AFG|BAT|62|1
+  Shakib Al Hasan|-|BAN|AR|70|1
+  Nahid Rana|-|BAN|PACE|68|1
+  Mehidy Hasan Miraz|-|BAN|AR|66|1
+  Tanzim Hasan Sakib|-|BAN|PACE|66|1
+  Shoriful Islam|-|BAN|PACE|66|1
+  Parvez Hossain Emon|-|BAN|BAT|64|1
+  Jaker Ali|-|BAN|WK|64|1
+  Brian Bennett|-|ZIM|BAT|66|1
+  Ryan Burl|-|ZIM|AR|64|1
+  Richard Ngarava|-|ZIM|PACE|64|1
+  Harry Tector|-|IRE|BAT|66|1
+  Curtis Campher|-|IRE|AR|66|1
+  Mark Adair|-|IRE|PACE|66|1
+  Barry McCarthy|-|IRE|PACE|62|1
+  Sundeep Jora|-|NEP|BAT|62|1
+  Abinash Bohara|-|NEP|PACE|62|1
+  Aarif Sheikh|-|NEP|BAT|60|1
+  Kamal Singh Airee|-|NEP|AR|60|1
+  Corey Anderson|-|USA|AR|66|1
+  Steven Taylor|-|USA|BAT|62|1
+  Nosthush Kenjige|-|USA|SPIN|62|1
+  Vikramjit Singh|-|NED|BAT|62|1
+  Michael Leask|-|SCO|AR|64|1
+  Safyaan Sharif|-|SCO|PACE|62|1
+  Alishan Sharafu|-|UAE|BAT|64|1
+  Junaid Siddique|-|UAE|PACE|62|1
+  Jatinder Singh|-|OMA|BAT|60|1
   `;
 
   // Playing styles (our reading of how each plays, not official data).
   // Batting: P = power hitter (big strike rate, more risk), A = anchor (builds an innings, fewer sixes early).
   // Bowling: D = death-overs specialist, N = new-ball / powerplay bowler.
-  const POWER = 'Abhishek Sharma|Travis Head|Heinrich Klaasen|Nicholas Pooran|Phil Salt|Suryakumar Yadav|Rishabh Pant|Jos Buttler|Tim David|Shimron Hetmyer|Rinku Singh|Shivam Dube|Liam Livingstone|Glenn Maxwell|Harry Brook|Jake Fraser-McGurk|Vaibhav Sooryavanshi|Priyansh Arya|Prabhsimran Singh|Shashank Singh|Ashutosh Sharma|Dewald Brevis|Rovman Powell|Marcus Stoinis|Hardik Pandya|Sunil Narine|Cameron Green|Ishan Kishan|Yashasvi Jaiswal|Will Jacks|Finn Allen|Romario Shepherd|Sherfane Rutherford|Abdul Samad|Aniket Verma|Mitchell Marsh|Sanju Samson|Rahmanullah Gurbaz|Tristan Stubbs|David Miller|Sikandar Raza|Dipendra Singh Airee|Kushal Malla|Rohit Sharma|Venkatesh Iyer|Naman Dhir|Jitesh Sharma|Ayush Mhatre|Urvil Patel|Rajat Patidar|Ryan Rickelton|Josh Inglis|Quinton de Kock|Brandon King';
-  const ANCHOR = 'Virat Kohli|Shubman Gill|Ruturaj Gaikwad|Sai Sudharsan|KL Rahul|Kane Williamson|Joe Root|Steve Smith|Ajinkya Rahane|Devdutt Padikkal|Aiden Markram|Devon Conway|Pathum Nissanka|Ibrahim Zadran|Reeza Hendricks|Rohit Paudel|Kushal Mendis|Shai Hope|Daryl Mitchell|Karun Nair|Sarfaraz Khan|Ben Duckett|Rachin Ravindra|Tilak Varma|Paul Stirling|Aasif Sheikh';
-  const DEATH = 'Jasprit Bumrah|Arshdeep Singh|Matheesha Pathirana|T Natarajan|Harshal Patel|Mitchell Starc|Avesh Khan|Mustafizur Rahman|Prasidh Krishna|Sandeep Sharma|Pat Cummins|Kagiso Rabada|Yash Dayal|Harshit Rana|Anrich Nortje|Lockie Ferguson|Naveen-ul-Haq|Nathan Ellis|Alzarri Joseph|Mohsin Khan|Tushar Deshpande';
-  const NEWBALL = 'Trent Boult|Bhuvneshwar Kumar|Mohammed Siraj|Deepak Chahar|Josh Hazlewood|Mohammed Shami|Khaleel Ahmed|Jofra Archer|Fazalhaq Farooqi|Mitchell Starc|Matt Henry|Mukesh Kumar|Ishant Sharma|Akash Deep|Mark Wood|Marco Jansen|Josh Little|Saurabh Netravalkar|Sompal Kami';
+  const POWER = 'Abhishek Sharma|Travis Head|Heinrich Klaasen|Nicholas Pooran|Phil Salt|Suryakumar Yadav|Rishabh Pant|Jos Buttler|Tim David|Shimron Hetmyer|Rinku Singh|Shivam Dube|Liam Livingstone|Glenn Maxwell|Harry Brook|Jake Fraser-McGurk|Vaibhav Sooryavanshi|Priyansh Arya|Prabhsimran Singh|Shashank Singh|Ashutosh Sharma|Dewald Brevis|Rovman Powell|Marcus Stoinis|Hardik Pandya|Sunil Narine|Cameron Green|Ishan Kishan|Yashasvi Jaiswal|Will Jacks|Finn Allen|Romario Shepherd|Sherfane Rutherford|Abdul Samad|Aniket Verma|Mitchell Marsh|Sanju Samson|Rahmanullah Gurbaz|Tristan Stubbs|David Miller|Sikandar Raza|Dipendra Singh Airee|Kushal Malla|Rohit Sharma|Venkatesh Iyer|Naman Dhir|Jitesh Sharma|Ayush Mhatre|Urvil Patel|Rajat Patidar|Ryan Rickelton|Josh Inglis|Quinton de Kock|Brandon King|Jonny Bairstow|Evin Lewis|David Warner|Rilee Rossouw|Kyle Mayers|Kusal Perera|Jimmy Neesham|Corey Anderson|Bhanuka Rajapaksa|Faf du Plessis|Abhinav Manohar|Deepak Hooda|Mahipal Lomror|Jamie Smith|Sediqullah Atal|Ryan Burl';
+  const ANCHOR = 'Virat Kohli|Shubman Gill|Ruturaj Gaikwad|Sai Sudharsan|KL Rahul|Kane Williamson|Joe Root|Steve Smith|Ajinkya Rahane|Devdutt Padikkal|Aiden Markram|Devon Conway|Pathum Nissanka|Ibrahim Zadran|Reeza Hendricks|Rohit Paudel|Kusal Mendis|Shai Hope|Daryl Mitchell|Karun Nair|Sarfaraz Khan|Ben Duckett|Rachin Ravindra|Tilak Varma|Paul Stirling|Aasif Sheikh|Rassie van der Dussen|Mayank Agarwal|Mark Chapman|Tony de Zorzi|Atharva Taide|Harry Tector|Najibullah Zadran|James Vince';
+  const DEATH = 'Jasprit Bumrah|Arshdeep Singh|Matheesha Pathirana|T Natarajan|Harshal Patel|Mitchell Starc|Avesh Khan|Mustafizur Rahman|Prasidh Krishna|Sandeep Sharma|Pat Cummins|Kagiso Rabada|Yash Dayal|Harshit Rana|Anrich Nortje|Lockie Ferguson|Naveen-ul-Haq|Nathan Ellis|Alzarri Joseph|Mohsin Khan|Tushar Deshpande|Mohit Sharma|Akash Madhwal|Tymal Mills|Chris Jordan|Obed McCoy|Nahid Rana|Kane Richardson';
+  const NEWBALL = 'Trent Boult|Bhuvneshwar Kumar|Mohammed Siraj|Deepak Chahar|Josh Hazlewood|Mohammed Shami|Khaleel Ahmed|Jofra Archer|Fazalhaq Farooqi|Mitchell Starc|Matt Henry|Mukesh Kumar|Ishant Sharma|Akash Deep|Mark Wood|Marco Jansen|Josh Little|Saurabh Netravalkar|Sompal Kami|Chris Woakes|Reece Topley|Jason Behrendorff|Umesh Yadav|Shamar Joseph|Will ORourke|Mark Adair';
   const has = (list, n) => list.split('|').includes(n);
+
+  // Batting and bowling skill (0-100), our reading of each player. The headline rating stays the
+  // player's overall T20 value; these two decide what he actually does with bat and ball.
+  // Only players who differ from the defaults below are listed: an all-rounder as bat/bowl, a bowler
+  // who can bat as bat/ (Rashid Khan), a batter who bowls a bit as /bowl (Markram's off-spin).
+  const SKILL = 'Shivam Dube:82/50|Jamie Overton:62/72|Ramakrishna Ghosh:54/56|Prashant Veer:62/64|Zak Foulkes:55/66|Matthew Short:74/55|Aman Khan:56/48|Axar Patel:76/86|Madhav Tiwari:52/54|Ajay Mandal:50/57|Rahul Tewatia:72/52|Washington Sundar:70/80|Glenn Phillips:78/58|Arshad Khan:55/62|Nishant Sindhu:56/56|Jason Holder:62/78|Sunil Narine:74/87|Ramandeep Singh:66/50|Anukul Roy:50/60|Cameron Green:84/76|Rachin Ravindra:80/62|Daksh Kamra:50/52|Mitchell Marsh:84/60|Shahbaz Ahmed:60/66|Arjun Tendulkar:42/58|Arshin Kulkarni:56/52|Hardik Pandya:84/82|Will Jacks:80/62|Naman Dhir:72/48|Shardul Thakur:58/72|Mitchell Santner:60/83|Corbin Bosch:58/68|Raj Angad Bawa:54/54|Mayank Rawat:50/52|Atharva Ankolekar:50/54|Marcus Stoinis:80/66|Marco Jansen:68/84|Mitchell Owen:74/55|Azmatullah Omarzai:70/78|Musheer Khan:58/54|Suryansh Shedge:60/50|Cooper Connolly:72/60|Riyan Parag:82/62|Ravindra Jadeja:76/85|Sam Curran:72/79|Krunal Pandya:66/78|Jacob Bethell:76/62|Romario Shepherd:70/70|Swapnil Singh:46/58|Venkatesh Iyer:77/45|Satvik Deswal:52/50|Kanishk Chouhan:46/55|Abhishek Sharma:92/58|Nitish Kumar Reddy:76/68|Kamindu Mendis:74/62|Liam Livingstone:80/64|Jack Edwards:60/70|Ben Stokes:78/76|Liam Dawson:60/72|Glenn Maxwell:79/68|Aaron Hardie:64/66|Daryl Mitchell:80/50|Michael Bracewell:66/70|Mohammad Nabi:66/74|Sikandar Raza:76/72|Dipendra Singh Airee:72/62|Kushal Malla:68/52|Gulsan Jha:56/64|Bas de Leede:66/70|Logan van Beek:54/68|Brandon McMullen:68/62|Gerhard Erasmus:64/62|JJ Smit:58/64|Aqib Ilyas:60/58|Deepak Hooda:66/52|Vijay Shankar:64/56|Shams Mulani:52/60|Tanush Kotian:54/62|Rajvardhan Hangargekar:52/60|Lalit Yadav:60/54|Vivrant Sharma:60/52|Sanvir Singh:56/54|Moeen Ali:70/70|Tom Curran:55/66|Ashton Agar:58/66|Daniel Sams:58/66|Beau Webster:64/62|Wiaan Mulder:64/66|George Linde:58/68|Jimmy Neesham:68/64|Josh Clarkson:62/56|Kyle Mayers:70/62|Roston Chase:62/68|Fabian Allen:60/62|Dunith Wellalage:58/70|Dasun Shanaka:66/62|Gulbadin Naib:62/64|Karim Janat:62/64|Shakib Al Hasan:64/72|Mehidy Hasan Miraz:60/66|Ryan Burl:62/60|Curtis Campher:64/62|Kamal Singh Airee:58/58|Corey Anderson:66/58|Michael Leask:62/60|Rashid Khan:62/|Pat Cummins:58/|Mitchell Starc:46/|Bhuvneshwar Kumar:46/|Deepak Chahar:50/|Harshal Patel:50/|Kyle Jamieson:52/|Jofra Archer:48/|Akeal Hosein:48/|Shreyas Gopal:48/|Chris Woakes:56/|Sean Abbott:50/|Chris Jordan:50/|Wanindu Hasaranga:56/|Noor Ahmad:34/|Yuzvendra Chahal:30/|Varun Chakravarthy:30/|Jasprit Bumrah:34/|Josh Hazlewood:34/|T Natarajan:30/|Mustafizur Rahman:30/|Kuldeep Yadav:42/|Ravi Bishnoi:34/|Aiden Markram:/62|Tilak Varma:/50|Nitish Rana:/52|Ayush Badoni:/48|Travis Head:/48|Rohit Paudel:/48|Kushal Bhurtel:/44';
+  const SK = {};
+  for (const x of SKILL.split('|')) { const [n, v] = x.split(':'); const [b, w] = v.split('/'); SK[n] = [b === '' ? null : +b, w === '' ? null : +w]; }
+  // Defaults: a batter is all bat, a specialist bowler bats like a tail-ender, an all-rounder is a bit of both.
+  function skills(role, r, name) {
+    const o = SK[name] || [null, null];
+    const bat = o[0] != null ? o[0] : role === 'BAT' || role === 'WK' ? r : role === 'AR' ? Math.round(r * 0.9) : 40;
+    const bowl = o[1] != null ? o[1] : role === 'PACE' || role === 'SPIN' ? r : role === 'AR' ? Math.round(r * 0.86) : role === 'BAT' ? 38 : 30;
+    return { bat, bowl };
+  }
 
   const PLAYERS = RAW.trim().split('\n').filter((l) => !l.trim().startsWith('--')).map((line, i) => {
     const [name, team, country, role, r, capped] = line.trim().split('|');
-    return { id: i, name, team, country, role, r: +r, capped: capped === '1', os: country !== 'IND', bs: has(POWER, name) ? 'P' : has(ANCHOR, name) ? 'A' : '', ws: has(DEATH, name) ? 'D' : has(NEWBALL, name) ? 'N' : '' };
+    return { id: i, name, team, country, role, r: +r, ...skills(role, +r, name), capped: capped === '1', os: country !== 'IND', bs: has(POWER, name) ? 'P' : has(ANCHOR, name) ? 'A' : '', ws: has(DEATH, name) ? 'D' : has(NEWBALL, name) ? 'N' : '' };
   });
 
 
@@ -399,5 +545,5 @@
   };
 
   const teamById = Object.fromEntries(TEAMS.map((t) => [t.id, t]));
-  IPLA.data = { SEASON, TEAMS, PLAYERS, teamById, COUNTRIES, VENUES };
+  IPLA.data = { SEASON, TEAMS, PLAYERS, teamById, COUNTRIES, VENUES, skills };
 })();
