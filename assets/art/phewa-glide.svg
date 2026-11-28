@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Provenance: hand-authored for this repo; matches phewa-glide/icon.svg (red wing over Machhapuchhre and Phewa, prayer-flag strip). -->
+  <defs>
+    <clipPath id="pg-clip"><circle cx="256" cy="256" r="216"/></clipPath>
+    <linearGradient id="pg-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c6cc6"/><stop offset=".6" stop-color="#9cc3e2"/><stop offset="1" stop-color="#f4b183"/></linearGradient>
+  </defs>
+  <g clip-path="url(#pg-clip)">
+    <rect width="512" height="512" fill="url(#pg-sky)"/>
+    <path d="M40 330 L130 262 L196 296 L262 160 L290 212 L318 136 L356 246 L420 214 L480 270 V512 H40z" fill="#e9eef6"/>
+    <path d="M262 160 L290 212 L318 136 L300 236 L276 236z" fill="#b9c6dc"/>
+    <path d="M40 360 Q150 304 262 350 T480 338 V512 H40z" fill="#3c6a3a"/>
+    <path d="M40 412 H480 V512 H40z" fill="#1c4b4f"/>
+    <path d="M40 412 H480 V424 H40z" fill="#5f9aa0" opacity=".6"/>
+    <path d="M122 160 Q256 72 390 160 L370 182 Q256 116 142 182z" fill="#d7263d"/>
+    <path d="M160 166 Q256 108 352 166 L342 174 Q256 126 170 174z" fill="#fff3e6"/>
+    <g stroke="#fff6e6" stroke-width="3" opacity=".85"><path d="M150 178 L250 270M206 150 L252 270M306 150 L260 270M362 178 L262 270"/></g>
+    <circle cx="256" cy="278" r="12" fill="#1d2f55"/>
+    <circle cx="256" cy="261" r="9" fill="#f4f1ea"/>
+    <circle cx="378" cy="300" r="20" fill="none" stroke="#f2c230" stroke-width="6"/>
+    <g><rect x="40" y="462" width="88" height="50" fill="#2457c5"/><rect x="128" y="462" width="88" height="50" fill="#f4f1ea"/><rect x="216" y="462" width="88" height="50" fill="#d42a20"/><rect x="304" y="462" width="88" height="50" fill="#2e9a4a"/><rect x="392" y="462" width="88" height="50" fill="#f2c230"/></g>
+  </g>
+</svg>

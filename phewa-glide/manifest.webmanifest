@@ -1,0 +1,14 @@
+{
+  "name": "Phewa Glide · फेवा उडान",
+  "short_name": "Phewa Glide",
+  "description": "Paraglide off Sarangkot over Phewa Lake in 3D. Works offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0f3d44",
+  "theme_color": "#0f3d44",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

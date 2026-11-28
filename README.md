@@ -10,6 +10,7 @@ Made by **Aabhash Shahi**.
 | Game | What you do | Folder |
 | --- | --- | --- |
 | IPL Auction (आईपीएल लिलामी) | Run one franchise through a full IPL mega auction against nine computer owners, then play the whole season ball by ball: live matches, scorecards, points table, Orange and Purple Caps | `ipl-auction` |
+| Phewa Glide (फेवा उडान) | 3D paragliding over Pokhara: run off Sarangkot, climb in thermals with the vultures, fly prayer-flag rings over Phewa Lake, flare onto the Lakeside target | `phewa-glide` |
 | Lakhey Run (लाखे दौड) | 3D runner: you teased Majipa Lakhey, now run old Kathmandu as a Newar boy or girl before he grabs you; pick Sun Gali or Mandir Bato at each fork | `lakhey-run` |
 | Duo (जोडी) | Two players, one phone, 7 games: Memory, Pool, Who Is It?, Four in a Row, Dots & Boxes, Sea Battle, Animal Stack | `duo` |
 | Imposter (नक्कली को?) | Pass-the-phone party game: everyone gets the secret word except the imposter. Clue, argue, point on 3 | `imposter` |
@@ -26,7 +27,7 @@ Made by **Aabhash Shahi**.
 | Umbra | 3D shadow puzzle: turn each plaster sculpture under the lamp until its shadow spells the hidden word, 12 sculptures | `shadow-puzzle` |
 | Sound Garden | Plant seeds that grow into singing plants and turn your garden into an ambient song; share it as a link | `sound-garden` |
 | Know Me | Open a pack, pull your personality card, dare friends to guess your answers | `know-me` |
-| Pro Scout | Guess the athlete from a pixelated photo, career path, nickname or flag | `pro-scout` |
+| Pro Scout | Guess the athlete from their eyes, career path, nickname or flag | `pro-scout` |
 | Orbit Switch | One-button arcade: switch orbits, dodge blocks, grab stars | `orbit-switch` |
 
 Several games are English and Nepali (use the EN / ने toggle). Each game folder has its own README with details.

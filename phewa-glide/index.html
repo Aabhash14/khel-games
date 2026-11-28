@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Phewa Glide · फेवा उडान</title>
+  <meta name="description" content="Paraglide off Sarangkot over Phewa Lake in 3D. Ride thermals with the vultures, fly through prayer-flag rings, and land on the target by the lake. English and Nepali.">
+  <meta name="theme-color" content="#0f3d44">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/mukta-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <canvas id="gl" aria-label="Phewa Glide game"></canvas>
+  <div id="pad" aria-hidden="true"></div>
+  <div id="stick" aria-hidden="true"><i></i></div>
+
+  <div id="loading" class="screen show">
+    <div class="flagline" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <p data-t="loading">Laying out the wing…</p>
+  </div>
+
+  <!-- menu -->
+  <section id="menu" class="screen" aria-labelledby="title">
+    <header class="top">
+      <a class="round hub" href="../" aria-label="Khel home"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <span class="sp"></span>
+      <button class="round" id="lang" type="button" aria-label="Language">ने</button>
+      <button class="round" id="snd" type="button" aria-label="Sound"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </header>
+    <div class="logo">
+      <h1 id="title"><span class="en">Phewa Glide</span><span class="ne" lang="ne">फेवा उडान</span></h1>
+      <p class="tag" data-t="tag"></p>
+    </div>
+    <div class="dock">
+      <div class="flights" id="flights" role="radiogroup" aria-label="Flights"></div>
+      <div class="wingrow">
+        <span class="lbl" data-t="wing"></span>
+        <div class="wings" id="wings" role="radiogroup" aria-label="Wing"></div>
+        <button class="btn ghost" id="howBtn" type="button" data-t="howTitle"></button>
+      </div>
+      <button class="btn main" id="play" type="button"><span data-t="fly">Fly</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13c4-1 7-4 9-8 2 4 5 7 9 8-4 0-7 1-9 3-2-2-5-3-9-3z" fill="currentColor"/></svg></button>
+    </div>
+  </section>
+
+  <!-- flight HUD -->
+  <section id="hud" class="screen" aria-live="off">
+    <div class="hud-l">
+      <div class="altbox">
+        <div class="vbar"><i id="vfill"></i></div>
+        <div>
+          <b id="alt">0</b><small data-t="m"></small>
+          <span class="sub"><span id="agl">0</span> <span data-t="agl"></span></span>
+          <span class="vario" id="vario">+0.0</span>
+        </div>
+      </div>
+      <span class="speed"><b id="spd">0</b> <span data-t="kmh"></span></span>
+    </div>
+    <div class="hud-c">
+      <span class="rings"><i class="hoop" aria-hidden="true"></i><b id="rc">0/0</b></span>
+      <span class="next" id="next"></span>
+    </div>
+    <div class="hud-r">
+      <button class="round" id="pauseBtn" type="button" aria-label="Pause"><svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg></button>
+      <canvas id="map" width="240" height="240" aria-hidden="true"></canvas>
+    </div>
+    <div id="hint" class="hint"></div>
+    <div id="toast" class="toast"><b></b><span></span></div>
+  </section>
+
+  <!-- pause -->
+  <section id="pause" class="screen dim">
+    <div class="card">
+      <div class="flagline" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <h2 data-t="paused"></h2>
+      <button class="btn main" id="resume" type="button" data-t="resume"></button>
+      <button class="btn ghost" id="restart" type="button" data-t="restart"></button>
+      <button class="btn ghost" id="quit" type="button" data-t="home"></button>
+    </div>
+  </section>
+
+  <!-- results -->
+  <section id="over" class="screen dim">
+    <div class="card result">
+      <div class="flagline" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="kicker" id="rFlight"></p>
+      <h2 id="rTitle"></h2>
+      <p class="rsub" id="rSub"></p>
+      <div class="stars" id="rStars" aria-label=""><i></i><i></i><i></i></div>
+      <dl class="tally" id="tally"></dl>
+      <p class="newbest" id="newBest" hidden data-t="newBest"></p>
+      <div class="row">
+        <button class="btn main" id="again" type="button" data-t="again"></button>
+        <button class="btn main alt" id="nextBtn" type="button" data-t="next"></button>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="shareBtn" type="button" data-t="share"></button>
+        <button class="btn ghost" id="homeBtn" type="button" data-t="home"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- how to fly -->
+  <section id="how" class="screen dim">
+    <div class="card how">
+      <div class="flagline" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <h2 data-t="howTitle"></h2>
+      <ol>
+        <li data-t="how1"></li>
+        <li data-t="how2"></li>
+        <li data-t="how3"></li>
+        <li data-t="how4"></li>
+        <li data-t="how5"></li>
+        <li data-t="how6"></li>
+      </ol>
+      <p class="keys" data-t="keys"></p>
+      <button class="btn main close" type="button" data-t="ok"></button>
+    </div>
+  </section>
+
+  <section id="nogl" class="screen dim"><div class="card"><p data-t="noGL"></p></div></section>
+
+  <script src="js/vendor/three.min.js"></script>
+  <script src="js/i18n.js?v=1"></script>
+  <script src="js/audio.js?v=1"></script>
+  <script src="js/chars.js?v=1"></script>
+  <script src="js/world.js?v=1"></script>
+  <script src="js/game.js?v=1"></script>
+  <script src="js/main.js?v=1"></script>
+</body>
+</html>
